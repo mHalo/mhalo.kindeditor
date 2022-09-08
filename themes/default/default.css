@@ -1,0 +1,1110 @@
+@import url(//at.alicdn.com/t/font_1491367_8c6xh7iejhd.css);
+
+.ke-inline-block {
+	display: -moz-inline-stack;
+	display: inline-block;
+	vertical-align: middle;
+	zoom: 1;
+	*display: inline;
+}
+
+.ke-clearfix {
+	zoom: 1
+}
+
+.ke-clearfix:after {
+	content: ".";
+	display: block;
+	clear: both;
+	font-size: 0;
+	height: 0;
+	line-height: 0;
+	visibility: hidden
+}
+
+.ke-shadow {
+	box-shadow: 0 0 0 #a0a0a0;
+	-moz-box-shadow: 0 0 0 #a0a0a0;
+	-webkit-box-shadow: 0 0 0 #a0a0a0;
+	filter: progid:DXImageTransform.Microsoft.Shadow(color='#A0A0A0',Direction=135,Strength=0);
+	background-color: #f0f0ee
+}
+
+.ke-dialog a,.ke-dialog a:hover,.ke-menu a,.ke-menu a:hover {
+	color: #337fe5;
+	text-decoration: none
+}
+
+.icon-ke-font {
+	font-family: icon-ke-font!important;
+	font-size: 1pc;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale
+}
+
+.ke-dialog select {
+	border: 1px solid #848484;
+	padding: 2px 0
+}
+
+.ke-dialog-shadow {
+	display: none
+}
+
+.ke-container {
+	display: block;
+	border: 1px solid #ccc;
+	background-color: #fff;
+	overflow: hidden;
+	margin: 0;
+	padding: 0
+}
+
+.ke-toolbar {
+	border-bottom: 1px solid #ccc;
+	background-color: #fafafa;
+	padding: 2px 5px;
+	text-align: left;
+	overflow: hidden;
+	zoom: 1
+}
+
+.ke-toolbar-icon {
+	background-repeat: no-repeat;
+	font-size: 0;
+	line-height: 0;
+	overflow: hidden;
+	display: block
+}
+
+.ke-toolbar-icon-url {
+	background-image: url(default.png)
+}
+
+.ke-toolbar .ke-outline {
+	border: 1px solid #fafafa;
+	margin: 1px;
+	padding: 1px 2px;
+	font-size: 0;
+	line-height: 0;
+	overflow: hidden;
+	cursor: pointer;
+	display: block;
+	float: left
+}
+
+.ke-toolbar .ke-on {
+	border: 1px solid #b7b7b7
+}
+
+.ke-toolbar .ke-selected {
+	border: 1px solid #b7b7b7;
+	background-color: #fff
+}
+
+.ke-toolbar .ke-disabled {
+	cursor: default
+}
+
+.ke-toolbar .ke-separator {
+	height: 26px;
+	margin: 5px 3px;
+	border-left: 1px solid #a0a0a0;
+	border-right: 1px solid #fff;
+	border-top: 0;
+	border-bottom: 0;
+	width: 0;
+	font-size: 0;
+	line-height: 0;
+	overflow: hidden;
+	display: block;
+	float: left
+}
+
+.ke-toolbar .ke-hr {
+	overflow: hidden;
+	height: 1px;
+	clear: both
+}
+
+.ke-edit {
+	padding: 0
+}
+
+.ke-edit-iframe,.ke-edit-textarea {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	overflow: auto
+}
+
+.ke-edit-textarea {
+	font: 9pt/1.5 "Consolas",Monaco,Bitstream Vera Sans Mono,Courier New,Courier,monospace;
+	color: #000;
+	overflow: auto;
+	resize: none
+}
+
+.ke-edit-textarea:focus {
+	outline: 0
+}
+
+.ke-statusbar {
+	position: relative;
+	background-color: #fafafa;
+	border-top: 1px solid #ccc;
+	font-size: 0;
+	line-height: 0;
+	*height: 9pt;
+	overflow: hidden;
+	text-align: center;
+	cursor: s-resize
+}
+
+.ke-statusbar-center-icon {
+	background-position: 0 -754px;
+	width: 15px;
+	height: 11px;
+	background-image: url(default.png)
+}
+
+.ke-statusbar-right-icon {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	cursor: se-resize;
+	background-position: -5px -741px;
+	width: 11px;
+	height: 11px;
+	background-image: url(default.png)
+}
+
+.ke-menu {
+	border: 1px solid #d2d2d2;
+	font-family: "Microsoft Yahei", "sans serif",tahoma,verdana,helvetica;
+	font-size: 9pt;
+	text-align: left;
+	border-radius: 2px;
+	box-shadow: 0 2px 4px rgba(000.12);
+	margin-top: -1px;
+}
+
+.ke-menu,.ke-menu-item {
+	background-color: #ffffff;
+	color: #222;
+	overflow: hidden;
+}
+
+.ke-menu-item {
+	height: 28px;
+	cursor: pointer
+}
+.ke-menu-item-selected{
+    background-color: #2196f3;
+	color: #fff;
+}
+.ke-menu-item-selected .ke-menu-item-left{
+	visibility:hidden;
+}
+
+.ke-menu-item-on {
+	border: none;
+	background-color: #f2f2f2;
+}
+
+.ke-menu-item-left {
+	width: 26px;
+	text-align: center;
+	overflow: hidden;
+}
+
+.ke-menu-item-left .ke-toolbar-icon {
+	width: 26px;
+    height: 26px;
+    text-align: center;
+    line-height: 28px;
+    font-size: 16px;
+}
+
+.ke-menu-item-center {
+	width: 0;
+	height: 24px;
+	border-left: 1px solid #e3e3e3;
+	border-right: 1px solid #fff;
+	border-top: 0;
+	border-bottom: 0
+}
+
+.ke-menu-item-center-on {
+	border-left: 1px solid #e9eff6;
+	border-right: 1px solid #e9eff6
+}
+
+.ke-menu-item-right {
+	border: 0;
+	padding: 0 0 0 5px;
+	line-height: 24px;
+	text-align: left;
+	overflow: hidden
+}
+
+.ke-menu-separator {
+	margin: 2px 0;
+	height: 0;
+	overflow: hidden;
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #fff;
+	border-left: 0;
+	border-right: 0
+}
+
+.ke-colorpicker {
+	border: 1px solid #a0a0a0;
+	background-color: #f1f1f1;
+	color: #222;
+	padding: 2px
+}
+
+.ke-colorpicker-table {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	border-collapse: separate
+}
+
+.ke-colorpicker-cell {
+	font-size: 0;
+	line-height: 0;
+	margin: 3px
+}
+
+.ke-colorpicker-cell,.ke-colorpicker-cell-top {
+	border: 1px solid #f0f0ee;
+	cursor: pointer;
+	padding: 0
+}
+
+.ke-colorpicker-cell-top {
+    font-size: 14px;
+    line-height: 28px;
+    margin: 0;
+    text-align: center;
+}
+
+.ke-colorpicker-cell-on {
+	border: 1px solid #5690d2
+}
+
+.ke-colorpicker-cell-selected {
+	border: 1px solid #2446ab
+}
+
+.ke-colorpicker-cell-color {
+	width: 24px;
+    height: 24px;
+    margin: 1px;
+    padding: 0;
+    border: 0;
+}
+
+.ke-dialog {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	box-shadow: 0 8px 24px rgba(0,0,0,.15)
+}
+
+.ke-dialog .ke-header {
+	width: 100%;
+	margin-bottom: 10px
+}
+
+.ke-dialog .ke-header .ke-left {
+	float: left
+}
+
+.ke-dialog .ke-header .ke-right {
+	float: right
+}
+
+.ke-dialog .ke-header label {
+	margin-right: 0;
+	cursor: pointer;
+	font-weight: 400;
+	display: inline;
+	vertical-align: top
+}
+
+.ke-dialog-content {
+	background-color: #fff;
+	width: 100%;
+	height: 100%;
+	color: #333;
+	border: 1px solid #d4d4d4
+}
+
+.ke-dialog-shadow {
+	position: absolute;
+	z-index: -1;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	box-shadow: 3px 3px 7px #999;
+	-moz-box-shadow: 3px 3px 7px #999;
+	-webkit-box-shadow: 3px 3px 7px #999;
+	filter: progid:DXImageTransform.Microsoft.Blur(PixelRadius='3',MakeShadow='true',ShadowOpacity='0.4');
+	background-color: #f0f0ee
+}
+
+.ke-dialog-header {
+	border: 0;
+	margin: 0;
+	padding: 0 14px;
+	background: #f8f8f8;
+	border-bottom: 1px solid #eee;
+	height: 38px;
+	line-height: 38px;
+	font: 14px/38px 'Microsoft Yahei',"sans serif",tahoma,verdana,helvetica;
+	text-align: left;
+	color: #222;
+	cursor: move
+}
+
+.ke-dialog-icon-close {
+	display: block;
+	width: 1pc;
+	height: 1pc;
+	line-height: 1pc;
+	position: absolute;
+	right: 11px;
+	top: 11px;
+	cursor: pointer
+}
+
+.ke-dialog-icon-close:before {
+	font-family: icon-ke-font!important;
+	font-size: 1pc;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	content: "\e69b"
+}
+
+.ke-dialog-body {
+	font: 14px/2 "Microsoft YaHei","sans serif",tahoma,verdana,helvetica;
+	text-align: left;
+	overflow: hidden;
+	width: 100%
+}
+
+.ke-dialog-body textarea {
+	display: block;
+	overflow: auto;
+	padding: 0;
+	resize: none
+}
+
+.ke-dialog-body input:focus,.ke-dialog-body select:focus,.ke-dialog-body textarea:focus {
+	outline: 0
+}
+
+.ke-dialog-body label {
+	margin-right: 10px;
+	cursor: pointer
+}
+
+.ke-dialog-body img,.ke-dialog-body label,.ke-dialog-body select {
+	display: -moz-inline-stack;
+	display: inline-block;
+	vertical-align: middle;
+	zoom: 1;
+	*display: inline
+}
+
+.ke-dialog-body select {
+	width: auto
+}
+
+.ke-dialog-body .ke-textarea {
+	display: block;
+	width: 408px;
+	height: 260px;
+	font-family: "sans serif",tahoma,verdana,helvetica;
+	font-size: 9pt;
+	border: 1px solid #e0e0e0
+}
+
+.ke-dialog-body .ke-form {
+	margin: 0;
+	padding: 0
+}
+
+.ke-dialog-loading {
+	position: absolute;
+	top: 0;
+	left: 1px;
+	z-index: 1;
+	text-align: center
+}
+
+.ke-dialog-loading-content {
+	background: url(../common/loading.gif) no-repeat;
+	color: #666;
+	font-size: 14px;
+	font-weight: 700;
+	height: 31px;
+	line-height: 31px;
+	padding-left: 36px
+}
+
+.ke-dialog-row {
+	margin-bottom: 10px
+}
+
+.ke-dialog-footer {
+	font: 9pt/1 "sans serif",tahoma,verdana,helvetica;
+	text-align: right;
+	padding: 5px 0;
+	background-color: #fff;
+	width: 100%
+}
+
+.ke-dialog-preview,.ke-dialog-yes {
+	margin: 5px
+}
+
+.ke-dialog-no {
+	margin: 5px 10px 5px 15px
+}
+
+.ke-button-common {
+	background: #dedede;
+    background-color: #2196f3;
+    border-color: #2565c4;
+    box-shadow: 0 1px 9pt 1px rgb(0 0 0 / 12%);
+    color: #fff!important;
+    font-size: 14px!important;
+}
+
+.ke-button-common>.ke-button-common {
+	background: none!important
+}
+
+.ke-dialog-no.ke-button-common {
+	background-color: #e2e2e2;
+	box-shadow: 0 1px 9pt 1px transparent
+}
+
+.ke-dialog-no .ke-button-common {
+	color: #5d5d5d!important
+}
+
+.ke-dialog-mask {
+	background-color: #fff;
+	filter: alpha(opacity=50);
+	opacity: .5
+}
+
+.ke-button-common {
+	height: 30px;
+	line-height: 30px;
+	overflow: visible;
+	display: inline-block;
+	vertical-align: top;
+	cursor: pointer;
+	border-radius: 1px
+}
+
+.ke-button-outer {
+	background-position: 0 -25px;
+	padding: 0;
+	display: -moz-inline-stack;
+	display: inline-block;
+	vertical-align: middle;
+	zoom: 1;
+	*display: inline
+}
+
+.ke-button {
+	background: none;
+	padding: 0 24px 0 20px;
+	margin: 0;
+	border: 0 none;
+	color: #333;
+	text-decoration: none
+}
+
+.ke-button,.ke-input-text {
+	font-family: "sans serif",tahoma,verdana,helvetica;
+	font-size: 9pt
+}
+
+.ke-input-text {
+	background-color: #fff;
+	line-height: 17px;
+	height: 17px;
+	padding: 2px 4px;
+	border-color: #848484 #e0e0e0 #e0e0e0 #848484;
+	border-style: solid;
+	border-width: 1px;
+	display: -moz-inline-stack;
+	display: inline-block;
+	vertical-align: middle;
+	zoom: 1;
+	*display: inline
+}
+
+.ke-input-number {
+	width: 50px
+}
+
+.ke-input-color {
+	border: 1px solid #a0a0a0;
+	background-color: #fff;
+	font-size: 9pt;
+	width: 5pc;
+	height: 30px;
+	line-height: 30px;
+	padding-left: 5px;
+	overflow: hidden;
+	cursor: pointer;
+	display: -moz-inline-stack;
+	display: inline-block;
+	vertical-align: middle;
+	zoom: 1;
+	*display: inline
+}
+
+.ke-upload-button {
+	position: relative
+}
+
+.ke-upload-area {
+	position: relative;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	*height: 25px
+}
+
+.ke-upload-area .ke-upload-file {
+	position: absolute;
+	font-size: 60px;
+	top: 0;
+	right: 0;
+	padding: 0;
+	margin: 0;
+	z-index: 811212;
+	border: 0 none;
+	opacity: 0;
+	filter: alpha(opacity=0)
+}
+
+.ke-tabs {
+	font: 9pt/1 "sans serif",tahoma,verdana,helvetica;
+	border-bottom: 1px solid #a0a0a0;
+	padding-left: 5px;
+	margin-bottom: 20px
+}
+
+.ke-tabs-ul {
+	list-style-image: none;
+	list-style-position: outside;
+	list-style-type: none;
+	margin: 0;
+	padding: 0
+}
+
+.ke-tabs-li {
+	position: relative;
+	border: 1px solid #a0a0a0;
+	background-color: #f0f0ee;
+	margin: 0 2px -1px 0;
+	padding: 0 20px;
+	float: left;
+	line-height: 25px;
+	text-align: center;
+	color: #555;
+	cursor: pointer
+}
+
+.ke-tabs-li-selected {
+	border-bottom: 1px solid #fff;
+	cursor: default
+}
+
+.ke-tabs-li-on,.ke-tabs-li-selected {
+	background-color: #fff;
+	color: #000
+}
+
+.ke-progressbar {
+	position: relative;
+	margin: 0;
+	padding: 0
+}
+
+.ke-progressbar-bar {
+	border: 1px solid #6fa5db;
+	width: 5pc;
+	height: 5px;
+	margin: 10px 10px 0;
+	padding: 0
+}
+
+.ke-progressbar-bar-inner {
+	width: 0;
+	height: 5px;
+	background-color: #6fa5db;
+	overflow: hidden;
+	margin: 0;
+	padding: 0
+}
+
+.ke-progressbar-percent {
+	position: absolute;
+	top: 0;
+	left: 40%;
+	display: none
+}
+
+.ke-swfupload-top {
+	position: relative;
+	margin-bottom: 10px;
+	_width: 38pc
+}
+
+.ke-swfupload-button {
+	height: 30px;
+	line-height: 30px
+}
+
+.webuploader-container input[type=file] {
+	opacity: 0
+}
+
+.webuploader-element-invisible {
+	opacity: 0;
+	position: relative;
+	z-index: 3
+}
+
+.webuploader-pick {
+	position: relative;
+	display: inline-block;
+	cursor: pointer;
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+	box-shadow: 0 1px 9pt 1px rgba(0,0,0,.12);
+	border-radius: 1px;
+	overflow: visible;
+	zoom: 1
+}
+
+.webuploader-pick:after {
+	content: '选择图片';
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+    background-color: #2196f3;
+    border-color: #2565c4;
+	z-index: 1;
+	margin: 0;
+	padding: 0;
+	color: #fff;
+	cursor: pointer
+}
+
+.ke-swfupload-desc {
+	padding: 0 10px;
+	height: 23px;
+	line-height: 23px
+}
+
+.ke-swfupload-startupload {
+	position: absolute;
+	top: 0;
+	right: 0
+}
+
+.ke-swfupload-body {
+	overflow-y: scroll;
+	background-color: #fff;
+	border-color: #848484 #e0e0e0 #e0e0e0 #848484;
+	border-style: solid;
+	border-width: 1px;
+	width: auto;
+	height: 370px;
+	padding: 5px
+}
+
+.ke-swfupload-body .ke-item {
+	width: 75pt;
+	margin: 5px 7px
+}
+
+.ke-swfupload-body .ke-photo {
+	position: relative;
+	border: 1px solid #ddd;
+	background-color: #fff;
+	padding: 10px
+}
+
+.ke-swfupload-body .ke-delete {
+	display: block;
+	background: url(default.png) no-repeat scroll 0 -43pc;
+	width: 1pc;
+	height: 1pc;
+	position: absolute;
+	right: 0;
+	top: 0;
+	cursor: pointer;
+	z-index: 1
+}
+
+.ke-swfupload-body .ke-status {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 75pt;
+	height: 22px;
+	line-height: 18px
+}
+
+.ke-swfupload-body .ke-message {
+	width: 75pt;
+	text-align: center;
+	overflow: hidden;
+	height: 22px;
+	background: rgba(0,0,0,.5);
+	color: #fff
+}
+
+.ke-swfupload-body .ke-error {
+	color: red
+}
+
+.ke-swfupload-body .ke-name {
+	width: 75pt;
+	text-align: center;
+	overflow: hidden;
+	height: 28px
+}
+
+.ke-swfupload-body .ke-on {
+	border: 1px solid #5690d2;
+	background-color: #e9eff6
+}
+
+.ke-swfupload .ke-progressbar {
+	position: absolute;
+	margin: 0;
+	padding: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background: rgba(0,179,14,.28);
+	text-shadow: 1px 1px 4px #000
+}
+
+.ke-swfupload .ke-progressbar-bar {
+	height: 4px;
+	padding: 0;
+	width: 100%;
+	margin: 0;
+	background: #565656;
+	border: none;
+	position: absolute;
+	bottom: 0
+}
+
+.ke-swfupload .ke-progressbar-bar-inner {
+	width: 0;
+	height: 4px;
+	background-color: #32ce62;
+	overflow: hidden;
+	margin: 0;
+	padding: 0
+}
+
+.ke-swfupload .ke-progressbar-percent {
+	position: absolute;
+	bottom: 3px;
+	left: 0;
+	font-weight: 700;
+	color: #7f0;
+	display: block;
+	width: 100%;
+	text-align: center
+}
+
+.ke-swfupload-body {
+	border: 3px dashed #ccc
+}
+
+.ke-swfupload-body:after {
+	content: '可拖拽文件至此处上传';
+	position: absolute;
+	top: 50%;
+	left: 0;
+	width: 100%;
+	height: 30px;
+	font-size: 24px;
+	color: #e2e2e2;
+	text-align: center;
+	margin-top: -15px
+}
+
+.ke-swfupload-body.drag-hover {
+	border: 3px dashed #000
+}
+
+.ke-swfupload-body .ke-item {
+	position: relative;
+	z-index: 1;
+	-moz-user-select: none;
+	-webkit-user-select: none;
+	-ms-user-select: none;
+	-khtml-user-select: none;
+	user-select: none
+}
+
+.ke-swfupload .ke-progressbar.error {
+	background: hsla(0,100%,85%,.5)
+}
+
+.ke-swfupload .ke-progressbar.error .ke-progressbar-bar-inner {
+	background: #ff1010
+}
+
+.ke-swfupload .ke-progressbar.error .ke-progressbar-percent {
+	color: #ff1010
+}
+
+.ke-swfupload {
+	position: relative
+}
+
+.ke-swfupload .upload-error-result {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 30px;
+	box-sizing: border-box;
+	padding: 0 50px;
+	background: #ff000096;
+	display: none;
+	text-align: center;
+	line-height: 30px;
+	color: #fff;
+	z-index: 2
+}
+
+.ke-swfupload .upload-error-result.show {
+	display: block
+}
+
+.ke-status.upload-error {
+	width: 100%;
+	height: 100%
+}
+
+.ke-status.upload-error .ke-message {
+	width: 100%;
+	height: 100%;
+	vertical-align: middle;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	z-index: 0;
+	background: rgba(132,0,0,.52);
+	color: #fff;
+	padding: 0 5px;
+	text-shadow: 1px 1px #b50000
+}
+
+.ke-plugin-emoticons {
+	position: relative
+}
+
+.ke-plugin-emoticons .ke-preview {
+	position: absolute;
+	text-align: center;
+	margin: 2px;
+	padding: 10px;
+	top: 0;
+	border: 1px solid #a0a0a0;
+	background-color: #fff;
+	display: none
+}
+
+.ke-plugin-emoticons .ke-preview-img {
+	border: 0;
+	margin: 0;
+	padding: 0
+}
+
+.ke-plugin-emoticons .ke-table {
+	border: 0;
+	margin: 0;
+	padding: 0;
+	border-collapse: separate
+}
+
+.ke-plugin-emoticons .ke-cell {
+	margin: 0;
+	padding: 1px;
+	border: 1px solid #f0f0ee;
+	cursor: pointer
+}
+
+.ke-plugin-emoticons .ke-on {
+	border: 1px solid #5690d2;
+	background-color: #e9eff6
+}
+
+.ke-plugin-emoticons .ke-img {
+	display: block;
+	background-repeat: no-repeat;
+	overflow: hidden;
+	margin: 2px;
+	width: 24px;
+	height: 24px;
+	margin: 0;
+	padding: 0;
+	border: 0
+}
+
+.ke-plugin-emoticons .ke-page {
+	text-align: right;
+	margin: 5px;
+	padding: 0;
+	border: 0;
+	font: 9pt/1 "sans serif",tahoma,verdana,helvetica;
+	color: #333;
+	text-decoration: none
+}
+
+.ke-plugin-plainpaste-textarea,.ke-plugin-wordpaste-iframe {
+	display: block;
+	width: 408px;
+	height: 260px;
+	font-family: "sans serif",tahoma,verdana,helvetica;
+	font-size: 9pt;
+	border-color: #848484 #e0e0e0 #e0e0e0 #848484;
+	border-style: solid;
+	border-width: 1px
+}
+
+.ke-plugin-filemanager-header {
+	width: 100%;
+	margin-bottom: 10px
+}
+
+.ke-plugin-filemanager-header .ke-left {
+	float: left
+}
+
+.ke-plugin-filemanager-header .ke-right {
+	float: right
+}
+
+.ke-plugin-filemanager-body {
+	overflow: scroll;
+	background-color: #fff;
+	border-color: #848484 #e0e0e0 #e0e0e0 #848484;
+	border-style: solid;
+	border-width: 1px;
+	width: auto;
+	height: 370px;
+	padding: 5px
+}
+
+.ke-plugin-filemanager-body .ke-item {
+	width: 75pt;
+	margin: 5px
+}
+
+.ke-plugin-filemanager-body .ke-photo {
+	border: 1px solid #ddd;
+	background-color: #fff;
+	padding: 10px
+}
+
+.ke-plugin-filemanager-body .ke-name {
+	width: 75pt;
+	text-align: center;
+	overflow: hidden;
+	height: 1pc
+}
+
+.ke-plugin-filemanager-body .ke-on {
+	border: 1px solid #5690d2;
+	background-color: #e9eff6
+}
+
+.ke-plugin-filemanager-body .ke-table {
+	width: 95%;
+	border: 0;
+	margin: 0;
+	padding: 0;
+	border-collapse: separate
+}
+
+.ke-plugin-filemanager-body .ke-table .ke-cell {
+	margin: 0;
+	padding: 0;
+	border: 0
+}
+
+.ke-plugin-filemanager-body .ke-table .ke-name {
+	width: 55%;
+	text-align: left
+}
+
+.ke-plugin-filemanager-body .ke-table .ke-size {
+	width: 15%;
+	text-align: left
+}
+
+.ke-plugin-filemanager-body .ke-table .ke-datetime {
+	width: 30%;
+	text-align: center
+}
+
+.ke-toolbar-icon {
+	font-family: icon-ke-font!important;
+	font-size: 1pc;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale
+}
+
+.ke-toolbar-icon-url {
+	background-image: none
+}
+
+.ke-toolbar-icon {
+	width: 36px;
+	height: 36px;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	line-height: 30px;
+	font-size: 18px
+}
+
+.ke-dialog-body .ke-input-text {
+	height: 30px;
+	min-height: 30px;
+	min-width: 5pc;
+	line-height: 30px
+}
