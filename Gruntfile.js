@@ -1,4 +1,5 @@
 
+
 module.exports = function(grunt) {
 
 var BANNER = '/* <%= pkg.name %> <%= pkg.version %> (<%= grunt.template.today("yyyy-mm-dd") %>), Copyright (C) kindeditor.net, Licence: http://kindeditor.net/license.php */\r\n';
@@ -92,28 +93,27 @@ grunt.initConfig({
 				archive: 'dist/<%= pkg.filename %>-<%= pkg.version %>-' + lang + '.zip',
 			},
 			files: [
-				{src: ['asp/**'], dest: 'kindeditor/'},
-				{src: ['asp.net/**'], dest: 'kindeditor/'},
 				{src: ['attached'], dest: 'kindeditor/'},
-				{src: ['jsp/**'], dest: 'kindeditor/'},
 				{src: ['lang/**'], dest: 'kindeditor/'},
-				{src: ['php/**'], dest: 'kindeditor/'},
 				{src: ['plugins/**'], dest: 'kindeditor/'},
 				{src: ['themes/**'], dest: 'kindeditor/'},
 				{src: ['kindeditor*.js'], dest: 'kindeditor/'},
 				{src: ['license.txt'], dest: 'kindeditor/'},
 			]
 		}
-	}
+	},
 });
 
 grunt.loadNpmTasks('grunt-contrib-concat');
 grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-contrib-compress');
 
+
 grunt.registerTask('build', ['concat', 'uglify']);
 grunt.registerTask('zip', ['build', 'compress']);
 
+
 grunt.registerTask('default', 'build');
+
 
 };
