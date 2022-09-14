@@ -6,14 +6,12 @@
 		<link rel="stylesheet" href="../themes/default/default.css" />
 		<!-- <script src="../lib/firebug-lite/build/firebug-lite.js#startOpened"></script> -->
         <script>window.rnd = function(){ return Math.random() }</script>
-		<script src="../lib/jquery.min.js"></script>
-		<script src="../kindeditor-all-min.js"></script>
-		<script src="../lang/zh-CN.js"></script>
+		<script src="../kindeditor-all.js"></script>
 
 	</head>
 	<body>
 		<h1 id="qunit-header">KindEditor</h1>
-        <textarea  id="editor" cols="30" rows="10" style="width:90%"></textarea>
+        <textarea  id="editor" cols="30" rows="10" style="width:90%;height:420px"></textarea>
 	</body>
     <script>
         // 初始化编辑器
@@ -28,7 +26,7 @@
                     uploadJson: '@Url.Action("Upload", "Handler")',
                     imageSizeLimit: '2MB',
                     items: K.Tools.All,
-                    cssData: 'body{font-size: 16px;line-height: 28px;}p{padding: 6px 0px;}img{margin: 6px auto;}p>img{margin: 0;}',
+                    cssData: 'body{font-size: 16px;line-height: 28px;}',
                     afterBlur: function () {
                         this.sync();//设置实际控件的值
                     }

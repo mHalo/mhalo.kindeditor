@@ -5,7 +5,7 @@
 * @author Roddy <luolonghao@gmail.com>
 * @website http://www.kindsoft.net/
 * @licence http://www.kindsoft.net/license.php
-* @version 4.1.12 (2022-09-08)
+* @version 4.1.12 (2022-09-14)
 *******************************************************************************/
 (function (window, undefined) {
 	if (window.KindEditor) {
@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.1.12 (2022-09-08)',
+var _VERSION = '4.1.12 (2022-09-14)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -3595,25 +3595,18 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData, documentMode) {
 	var dmcls = !!documentMode ? 'class="ke-document-mode"' : '';
 	var arr = [
 		(_direction === '' ? '<html '+ dmcls +'>' : '<html '+ dmcls +' dir="' + _direction + '">'),
-		'<head><meta charset="utf-8" /><title></title>',
+		'<head><meta charset="utf-8"/><title></title>',
 		'<style>',
-		'html {margin:0;padding:0;}',
-		'body {margin:0;padding:5px;caret-color: #32c787;}',
+		'html,body {margin:0;padding:0;}',
 		'body, td {font:12px/1.5 "微软雅黑", "Microsoft Yahei", "sans serif",tahoma,verdana,helvetica;}',
-		'body, p, div {word-wrap: break-word;}',
-		'p {margin:5px 0;}',
+		'body, p, div {word-wrap: break-word;line-height:28px;margin-block-start:0;margin-block-end:0}',
 		'table {border-collapse:collapse;}',
-		'img {border:0;}',
 		'noscript {display:none;}',
 		'table.ke-zeroborder td {border:1px dotted #AAA;}',
-		'::selection {background-color: #32c787;color: white;}',
-		'::-moz-selection {background-color: #32c787;color: white;}',
 		'img {border: 2px solid transparent;max-width:100%}',
 		'img:hover {border: 2px solid #32c787;}',
 		'.ke-document-mode {background-color: #eeeeee;}',
-		'.ke-content {',
-		'	margin: 15px 20px;',
-		'}',
+		'.ke-content {margin: 15px 20px;}',
 		'.ke-document-mode .ke-content {',
 		'	margin:30px;',
 		'   min-height: 21cm;',
@@ -3652,7 +3645,9 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData, documentMode) {
 		'	padding: 10px 16px;',
 		'	border-left: 5px solid #ddd;',
 		'	box-sizing: border-box;',
-		'	min-height: 50px;',
+		'}',
+		'blockquote.ke-quote p {',
+		'	min-height: 24px;',
 		'}',
 		'.ke-code{',
 			'background: #e6e6e6;',
@@ -6161,7 +6156,7 @@ _plugin('core', function(K) {
 * @author Roddy <luolonghao@gmail.com>
 * @website http://www.kindsoft.net/
 * @licence http://www.kindsoft.net/license.php
-* @version 4.1.12 (2022-09-08)
+* @version 4.1.12 (2022-09-14)
 *******************************************************************************/
 (function (window, undefined) {
 	if (window.KindEditor) {
@@ -8008,192 +8003,196 @@ KindEditor.plugin('media', function(K) {
 * @licence http://www.kindsoft.net/license.php
 *******************************************************************************/
 (function(K) {
-function KSWFUpload(options) {
-	this.init(options);
-}
-K.extend(KSWFUpload, {
-	init : function(options) {
-		var self = this;
-		options.afterError = options.afterError || function(str) {
-			alert(str);
-		};
-		self.options = options;
-        self.progressbars = {};
-        var handleBtnId = 'ke_multi_upload_btn' + new Date() * 1 + '_' + Math.floor((window.rnd()*90000) + 9999);
-        var dragBodyId = 'ke_multi_upload_dragbody' + new Date() * 1 + '_' + Math.floor((window.rnd()*90000) + 9999);
-        var uploadErrorId = 'ke_multi_upload_error' + new Date() * 1 + '_' + Math.floor((window.rnd()*90000) + 9999);
-		self.div = K(options.container).html([
-			'<div class="ke-swfupload">',
-			'<div class="ke-swfupload-top" >',
-			'<div class="ke-inline-block ke-swfupload-button" id="'+ handleBtnId +'" style="width: 76px;">',
-			'</div>',
-			'<div class="ke-inline-block ke-swfupload-desc">' + options.uploadDesc + '</div>',
-			'<span class="ke-button-common ke-button-outer ke-swfupload-startupload">',
-			'<input type="button" class="ke-button-common ke-button" value="' + options.startButtonValue + '" />',
-			'</span>',
-			'</div>',
-            '<div class="ke-swfupload-body" id="'+ dragBodyId +'"></div>',
-            '<div class="upload-error-result" id="'+uploadErrorId+'"></div>',
-			'</div>'
-		].join(''));
-		self.bodyDiv = K('.ke-swfupload-body', self.div);
-		function showError(itemDiv, msg) {
-			K('.ke-status', itemDiv).addClass('upload-error');
-			K('.ke-status > div', itemDiv).hide();
-			K('.ke-message', itemDiv).addClass('ke-error').show().html(K.escape(msg));
-		}
-		self.uploader = WebUploader.create({
-			server: self.options.uploadUrl,
-			pick: '#' + handleBtnId,
-			resize: false,
-            fileVal: 'imgFile',
-            accept: {
-                title: 'Images',
-                extensions: options.fileTypes.replace(/\*\./g,'').replace(/;/g,','),
-                mimeTypes: 'image/*'
-            },
-            fileNumLimit: options.fileUploadLimit,
-            fileSingleSizeLimit: options.fileSizeLimit.replace(/MB/g,'') * 1 * 1024 *1024
-        });
-		if(self.options.uploadCompress !== undefined){
-			self.uploader.options.compress = self.options.uploadCompress;
-		}
-		self.uploader.on('fileQueued', function(file){
-			self.uploader.makeThumb( file, function( error, src ) {
-				if(error){
-					src = self.options.fileIconUrl;
-				}
-				file.url = src;
-				self.appendFile(file);
-			}, 80, 80);
-		});
-		self.uploader.on('uploadStart', function(file){
-			var self = this;
-			var itemDiv = K('div[data-id="' + file.id + '"]', self.bodyDiv);
-			K('.ke-status > div', itemDiv).hide();
-			K('.ke-progressbar', itemDiv).show();
-		});
-		self.uploader.on('uploadProgress', function( file, percentage ) {
-			var progressbar = self.progressbars[file.id];
-			var percent = Math.floor(percentage * 100);
-			progressbar.bar.css('width', percent + '%');
-			var barText = percent>=100 ? '上传成功' : percent + '%';
-			progressbar.percent.html(barText).show();
-		});
-		self.uploader.on('uploadSuccess', function(file, response){
-			var itemDiv = K('div[data-id="' + file.id + '"]', self.bodyDiv).eq(0);
-			var data = response;
-			if (data.error !== 0) {
-				showError(itemDiv, data.message || self.options.errorMessage);
-				return;
+    function KSWFUpload(options) {
+        this.init(options);
+    }
+    K.extend(KSWFUpload, {
+        init : function(options) {
+            var self = this;
+            options.afterError = options.afterError || function(str) {
+                alert(str);
+            };
+            self.options = options;
+            self.progressbars = {};
+            var handleBtnId = 'ke_multi_upload_btn' + new Date() * 1 + '_' + Math.floor((window.rnd()*90000) + 9999);
+            var dragBodyId = 'ke_multi_upload_dragbody' + new Date() * 1 + '_' + Math.floor((window.rnd()*90000) + 9999);
+            var uploadErrorId = 'ke_multi_upload_error' + new Date() * 1 + '_' + Math.floor((window.rnd()*90000) + 9999);
+            self.div = K(options.container).html([
+                '<div class="ke-swfupload">',
+                '<div class="ke-swfupload-top" >',
+                '<div class="ke-inline-block ke-swfupload-button" id="'+ handleBtnId +'" style="width: 76px;">',
+                '</div>',
+                '<div class="ke-inline-block ke-swfupload-desc">' + options.uploadDesc + '</div>',
+                '<span class="ke-button-common ke-button-outer ke-swfupload-startupload">',
+                '<input type="button" class="ke-button-common ke-button" value="' + options.startButtonValue + '" />',
+                '</span>',
+                '</div>',
+                '<div class="ke-swfupload-body" id="'+ dragBodyId +'"></div>',
+                '<div class="upload-error-result" id="'+uploadErrorId+'"></div>',
+                '</div>'
+            ].join(''));
+            self.bodyDiv = K('.ke-swfupload-body', self.div);
+            function showError(itemDiv, msg) {
+                K('.ke-status', itemDiv).addClass('upload-error');
+                K('.ke-status > div', itemDiv).hide();
+                K('.ke-message', itemDiv).addClass('ke-error').show().html(K.escape(msg));
             }
-            var resultUrl = data.url;
-            console.info('self.options.formatUploadUrl', self.options.formatUploadUrl)
-            if (self.options.formatUploadUrl) {
-                resultUrl = file.url = K.formatUrl(data.url, 'absolute');
-            } else {
-                resultUrl = file.url = data.url;
+            self.uploader = WebUploader.create({
+                server: self.options.uploadUrl,
+                pick: '#' + handleBtnId,
+                resize: false,
+                fileVal: 'imgFile',
+                accept: {
+                    title: 'Images',
+                    extensions: options.fileTypes.replace(/\*\./g,'').replace(/;/g,','),
+                    mimeTypes: 'image/*'
+                },
+                fileNumLimit: options.fileUploadLimit,
+                fileSingleSizeLimit: options.fileSizeLimit.replace(/MB/g,'') * 1 * 1024 *1024
+            });
+            if(self.options.uploadCompress !== undefined){
+                self.uploader.options.compress = self.options.uploadCompress;
             }
-			K('.ke-img', itemDiv).attr('src', file.url).attr('data-status', "1").data('data', {
-				url: resultUrl,
-				title: file.name + '',
-				width: (file._info || {width:'auto'}).width + '',
-				height: '',
-				border: '',
-				align:''
-			});
-		});
-		self.uploader.on('uploadError', function(file, reson){
-			if (file) {
-				var itemDiv = K('div[data-id="' + file.id + '"]', self.bodyDiv).eq(0);
-				showError(itemDiv, 'ERROR:' + reson);
-			}
-		});
-		self.uploader.on('error', function(type){
-            var error = '部分或全部文件上传出现错误，请检查后重试！';
-            if(type === 'Q_TYPE_DENIED'){
-                error = ('['+arguments[1].name +']文件类型不正确，上传失败！')
-            }
-            else if (type === 'Q_EXCEED_NUM_LIMIT'){
-                error = ('同时最多可上传'+ options.fileUploadLimit +'张图片，超出部分已经忽略！');
-            }
-            else if(type === "F_EXCEED_SIZE"){
-                error = ('['+arguments[2].name +']文件大小超出限制（最大'+ options.fileSizeLimit.replace(/MB/g,'') * 1  +'M），上传失败！')
-            }
-            console.error('部分或全部文件上传出现错误，请检查后重试！', arguments);
-            alert(error);
-		});
-		K('.ke-swfupload-startupload input', self.div).click(function() {
-			self.uploader.upload();
-		});
-	},
-	removeFile : function(fileId) {
-		var self = this;
-		self.uploader.cancelFile(fileId);
-		var itemDiv = K('div[data-id="' + fileId + '"]', self.bodyDiv);
-		K('.ke-photo', itemDiv).unbind();
-		K('.ke-delete', itemDiv).unbind();
-		itemDiv.remove();
-	},
-	removeFiles : function() {
-		var self = this;
-		K('.ke-item', self.bodyDiv).each(function() {
-			self.removeFile(K(this).attr('data-id'));
-		});
-	},
-	appendFile : function(file) {
-		var self = this;
-		var itemDiv = K('<div class="ke-inline-block ke-item" draggable="false" data-id="' + file.id + '"></div>');
-		self.bodyDiv.append(itemDiv);
-		var photoDiv = K('<div class="ke-inline-block ke-photo"></div>')
-			.mouseover(function(e) {
-				K(this).addClass('ke-on');
-			})
-			.mouseout(function(e) {
-				K(this).removeClass('ke-on');
-			});
-		itemDiv.append(photoDiv);
-		var img = K('<img src="' + file.url + '" class="ke-img" draggable="false" data-status="0" width="80" height="80" alt="' + file.name + '" />');
-		photoDiv.append(img);
-		K('<span class="ke-delete"></span>').appendTo(photoDiv).click(function() {
-			self.removeFile(file.id);
-		});
-		var statusDiv = K('<div class="ke-status"></div>').appendTo(photoDiv);
-		K(['<div class="ke-progressbar">',
-			'<div class="ke-progressbar-bar"><div class="ke-progressbar-bar-inner"></div></div>',
-			'<div class="ke-progressbar-percent">0%</div></div>'].join('')).hide().appendTo(statusDiv);
-		K('<div class="ke-message">' + self.options.pendingMessage + '</div>').appendTo(statusDiv);
-		itemDiv.append('<div class="ke-name">' + file.name + '</div>');
-		self.progressbars[file.id] = {
-			bar : K('.ke-progressbar-bar-inner', photoDiv),
-			percent : K('.ke-progressbar-percent', photoDiv)
-		};
-	},
-	remove : function() {
-		var self = this;
-		self.removeFiles();
-		self.destroy();
-		self.div.html('');
-	},
-	getUrlList : function() {
-		var list = [];
-		K('.ke-img', self.bodyDiv).each(function() {
-			var img = K(this);
-			var status = img.attr('data-status');
-			if (status == "1") {
-				list.push(img.data('data'));
-			}
-		});
-		return list;
-	},
-	destroy : function(){
-		var self = this;
-		self.uploader.destroy();
-	}
-});
-K.swfupload = function(element, options) {
-	return new KSWFUpload(element, options);
-};
+            self.uploader.on('fileQueued', function(file){
+                self.uploader.makeThumb( file, function( error, src ) {
+                    if(error){
+                        src = self.options.fileIconUrl;
+                    }
+                    file.url = src;
+                    self.appendFile(file);
+                }, 80, 80);
+            });
+            self.uploader.on('uploadStart', function(file){
+                var self = this;
+                var itemDiv = K('div[data-id="' + file.id + '"]', self.bodyDiv);
+                K('.ke-status > div', itemDiv).hide();
+                K('.ke-progressbar', itemDiv).show();
+            });
+            self.uploader.on('uploadProgress', function( file, percentage ) {
+                var progressbar = self.progressbars[file.id];
+                var percent = Math.floor(percentage * 100);
+                progressbar.bar.css('width', percent + '%');
+                var barText = percent>=100 ? '上传成功' : percent + '%';
+                progressbar.percent.html(barText).show();
+            });
+            self.uploader.on('uploadSuccess', function(file, response){
+                var itemDiv = K('div[data-id="' + file.id + '"]', self.bodyDiv).eq(0);
+                var data = response;
+                if (data.error !== 0) {
+                    showError(itemDiv, data.message || self.options.errorMessage);
+                    return;
+                }
+                var resultUrl = data.url;
+                console.info('self.options.formatUploadUrl', self.options.formatUploadUrl)
+                if (self.options.formatUploadUrl) {
+                    resultUrl = file.url = K.formatUrl(data.url, 'absolute');
+                } else {
+                    resultUrl = file.url = data.url;
+                }
+                K('.ke-img', itemDiv).attr('src', file.url).attr('data-status', "1").data('data', {
+                    url: resultUrl,
+                    title: file.name + '',
+                    width: (file._info || {width:'auto'}).width + '',
+                    height: '',
+                    border: '',
+                    align:''
+                });
+            });
+            self.uploader.on('uploadError', function(file, reson){
+                if (file) {
+                    var itemDiv = K('div[data-id="' + file.id + '"]', self.bodyDiv).eq(0);
+                    showError(itemDiv, 'ERROR:' + reson);
+                }
+            });
+            self.uploader.on('error', function(type){
+                console.info('type', type)
+                var error = '部分或全部文件上传出现错误，请检查后重试！';
+                if(type === 'Q_TYPE_DENIED'){
+                    error = ('['+arguments[1].name +']文件类型不正确，上传失败！')
+                }
+                else if (type === 'Q_EXCEED_NUM_LIMIT'){
+                    error = ('同时最多可上传'+ options.fileUploadLimit +'张图片，超出部分已经忽略！');
+                }
+                else if(type === "F_EXCEED_SIZE"){
+                    error = ('['+arguments[2].name +']文件大小超出限制（最大'+ options.fileSizeLimit.replace(/MB/g,'') * 1  +'M），上传失败！')
+                }
+                else if(type === "F_DUPLICATE"){
+                    error = ('['+arguments[1].name +']文件已存在于待上传列表中！')
+                }
+                console.error('部分或全部文件上传出现错误，请检查后重试！', arguments);
+                alert(error);
+            });
+            K('.ke-swfupload-startupload input', self.div).click(function() {
+                self.uploader.upload();
+            });
+        },
+        removeFile : function(fileId) {
+            var self = this;
+            self.uploader.cancelFile(fileId);
+            var itemDiv = K('div[data-id="' + fileId + '"]', self.bodyDiv);
+            K('.ke-photo', itemDiv).unbind();
+            K('.ke-delete', itemDiv).unbind();
+            itemDiv.remove();
+        },
+        removeFiles : function() {
+            var self = this;
+            K('.ke-item', self.bodyDiv).each(function() {
+                self.removeFile(K(this).attr('data-id'));
+            });
+        },
+        appendFile : function(file) {
+            var self = this;
+            var itemDiv = K('<div class="ke-inline-block ke-item" draggable="false" data-id="' + file.id + '"></div>');
+            self.bodyDiv.append(itemDiv);
+            var photoDiv = K('<div class="ke-inline-block ke-photo"></div>')
+                .mouseover(function(e) {
+                    K(this).addClass('ke-on');
+                })
+                .mouseout(function(e) {
+                    K(this).removeClass('ke-on');
+                });
+            itemDiv.append(photoDiv);
+            var img = K('<img src="' + file.url + '" class="ke-img" draggable="false" data-status="0" width="80" height="80" alt="' + file.name + '" />');
+            photoDiv.append(img);
+            K('<span class="ke-delete"></span>').appendTo(photoDiv).click(function() {
+                self.removeFile(file.id);
+            });
+            var statusDiv = K('<div class="ke-status"></div>').appendTo(photoDiv);
+            K(['<div class="ke-progressbar">',
+                '<div class="ke-progressbar-bar"><div class="ke-progressbar-bar-inner"></div></div>',
+                '<div class="ke-progressbar-percent">0%</div></div>'].join('')).hide().appendTo(statusDiv);
+            K('<div class="ke-message">' + self.options.pendingMessage + '</div>').appendTo(statusDiv);
+            itemDiv.append('<div class="ke-name">' + file.name + '</div>');
+            self.progressbars[file.id] = {
+                bar : K('.ke-progressbar-bar-inner', photoDiv),
+                percent : K('.ke-progressbar-percent', photoDiv)
+            };
+        },
+        remove : function() {
+            var self = this;
+            self.removeFiles();
+            self.destroy();
+            self.div.html('');
+        },
+        getUrlList : function() {
+            var list = [];
+            K('.ke-img', self.bodyDiv).each(function() {
+                var img = K(this);
+                var status = img.attr('data-status');
+                if (status == "1") {
+                    list.push(img.data('data'));
+                }
+            });
+            return list;
+        },
+        destroy : function(){
+            var self = this;
+            self.uploader.destroy();
+        }
+    });
+    K.swfupload = function(element, options) {
+        return new KSWFUpload(element, options);
+    };
 })(KindEditor);
 KindEditor.plugin('multiimage', function(K) {
 	var self = this, name = 'multiimage',
@@ -8312,3506 +8311,10 @@ KindEditor.plugin('multiimage', function(K) {
 		});
 	});
 });
-/*! WebUploader 0.1.5 */
-(function( root, factory ) {
-    var modules = {},
-        _require = function( deps, callback ) {
-            var args, len, i;
-            if ( typeof deps === 'string' ) {
-                return getModule( deps );
-            } else {
-                args = [];
-                for( len = deps.length, i = 0; i < len; i++ ) {
-                    args.push( getModule( deps[ i ] ) );
-                }
-                return callback.apply( null, args );
-            }
-        },
-        _define = function( id, deps, factory ) {
-            if ( arguments.length === 2 ) {
-                factory = deps;
-                deps = null;
-            }
-            _require( deps || [], function() {
-                setModule( id, factory, arguments );
-            });
-        },
-        setModule = function( id, factory, args ) {
-            var module = {
-                    exports: factory
-                },
-                returned;
-            if ( typeof factory === 'function' ) {
-                args.length || (args = [ _require, module.exports, module ]);
-                returned = factory.apply( null, args );
-                returned !== undefined && (module.exports = returned);
-            }
-            modules[ id ] = module.exports;
-        },
-        getModule = function( id ) {
-            var module = modules[ id ] || root[ id ];
-            if ( !module ) {
-                throw new Error( '`' + id + '` is undefined' );
-            }
-            return module;
-        },
-        exportsTo = function( obj ) {
-            var key, host, parts, part, last, ucFirst;
-            ucFirst = function( str ) {
-                return str && (str.charAt( 0 ).toUpperCase() + str.substr( 1 ));
-            };
-            for ( key in modules ) {
-                host = obj;
-                if ( !modules.hasOwnProperty( key ) ) {
-                    continue;
-                }
-                parts = key.split('/');
-                last = ucFirst( parts.pop() );
-                while( (part = ucFirst( parts.shift() )) ) {
-                    host[ part ] = host[ part ] || {};
-                    host = host[ part ];
-                }
-                host[ last ] = modules[ key ];
-            }
-            return obj;
-        },
-        makeExport = function( dollar ) {
-            root.__dollar = dollar;
-            return exportsTo( factory( root, _define, _require ) );
-        },
-        origin;
-    if ( typeof module === 'object' && typeof module.exports === 'object' ) {
-        module.exports = makeExport();
-    } else if ( typeof define === 'function' && define.amd ) {
-        define([ 'jquery' ], makeExport );
-    } else {
-        origin = root.WebUploader;
-        root.WebUploader = makeExport();
-        root.WebUploader.noConflict = function() {
-            root.WebUploader = origin;
-        };
-    }
-})( window, function( window, define, require ) {
-    define('dollar-third',[],function() {
-        var $ = window.__dollar || window.jQuery || window.Zepto;
-        if ( !$ ) {
-            throw new Error('jQuery or Zepto not found!');
-        }
-        return $;
-    });
-    define('dollar',[
-        'dollar-third'
-    ], function( _ ) {
-        return _;
-    });
-    define('promise-third',[
-        'dollar'
-    ], function( $ ) {
-        return {
-            Deferred: $.Deferred,
-            when: $.when,
-            isPromise: function( anything ) {
-                return anything && typeof anything.then === 'function';
-            }
-        };
-    });
-    define('promise',[
-        'promise-third'
-    ], function( _ ) {
-        return _;
-    });
-    define('base',[
-        'dollar',
-        'promise'
-    ], function( $, promise ) {
-        var noop = function() {},
-            call = Function.call;
-        function uncurryThis( fn ) {
-            return function() {
-                return call.apply( fn, arguments );
-            };
-        }
-        function bindFn( fn, context ) {
-            return function() {
-                return fn.apply( context, arguments );
-            };
-        }
-        function createObject( proto ) {
-            var f;
-            if ( Object.create ) {
-                return Object.create( proto );
-            } else {
-                f = function() {};
-                f.prototype = proto;
-                return new f();
-            }
-        }
-        return {
-            version: '0.1.5',
-            $: $,
-            Deferred: promise.Deferred,
-            isPromise: promise.isPromise,
-            when: promise.when,
-            browser: (function( ua ) {
-                var ret = {},
-                    webkit = ua.match( /WebKit\/([\d.]+)/ ),
-                    chrome = ua.match( /Chrome\/([\d.]+)/ ) ||
-                        ua.match( /CriOS\/([\d.]+)/ ),
-                    ie = ua.match( /MSIE\s([\d\.]+)/ ) ||
-                        ua.match( /(?:trident)(?:.*rv:([\w.]+))?/i ),
-                    firefox = ua.match( /Firefox\/([\d.]+)/ ),
-                    safari = ua.match( /Safari\/([\d.]+)/ ),
-                    opera = ua.match( /OPR\/([\d.]+)/ );
-                webkit && (ret.webkit = parseFloat( webkit[ 1 ] ));
-                chrome && (ret.chrome = parseFloat( chrome[ 1 ] ));
-                ie && (ret.ie = parseFloat( ie[ 1 ] ));
-                firefox && (ret.firefox = parseFloat( firefox[ 1 ] ));
-                safari && (ret.safari = parseFloat( safari[ 1 ] ));
-                opera && (ret.opera = parseFloat( opera[ 1 ] ));
-                return ret;
-            })( navigator.userAgent ),
-            os: (function( ua ) {
-                var ret = {},
-                    android = ua.match( /(?:Android);?[\s\/]+([\d.]+)?/ ),
-                    ios = ua.match( /(?:iPad|iPod|iPhone).*OS\s([\d_]+)/ );
-                android && (ret.android = parseFloat( android[ 1 ] ));
-                ios && (ret.ios = parseFloat( ios[ 1 ].replace( /_/g, '.' ) ));
-                return ret;
-            })( navigator.userAgent ),
-            inherits: function( Super, protos, staticProtos ) {
-                var child;
-                if ( typeof protos === 'function' ) {
-                    child = protos;
-                    protos = null;
-                } else if ( protos && protos.hasOwnProperty('constructor') ) {
-                    child = protos.constructor;
-                } else {
-                    child = function() {
-                        return Super.apply( this, arguments );
-                    };
-                }
-                $.extend( true, child, Super, staticProtos || {} );
-                /* jshint camelcase: false */
-                child.__super__ = Super.prototype;
-                child.prototype = createObject( Super.prototype );
-                protos && $.extend( true, child.prototype, protos );
-                return child;
-            },
-            noop: noop,
-            bindFn: bindFn,
-            log: (function() {
-                if ( window.console ) {
-                    return bindFn( console.log, console );
-                }
-                return noop;
-            })(),
-            nextTick: (function() {
-                return function( cb ) {
-                    setTimeout( cb, 1 );
-                };
-            })(),
-            slice: uncurryThis( [].slice ),
-            guid: (function() {
-                var counter = 0;
-                return function( prefix ) {
-                    var mrg = (+new Date()).toString( 32 ),
-                        i = 0;
-                    for ( ; i < 5; i++ ) {
-                        mrg += Math.floor(window.rnd() * 65535 ).toString( 32 );
-                    }
-                    return (prefix || 'wu_') + mrg + (counter++).toString( 32 );
-                };
-            })(),
-            formatSize: function( size, pointLength, units ) {
-                var unit;
-                units = units || [ 'B', 'K', 'M', 'G', 'TB' ];
-                while ( (unit = units.shift()) && size > 1024 ) {
-                    size = size / 1024;
-                }
-                return (unit === 'B' ? size : size.toFixed( pointLength || 2 )) +
-                        unit;
-            }
-        };
-    });
-    define('mediator',[
-        'base'
-    ], function( Base ) {
-        var $ = Base.$,
-            slice = [].slice,
-            separator = /\s+/,
-            protos;
-        function findHandlers( arr, name, callback, context ) {
-            return $.grep( arr, function( handler ) {
-                return handler &&
-                        (!name || handler.e === name) &&
-                        (!callback || handler.cb === callback ||
-                        handler.cb._cb === callback) &&
-                        (!context || handler.ctx === context);
-            });
-        }
-        function eachEvent( events, callback, iterator ) {
-            $.each( (events || '').split( separator ), function( _, key ) {
-                iterator( key, callback );
-            });
-        }
-        function triggerHanders( events, args ) {
-            var stoped = false,
-                i = -1,
-                len = events.length,
-                handler;
-            while ( ++i < len ) {
-                handler = events[ i ];
-                if ( handler.cb.apply( handler.ctx2, args ) === false ) {
-                    stoped = true;
-                    break;
-                }
-            }
-            return !stoped;
-        }
-        protos = {
-            on: function( name, callback, context ) {
-                var me = this,
-                    set;
-                if ( !callback ) {
-                    return this;
-                }
-                set = this._events || (this._events = []);
-                eachEvent( name, callback, function( name, callback ) {
-                    var handler = { e: name };
-                    handler.cb = callback;
-                    handler.ctx = context;
-                    handler.ctx2 = context || me;
-                    handler.id = set.length;
-                    set.push( handler );
-                });
-                return this;
-            },
-            once: function( name, callback, context ) {
-                var me = this;
-                if ( !callback ) {
-                    return me;
-                }
-                eachEvent( name, callback, function( name, callback ) {
-                    var once = function() {
-                            me.off( name, once );
-                            return callback.apply( context || me, arguments );
-                        };
-                    once._cb = callback;
-                    me.on( name, once, context );
-                });
-                return me;
-            },
-            off: function( name, cb, ctx ) {
-                var events = this._events;
-                if ( !events ) {
-                    return this;
-                }
-                if ( !name && !cb && !ctx ) {
-                    this._events = [];
-                    return this;
-                }
-                eachEvent( name, cb, function( name, cb ) {
-                    $.each( findHandlers( events, name, cb, ctx ), function() {
-                        delete events[ this.id ];
-                    });
-                });
-                return this;
-            },
-            trigger: function( type ) {
-                var args, events, allEvents;
-                if ( !this._events || !type ) {
-                    return this;
-                }
-                args = slice.call( arguments, 1 );
-                events = findHandlers( this._events, type );
-                allEvents = findHandlers( this._events, 'all' );
-                return triggerHanders( events, args ) &&
-                        triggerHanders( allEvents, arguments );
-            }
-        };
-        return $.extend({
-            installTo: function( obj ) {
-                return $.extend( obj, protos );
-            }
-        }, protos );
-    });
-    define('uploader',[
-        'base',
-        'mediator'
-    ], function( Base, Mediator ) {
-        var $ = Base.$;
-        function Uploader( opts ) {
-            this.options = $.extend( true, {}, Uploader.options, opts );
-            this._init( this.options );
-        }
-        Uploader.options = {};
-        Mediator.installTo( Uploader.prototype );
-        $.each({
-            upload: 'start-upload',
-            stop: 'stop-upload',
-            getFile: 'get-file',
-            getFiles: 'get-files',
-            addFile: 'add-file',
-            addFiles: 'add-file',
-            sort: 'sort-files',
-            removeFile: 'remove-file',
-            cancelFile: 'cancel-file',
-            skipFile: 'skip-file',
-            retry: 'retry',
-            isInProgress: 'is-in-progress',
-            makeThumb: 'make-thumb',
-            md5File: 'md5-file',
-            getDimension: 'get-dimension',
-            addButton: 'add-btn',
-            predictRuntimeType: 'predict-runtime-type',
-            refresh: 'refresh',
-            disable: 'disable',
-            enable: 'enable',
-            reset: 'reset'
-        }, function( fn, command ) {
-            Uploader.prototype[ fn ] = function() {
-                return this.request( command, arguments );
-            };
-        });
-        $.extend( Uploader.prototype, {
-            state: 'pending',
-            _init: function( opts ) {
-                var me = this;
-                me.request( 'init', opts, function() {
-                    me.state = 'ready';
-                    me.trigger('ready');
-                });
-            },
-            option: function( key, val ) {
-                var opts = this.options;
-                if ( arguments.length > 1 ) {
-                    if ( $.isPlainObject( val ) &&
-                            $.isPlainObject( opts[ key ] ) ) {
-                        $.extend( opts[ key ], val );
-                    } else {
-                        opts[ key ] = val;
-                    }
-                } else {
-                    return key ? opts[ key ] : opts;
-                }
-            },
-            getStats: function() {
-                var stats = this.request('get-stats');
-                return stats ? {
-                    successNum: stats.numOfSuccess,
-                    progressNum: stats.numOfProgress,
-                    cancelNum: stats.numOfCancel,
-                    invalidNum: stats.numOfInvalid,
-                    uploadFailNum: stats.numOfUploadFailed,
-                    queueNum: stats.numOfQueue,
-                    interruptNum: stats.numofInterrupt
-                } : {};
-            },
-            trigger: function( type/*, args...*/ ) {
-                var args = [].slice.call( arguments, 1 ),
-                    opts = this.options,
-                    name = 'on' + type.substring( 0, 1 ).toUpperCase() +
-                        type.substring( 1 );
-                if (
-                        Mediator.trigger.apply( this, arguments ) === false ||
-                        $.isFunction( opts[ name ] ) &&
-                        opts[ name ].apply( this, args ) === false ||
-                        $.isFunction( this[ name ] ) &&
-                        this[ name ].apply( this, args ) === false ||
-                        Mediator.trigger.apply( Mediator,
-                        [ this, type ].concat( args ) ) === false ) {
-                    return false;
-                }
-                return true;
-            },
-            destroy: function() {
-                this.request( 'destroy', arguments );
-                this.off();
-            },
-            request: Base.noop
-        });
-        Base.create = Uploader.create = function( opts ) {
-            return new Uploader( opts );
-        };
-        Base.Uploader = Uploader;
-        return Uploader;
-    });
-    define('runtime/runtime',[
-        'base',
-        'mediator'
-    ], function( Base, Mediator ) {
-        var $ = Base.$,
-            factories = {},
-            getFirstKey = function( obj ) {
-                for ( var key in obj ) {
-                    if ( obj.hasOwnProperty( key ) ) {
-                        return key;
-                    }
-                }
-                return null;
-            };
-        function Runtime( options ) {
-            this.options = $.extend({
-                container: document.body
-            }, options );
-            this.uid = Base.guid('rt_');
-        }
-        $.extend( Runtime.prototype, {
-            getContainer: function() {
-                var opts = this.options,
-                    parent, container;
-                if ( this._container ) {
-                    return this._container;
-                }
-                parent = $( opts.container || document.body );
-                container = $( document.createElement('div') );
-                container.attr( 'id', 'rt_' + this.uid );
-                container.css({
-                    position: 'absolute',
-                    top: '0px',
-                    left: '0px',
-                    width: '1px',
-                    height: '1px',
-                    overflow: 'hidden'
-                });
-                parent.append( container );
-                parent.addClass('webuploader-container');
-                this._container = container;
-                this._parent = parent;
-                return container;
-            },
-            init: Base.noop,
-            exec: Base.noop,
-            destroy: function() {
-                this._container && this._container.remove();
-                this._parent && this._parent.removeClass('webuploader-container');
-                this.off();
-            }
-        });
-        Runtime.orders = 'html5,flash';
-        Runtime.addRuntime = function( type, factory ) {
-            factories[ type ] = factory;
-        };
-        Runtime.hasRuntime = function( type ) {
-            return !!(type ? factories[ type ] : getFirstKey( factories ));
-        };
-        Runtime.create = function( opts, orders ) {
-            var type, runtime;
-            orders = orders || Runtime.orders;
-            $.each( orders.split( /\s*,\s*/g ), function() {
-                if ( factories[ this ] ) {
-                    type = this;
-                    return false;
-                }
-            });
-            type = type || getFirstKey( factories );
-            if ( !type ) {
-                throw new Error('Runtime Error');
-            }
-            runtime = new factories[ type ]( opts );
-            return runtime;
-        };
-        Mediator.installTo( Runtime.prototype );
-        return Runtime;
-    });
-    define('runtime/client',[
-        'base',
-        'mediator',
-        'runtime/runtime'
-    ], function( Base, Mediator, Runtime ) {
-        var cache;
-        cache = (function() {
-            var obj = {};
-            return {
-                add: function( runtime ) {
-                    obj[ runtime.uid ] = runtime;
-                },
-                get: function( ruid, standalone ) {
-                    var i;
-                    if ( ruid ) {
-                        return obj[ ruid ];
-                    }
-                    for ( i in obj ) {
-                        if ( standalone && obj[ i ].__standalone ) {
-                            continue;
-                        }
-                        return obj[ i ];
-                    }
-                    return null;
-                },
-                remove: function( runtime ) {
-                    delete obj[ runtime.uid ];
-                }
-            };
-        })();
-        function RuntimeClient( component, standalone ) {
-            var deferred = Base.Deferred(),
-                runtime;
-            this.uid = Base.guid('client_');
-            this.runtimeReady = function( cb ) {
-                return deferred.done( cb );
-            };
-            this.connectRuntime = function( opts, cb ) {
-                if ( runtime ) {
-                    throw new Error('already connected!');
-                }
-                deferred.done( cb );
-                if ( typeof opts === 'string' && cache.get( opts ) ) {
-                    runtime = cache.get( opts );
-                }
-                runtime = runtime || cache.get( null, standalone );
-                if ( !runtime ) {
-                    runtime = Runtime.create( opts, opts.runtimeOrder );
-                    runtime.__promise = deferred.promise();
-                    runtime.once( 'ready', deferred.resolve );
-                    runtime.init();
-                    cache.add( runtime );
-                    runtime.__client = 1;
-                } else {
-                    Base.$.extend( runtime.options, opts );
-                    runtime.__promise.then( deferred.resolve );
-                    runtime.__client++;
-                }
-                standalone && (runtime.__standalone = standalone);
-                return runtime;
-            };
-            this.getRuntime = function() {
-                return runtime;
-            };
-            this.disconnectRuntime = function() {
-                if ( !runtime ) {
-                    return;
-                }
-                runtime.__client--;
-                if ( runtime.__client <= 0 ) {
-                    cache.remove( runtime );
-                    delete runtime.__promise;
-                    runtime.destroy();
-                }
-                runtime = null;
-            };
-            this.exec = function() {
-                if ( !runtime ) {
-                    return;
-                }
-                var args = Base.slice( arguments );
-                component && args.unshift( component );
-                return runtime.exec.apply( this, args );
-            };
-            this.getRuid = function() {
-                return runtime && runtime.uid;
-            };
-            this.destroy = (function( destroy ) {
-                return function() {
-                    destroy && destroy.apply( this, arguments );
-                    this.trigger('destroy');
-                    this.off();
-                    this.exec('destroy');
-                    this.disconnectRuntime();
-                };
-            })( this.destroy );
-        }
-        Mediator.installTo( RuntimeClient.prototype );
-        return RuntimeClient;
-    });
-    define('lib/dnd',[
-        'base',
-        'mediator',
-        'runtime/client'
-    ], function( Base, Mediator, RuntimeClent ) {
-        var $ = Base.$;
-        function DragAndDrop( opts ) {
-            opts = this.options = $.extend({}, DragAndDrop.options, opts );
-            opts.container = $( opts.container );
-            if ( !opts.container.length ) {
-                return;
-            }
-            RuntimeClent.call( this, 'DragAndDrop' );
-        }
-        DragAndDrop.options = {
-            accept: null,
-            disableGlobalDnd: false
-        };
-        Base.inherits( RuntimeClent, {
-            constructor: DragAndDrop,
-            init: function() {
-                var me = this;
-                me.connectRuntime( me.options, function() {
-                    me.exec('init');
-                    me.trigger('ready');
-                });
-            }
-        });
-        Mediator.installTo( DragAndDrop.prototype );
-        return DragAndDrop;
-    });
-    define('widgets/widget',[
-        'base',
-        'uploader'
-    ], function( Base, Uploader ) {
-        var $ = Base.$,
-            _init = Uploader.prototype._init,
-            _destroy = Uploader.prototype.destroy,
-            IGNORE = {},
-            widgetClass = [];
-        function isArrayLike( obj ) {
-            if ( !obj ) {
-                return false;
-            }
-            var length = obj.length,
-                type = $.type( obj );
-            if ( obj.nodeType === 1 && length ) {
-                return true;
-            }
-            return type === 'array' || type !== 'function' && type !== 'string' &&
-                    (length === 0 || typeof length === 'number' && length > 0 &&
-                    (length - 1) in obj);
-        }
-        function Widget( uploader ) {
-            this.owner = uploader;
-            this.options = uploader.options;
-        }
-        $.extend( Widget.prototype, {
-            init: Base.noop,
-            invoke: function( apiName, args ) {
-                /*
-                    {
-                        'make-thumb': 'makeThumb'
-                    }
-                 */
-                var map = this.responseMap;
-                if ( !map || !(apiName in map) || !(map[ apiName ] in this) ||
-                        !$.isFunction( this[ map[ apiName ] ] ) ) {
-                    return IGNORE;
-                }
-                return this[ map[ apiName ] ].apply( this, args );
-            },
-            request: function() {
-                return this.owner.request.apply( this.owner, arguments );
-            }
-        });
-        $.extend( Uploader.prototype, {
-            _init: function() {
-                var me = this,
-                    widgets = me._widgets = [],
-                    deactives = me.options.disableWidgets || '';
-                $.each( widgetClass, function( _, klass ) {
-                    (!deactives || !~deactives.indexOf( klass._name )) &&
-                        widgets.push( new klass( me ) );
-                });
-                return _init.apply( me, arguments );
-            },
-            request: function( apiName, args, callback ) {
-                var i = 0,
-                    widgets = this._widgets,
-                    len = widgets && widgets.length,
-                    rlts = [],
-                    dfds = [],
-                    widget, rlt, promise, _xk;
-                args = isArrayLike( args ) ? args : [ args ];
-                for ( ; i < len; i++ ) {
-                    widget = widgets[ i ];
-                    rlt = widget.invoke( apiName, args );
-                    if ( rlt !== IGNORE ) {
-                        if ( Base.isPromise( rlt ) ) {
-                            dfds.push( rlt );
-                        } else {
-                            rlts.push( rlt );
-                        }
-                    }
-                }
-                if ( callback || dfds.length ) {
-                    promise = Base.when.apply( Base, dfds );
-                    _xk = promise.pipe ? 'pipe' : 'then';
-                    return promise[ _xk ](function() {
-                                var deferred = Base.Deferred(),
-                                    args = arguments;
-                                if ( args.length === 1 ) {
-                                    args = args[ 0 ];
-                                }
-                                setTimeout(function() {
-                                    deferred.resolve( args );
-                                }, 1 );
-                                return deferred.promise();
-                            })[ callback ? _xk : 'done' ]( callback || Base.noop );
-                } else {
-                    return rlts[ 0 ];
-                }
-            },
-            destroy: function() {
-                _destroy.apply( this, arguments );
-                this._widgets = null;
-            }
-        });
-        Uploader.register = Widget.register = function( responseMap, widgetProto ) {
-            var map = { init: 'init', destroy: 'destroy', name: 'anonymous' },
-                klass;
-            if ( arguments.length === 1 ) {
-                widgetProto = responseMap;
-                $.each(widgetProto, function(_xk) {
-                    if ( _xk[0] === '_' || _xk === 'name' ) {
-                        _xk === 'name' && (map.name = widgetProto.name);
-                        return;
-                    }
-                    map[_xk.replace(/[A-Z]/g, '-$&').toLowerCase()] = _xk;
-                });
-            } else {
-                map = $.extend( map, responseMap );
-            }
-            widgetProto.responseMap = map;
-            klass = Base.inherits( Widget, widgetProto );
-            klass._name = map.name;
-            widgetClass.push( klass );
-            return klass;
-        };
-        Uploader.unRegister = Widget.unRegister = function( name ) {
-            if ( !name || name === 'anonymous' ) {
-                return;
-            }
-            for ( var i = widgetClass.length; i--; ) {
-                if ( widgetClass[i]._name === name ) {
-                    widgetClass.splice(i, 1)
-                }
-            }
-        };
-        return Widget;
-    });
-    define('widgets/filednd',[
-        'base',
-        'uploader',
-        'lib/dnd',
-        'widgets/widget'
-    ], function( Base, Uploader, Dnd ) {
-        var $ = Base.$;
-        Uploader.options.dnd = '';
-        return Uploader.register({
-            name: 'dnd',
-            init: function( opts ) {
-                if ( !opts.dnd ||
-                        this.request('predict-runtime-type') !== 'html5' ) {
-                    return;
-                }
-                var me = this,
-                    deferred = Base.Deferred(),
-                    options = $.extend({}, {
-                        disableGlobalDnd: opts.disableGlobalDnd,
-                        container: opts.dnd,
-                        accept: opts.accept
-                    }),
-                    dnd;
-                this.dnd = dnd = new Dnd( options );
-                dnd.once( 'ready', deferred.resolve );
-                dnd.on( 'drop', function( files ) {
-                    me.request( 'add-file', [ files ]);
-                });
-                dnd.on( 'accept', function( items ) {
-                    return me.owner.trigger( 'dndAccept', items );
-                });
-                dnd.init();
-                return deferred.promise();
-            },
-            destroy: function() {
-                this.dnd && this.dnd.destroy();
-            }
-        });
-    });
-    define('lib/filepaste',[
-        'base',
-        'mediator',
-        'runtime/client'
-    ], function( Base, Mediator, RuntimeClent ) {
-        var $ = Base.$;
-        function FilePaste( opts ) {
-            opts = this.options = $.extend({}, opts );
-            opts.container = $( opts.container || document.body );
-            RuntimeClent.call( this, 'FilePaste' );
-        }
-        Base.inherits( RuntimeClent, {
-            constructor: FilePaste,
-            init: function() {
-                var me = this;
-                me.connectRuntime( me.options, function() {
-                    me.exec('init');
-                    me.trigger('ready');
-                });
-            }
-        });
-        Mediator.installTo( FilePaste.prototype );
-        return FilePaste;
-    });
-    define('widgets/filepaste',[
-        'base',
-        'uploader',
-        'lib/filepaste',
-        'widgets/widget'
-    ], function( Base, Uploader, FilePaste ) {
-        var $ = Base.$;
-        return Uploader.register({
-            name: 'paste',
-            init: function( opts ) {
-                if ( !opts.paste ||
-                        this.request('predict-runtime-type') !== 'html5' ) {
-                    return;
-                }
-                var me = this,
-                    deferred = Base.Deferred(),
-                    options = $.extend({}, {
-                        container: opts.paste,
-                        accept: opts.accept
-                    }),
-                    paste;
-                this.paste = paste = new FilePaste( options );
-                paste.once( 'ready', deferred.resolve );
-                paste.on( 'paste', function( files ) {
-                    me.owner.request( 'add-file', [ files ]);
-                });
-                paste.init();
-                return deferred.promise();
-            },
-            destroy: function() {
-                this.paste && this.paste.destroy();
-            }
-        });
-    });
-    define('lib/blob',[
-        'base',
-        'runtime/client'
-    ], function( Base, RuntimeClient ) {
-        function Blob( ruid, source ) {
-            var me = this;
-            me.source = source;
-            me.ruid = ruid;
-            this.size = source.size || 0;
-            if ( !source.type && this.ext &&
-                    ~'jpg,jpeg,png,gif,bmp'.indexOf( this.ext ) ) {
-                this.type = 'image/' + (this.ext === 'jpg' ? 'jpeg' : this.ext);
-            } else {
-                this.type = source.type || 'application/octet-stream';
-            }
-            RuntimeClient.call( me, 'Blob' );
-            this.uid = source.uid || this.uid;
-            if ( ruid ) {
-                me.connectRuntime( ruid );
-            }
-        }
-        Base.inherits( RuntimeClient, {
-            constructor: Blob,
-            slice: function( start, end ) {
-                return this.exec( 'slice', start, end );
-            },
-            getSource: function() {
-                return this.source;
-            }
-        });
-        return Blob;
-    });
-    define('lib/file',[
-        'base',
-        'lib/blob'
-    ], function( Base, Blob ) {
-        var uid = 1,
-            rExt = /\.([^.]+)$/;
-        function File( ruid, file ) {
-            var ext;
-            this.name = file.name || ('untitled' + uid++);
-            ext = rExt.exec( file.name ) ? RegExp.$1.toLowerCase() : '';
-            if ( !ext && file.type ) {
-                ext = /\/(jpg|jpeg|png|gif|bmp)$/i.exec( file.type ) ?
-                        RegExp.$1.toLowerCase() : '';
-                this.name += '.' + ext;
-            }
-            this.ext = ext;
-            this.lastModifiedDate = file.lastModifiedDate ||
-                    (new Date()).toLocaleString();
-            Blob.apply( this, arguments );
-        }
-        return Base.inherits( Blob, File );
-    });
-    define('lib/filepicker',[
-        'base',
-        'runtime/client',
-        'lib/file'
-    ], function( Base, RuntimeClent, File ) {
-        var $ = Base.$;
-        function FilePicker( opts ) {
-            opts = this.options = $.extend({}, FilePicker.options, opts );
-            opts.container = $( opts.id );
-            if ( !opts.container.length ) {
-                throw new Error('按钮指定错误');
-            }
-            opts.innerHTML = opts.innerHTML || opts.label ||
-                    opts.container.html() || '';
-            opts.button = $( opts.button || document.createElement('div') );
-            opts.button.html( opts.innerHTML );
-            opts.container.html( opts.button );
-            RuntimeClent.call( this, 'FilePicker', true );
-        }
-        FilePicker.options = {
-            button: null,
-            container: null,
-            label: null,
-            innerHTML: null,
-            multiple: true,
-            accept: null,
-            name: 'file'
-        };
-        Base.inherits( RuntimeClent, {
-            constructor: FilePicker,
-            init: function() {
-                var me = this,
-                    opts = me.options,
-                    button = opts.button;
-                button.addClass('webuploader-pick');
-                me.on( 'all', function( type ) {
-                    var files;
-                    switch ( type ) {
-                        case 'mouseenter':
-                            button.addClass('webuploader-pick-hover');
-                            break;
-                        case 'mouseleave':
-                            button.removeClass('webuploader-pick-hover');
-                            break;
-                        case 'change':
-                            files = me.exec('getFiles');
-                            me.trigger( 'select', $.map( files, function( file ) {
-                                file = new File( me.getRuid(), file );
-                                file._refer = opts.container;
-                                return file;
-                            }), opts.container );
-                            break;
-                    }
-                });
-                me.connectRuntime( opts, function() {
-                    me.refresh();
-                    me.exec( 'init', opts );
-                    me.trigger('ready');
-                });
-                this._resizeHandler = Base.bindFn( this.refresh, this );
-                $( window ).on( 'resize', this._resizeHandler );
-            },
-            refresh: function() {
-                var shimContainer = this.getRuntime().getContainer(),
-                    button = this.options.button,
-                    width = button.outerWidth ?
-                            button.outerWidth() : button.width(),
-                    height = button.outerHeight ?
-                            button.outerHeight() : button.height(),
-                    pos = button.offset();
-                width && height && shimContainer.css({
-                    bottom: 'auto',
-                    right: 'auto',
-                    width: width + 'px',
-                    height: height + 'px'
-                }).offset( pos );
-            },
-            enable: function() {
-                var btn = this.options.button;
-                btn.removeClass('webuploader-pick-disable');
-                this.refresh();
-            },
-            disable: function() {
-                var btn = this.options.button;
-                this.getRuntime().getContainer().css({
-                    top: '-99999px'
-                });
-                btn.addClass('webuploader-pick-disable');
-            },
-            destroy: function() {
-                var btn = this.options.button;
-                $( window ).off( 'resize', this._resizeHandler );
-                btn.removeClass('webuploader-pick-disable webuploader-pick-hover ' +
-                    'webuploader-pick');
-            }
-        });
-        return FilePicker;
-    });
-    define('widgets/filepicker',[
-        'base',
-        'uploader',
-        'lib/filepicker',
-        'widgets/widget'
-    ], function( Base, Uploader, FilePicker ) {
-        var $ = Base.$;
-        $.extend( Uploader.options, {
-            pick: null,
-            accept: null/*{
-                title: 'Images',
-                extensions: 'gif,jpg,jpeg,bmp,png',
-                mimeTypes: 'image/*'
-            }*/
-        });
-        return Uploader.register({
-            name: 'picker',
-            init: function( opts ) {
-                this.pickers = [];
-                return opts.pick && this.addBtn( opts.pick );
-            },
-            refresh: function() {
-                $.each( this.pickers, function() {
-                    this.refresh();
-                });
-            },
-            addBtn: function( pick ) {
-                var me = this,
-                    opts = me.options,
-                    accept = opts.accept,
-                    promises = [];
-                if ( !pick ) {
-                    return;
-                }
-                $.isPlainObject( pick ) || (pick = {
-                    id: pick
-                });
-                $( pick.id ).each(function() {
-                    var options, picker, deferred;
-                    deferred = Base.Deferred();
-                    options = $.extend({}, pick, {
-                        accept: $.isPlainObject( accept ) ? [ accept ] : accept,
-                        swf: opts.swf,
-                        runtimeOrder: opts.runtimeOrder,
-                        id: this
-                    });
-                    picker = new FilePicker( options );
-                    picker.once( 'ready', deferred.resolve );
-                    picker.on( 'select', function( files ) {
-                        me.owner.request( 'add-file', [ files ]);
-                    });
-                    picker.init();
-                    me.pickers.push( picker );
-                    promises.push( deferred.promise() );
-                });
-                return Base.when.apply( Base, promises );
-            },
-            disable: function() {
-                $.each( this.pickers, function() {
-                    this.disable();
-                });
-            },
-            enable: function() {
-                $.each( this.pickers, function() {
-                    this.enable();
-                });
-            },
-            destroy: function() {
-                $.each( this.pickers, function() {
-                    this.destroy();
-                });
-                this.pickers = null;
-            }
-        });
-    });
-    define('lib/image',[
-        'base',
-        'runtime/client',
-        'lib/blob'
-    ], function( Base, RuntimeClient, Blob ) {
-        var $ = Base.$;
-        function Image( opts ) {
-            this.options = $.extend({}, Image.options, opts );
-            RuntimeClient.call( this, 'Image' );
-            this.on( 'load', function() {
-                this._info = this.exec('info');
-                this._meta = this.exec('meta');
-            });
-        }
-        Image.options = {
-            quality: 90,
-            crop: false,
-            preserveHeaders: false,
-            allowMagnify: false
-        };
-        Base.inherits( RuntimeClient, {
-            constructor: Image,
-            info: function( val ) {
-                if ( val ) {
-                    this._info = val;
-                    return this;
-                }
-                return this._info;
-            },
-            meta: function( val ) {
-                if ( val ) {
-                    this._meta = val;
-                    return this;
-                }
-                return this._meta;
-            },
-            loadFromBlob: function( blob ) {
-                var me = this,
-                    ruid = blob.getRuid();
-                this.connectRuntime( ruid, function() {
-                    me.exec( 'init', me.options );
-                    me.exec( 'loadFromBlob', blob );
-                });
-            },
-            resize: function() {
-                var args = Base.slice( arguments );
-                return this.exec.apply( this, [ 'resize' ].concat( args ) );
-            },
-            crop: function() {
-                var args = Base.slice( arguments );
-                return this.exec.apply( this, [ 'crop' ].concat( args ) );
-            },
-            getAsDataUrl: function( type ) {
-                return this.exec( 'getAsDataUrl', type );
-            },
-            getAsBlob: function( type ) {
-                var blob = this.exec( 'getAsBlob', type );
-                return new Blob( this.getRuid(), blob );
-            }
-        });
-        return Image;
-    });
-    define('widgets/image',[
-        'base',
-        'uploader',
-        'lib/image',
-        'widgets/widget'
-    ], function( Base, Uploader, Image ) {
-        var $ = Base.$,
-            throttle;
-        throttle = (function( max ) {
-            var occupied = 0,
-                waiting = [],
-                tick = function() {
-                    var item;
-                    while ( waiting.length && occupied < max ) {
-                        item = waiting.shift();
-                        occupied += item[ 0 ];
-                        item[ 1 ]();
-                    }
-                };
-            return function( emiter, size, cb ) {
-                waiting.push([ size, cb ]);
-                emiter.once( 'destroy', function() {
-                    occupied -= size;
-                    setTimeout( tick, 1 );
-                });
-                setTimeout( tick, 1 );
-            };
-        })( 5 * 1024 * 1024 );
-        $.extend( Uploader.options, {
-            thumb: {
-                width: 110,
-                height: 110,
-                quality: 70,
-                allowMagnify: true,
-                crop: true,
-                preserveHeaders: false,
-                type: 'image/jpeg'
-            },
-            compress: {
-                width: 1600,
-                height: 1600,
-                quality: 90,
-                allowMagnify: false,
-                crop: false,
-                preserveHeaders: true
-            }
-        });
-        return Uploader.register({
-            name: 'image',
-            makeThumb: function( file, cb, width, height ) {
-                var opts, image;
-                file = this.request( 'get-file', file );
-                if ( !file.type.match( /^image/ ) ) {
-                    cb( true );
-                    return;
-                }
-                opts = $.extend({}, this.options.thumb );
-                if ( $.isPlainObject( width ) ) {
-                    opts = $.extend( opts, width );
-                    width = null;
-                }
-                width = width || opts.width;
-                height = height || opts.height;
-                image = new Image( opts );
-                image.once( 'load', function() {
-                    file._info = file._info || image.info();
-                    file._meta = file._meta || image.meta();
-                    if ( width <= 1 && width > 0 ) {
-                        width = file._info.width * width;
-                    }
-                    if ( height <= 1 && height > 0 ) {
-                        height = file._info.height * height;
-                    }
-                    image.resize( width, height );
-                });
-                image.once( 'complete', function() {
-                    cb( false, image.getAsDataUrl( opts.type ) );
-                    image.destroy();
-                });
-                image.once( 'error', function( reason ) {
-                    cb( reason || true );
-                    image.destroy();
-                });
-                throttle( image, file.source.size, function() {
-                    file._info && image.info( file._info );
-                    file._meta && image.meta( file._meta );
-                    image.loadFromBlob( file.source );
-                });
-            },
-            beforeSendFile: function( file ) {
-                var opts = this.options.compress || this.options.resize,
-                    compressSize = opts && opts.compressSize || 0,
-                    noCompressIfLarger = opts && opts.noCompressIfLarger || false,
-                    image, deferred;
-                file = this.request( 'get-file', file );
-                if ( !opts || !~'image/jpeg,image/jpg'.indexOf( file.type ) ||
-                        file.size < compressSize ||
-                        file._compressed ) {
-                    return;
-                }
-                opts = $.extend({}, opts );
-                deferred = Base.Deferred();
-                image = new Image( opts );
-                deferred.always(function() {
-                    image.destroy();
-                    image = null;
-                });
-                image.once( 'error', deferred.reject );
-                image.once( 'load', function() {
-                    var width = opts.width,
-                        height = opts.height;
-                    file._info = file._info || image.info();
-                    file._meta = file._meta || image.meta();
-                    if ( width <= 1 && width > 0 ) {
-                        width = file._info.width * width;
-                    }
-                    if ( height <= 1 && height > 0 ) {
-                        height = file._info.height * height;
-                    }
-                    image.resize( width, height );
-                });
-                image.once( 'complete', function() {
-                    var blob, size;
-                    try {
-                        blob = image.getAsBlob( opts.type );
-                        size = file.size;
-                        if ( !noCompressIfLarger || blob.size < size ) {
-                            file.source = blob;
-                            file.size = blob.size;
-                            file.trigger( 'resize', blob.size, size );
-                        }
-                        file._compressed = true;
-                        deferred.resolve();
-                    } catch ( e ) {
-                        deferred.resolve();
-                    }
-                });
-                file._info && image.info( file._info );
-                file._meta && image.meta( file._meta );
-                image.loadFromBlob( file.source );
-                return deferred.promise();
-            }
-        });
-    });
-    define('file',[
-        'base',
-        'mediator'
-    ], function( Base, Mediator ) {
-        var $ = Base.$,
-            idPrefix = 'WU_FILE_',
-            idSuffix = 0,
-            rExt = /\.([^.]+)$/,
-            statusMap = {};
-        function gid() {
-            return idPrefix + idSuffix++;
-        }
-        function WUFile( source ) {
-            this.name = source.name || 'Untitled';
-            this.size = source.size || 0;
-            this.type = source.type || 'application/octet-stream';
-            this.lastModifiedDate = source.lastModifiedDate || (new Date() * 1);
-            this.id = gid();
-            this.ext = rExt.exec( this.name ) ? RegExp.$1 : '';
-            this.statusText = '';
-            statusMap[ this.id ] = WUFile.Status.INITED;
-            this.source = source;
-            this.loaded = 0;
-            this.on( 'error', function( msg ) {
-                this.setStatus( WUFile.Status.ERROR, msg );
-            });
-        }
-        $.extend( WUFile.prototype, {
-            setStatus: function( status, text ) {
-                var prevStatus = statusMap[ this.id ];
-                typeof text !== 'undefined' && (this.statusText = text);
-                if ( status !== prevStatus ) {
-                    statusMap[ this.id ] = status;
-                    this.trigger( 'statuschange', status, prevStatus );
-                }
-            },
-            getStatus: function() {
-                return statusMap[ this.id ];
-            },
-            getSource: function() {
-                return this.source;
-            },
-            destroy: function() {
-                this.off();
-                delete statusMap[ this.id ];
-            }
-        });
-        Mediator.installTo( WUFile.prototype );
-        WUFile.Status = {
-            INITED:     'inited',
-            QUEUED:     'queued',
-            PROGRESS:   'progress',
-            ERROR:      'error',
-            COMPLETE:   'complete',
-            CANCELLED:  'cancelled',
-            INTERRUPT:  'interrupt',
-            INVALID:    'invalid'
-        };
-        return WUFile;
-    });
-    define('queue',[
-        'base',
-        'mediator',
-        'file'
-    ], function( Base, Mediator, WUFile ) {
-        var $ = Base.$,
-            STATUS = WUFile.Status;
-        function Queue() {
-            this.stats = {
-                numOfQueue: 0,
-                numOfSuccess: 0,
-                numOfCancel: 0,
-                numOfProgress: 0,
-                numOfUploadFailed: 0,
-                numOfInvalid: 0,
-                numofDeleted: 0,
-                numofInterrupt: 0
-            };
-            this._queue = [];
-            this._map = {};
-        }
-        $.extend( Queue.prototype, {
-            append: function( file ) {
-                this._queue.push( file );
-                this._fileAdded( file );
-                return this;
-            },
-            prepend: function( file ) {
-                this._queue.unshift( file );
-                this._fileAdded( file );
-                return this;
-            },
-            getFile: function( fileId ) {
-                if ( typeof fileId !== 'string' ) {
-                    return fileId;
-                }
-                return this._map[ fileId ];
-            },
-            fetch: function( status ) {
-                var len = this._queue.length,
-                    i, file;
-                status = status || STATUS.QUEUED;
-                for ( i = 0; i < len; i++ ) {
-                    file = this._queue[ i ];
-                    if ( status === file.getStatus() ) {
-                        return file;
-                    }
-                }
-                return null;
-            },
-            sort: function( fn ) {
-                if ( typeof fn === 'function' ) {
-                    this._queue.sort( fn );
-                }
-            },
-            getFiles: function() {
-                var sts = [].slice.call( arguments, 0 ),
-                    ret = [],
-                    i = 0,
-                    len = this._queue.length,
-                    file;
-                for ( ; i < len; i++ ) {
-                    file = this._queue[ i ];
-                    if ( sts.length && !~$.inArray( file.getStatus(), sts ) ) {
-                        continue;
-                    }
-                    ret.push( file );
-                }
-                return ret;
-            },
-            removeFile: function( file ) {
-                var me = this,
-                    existing = this._map[ file.id ];
-                if ( existing ) {
-                    delete this._map[ file.id ];
-                    file.destroy();
-                    this.stats.numofDeleted++;
-                }
-            },
-            _fileAdded: function( file ) {
-                var me = this,
-                    existing = this._map[ file.id ];
-                if ( !existing ) {
-                    this._map[ file.id ] = file;
-                    file.on( 'statuschange', function( cur, pre ) {
-                        me._onFileStatusChange( cur, pre );
-                    });
-                }
-            },
-            _onFileStatusChange: function( curStatus, preStatus ) {
-                var stats = this.stats;
-                switch ( preStatus ) {
-                    case STATUS.PROGRESS:
-                        stats.numOfProgress--;
-                        break;
-                    case STATUS.QUEUED:
-                        stats.numOfQueue --;
-                        break;
-                    case STATUS.ERROR:
-                        stats.numOfUploadFailed--;
-                        break;
-                    case STATUS.INVALID:
-                        stats.numOfInvalid--;
-                        break;
-                    case STATUS.INTERRUPT:
-                        stats.numofInterrupt--;
-                        break;
-                }
-                switch ( curStatus ) {
-                    case STATUS.QUEUED:
-                        stats.numOfQueue++;
-                        break;
-                    case STATUS.PROGRESS:
-                        stats.numOfProgress++;
-                        break;
-                    case STATUS.ERROR:
-                        stats.numOfUploadFailed++;
-                        break;
-                    case STATUS.COMPLETE:
-                        stats.numOfSuccess++;
-                        break;
-                    case STATUS.CANCELLED:
-                        stats.numOfCancel++;
-                        break;
-                    case STATUS.INVALID:
-                        stats.numOfInvalid++;
-                        break;
-                    case STATUS.INTERRUPT:
-                        stats.numofInterrupt++;
-                        break;
-                }
-            }
-        });
-        Mediator.installTo( Queue.prototype );
-        return Queue;
-    });
-    define('widgets/queue',[
-        'base',
-        'uploader',
-        'queue',
-        'file',
-        'lib/file',
-        'runtime/client',
-        'widgets/widget'
-    ], function( Base, Uploader, Queue, WUFile, File, RuntimeClient ) {
-        var $ = Base.$,
-            rExt = /\.\w+$/,
-            Status = WUFile.Status;
-        return Uploader.register({
-            name: 'queue',
-            init: function( opts ) {
-                var me = this,
-                    deferred, len, i, item, arr, accept, runtime;
-                if ( $.isPlainObject( opts.accept ) ) {
-                    opts.accept = [ opts.accept ];
-                }
-                if ( opts.accept ) {
-                    arr = [];
-                    for ( i = 0, len = opts.accept.length; i < len; i++ ) {
-                        item = opts.accept[ i ].extensions;
-                        item && arr.push( item );
-                    }
-                    if ( arr.length ) {
-                        accept = '\\.' + arr.join(',')
-                                .replace( /,/g, '$|\\.' )
-                                .replace( /\*/g, '.*' ) + '$';
-                    }
-                    me.accept = new RegExp( accept, 'i' );
-                }
-                me.queue = new Queue();
-                me.stats = me.queue.stats;
-                if ( this.request('predict-runtime-type') !== 'html5' ) {
-                    return;
-                }
-                deferred = Base.Deferred();
-                this.placeholder = runtime = new RuntimeClient('Placeholder');
-                runtime.connectRuntime({
-                    runtimeOrder: 'html5'
-                }, function() {
-                    me._ruid = runtime.getRuid();
-                    deferred.resolve();
-                });
-                return deferred.promise();
-            },
-            _wrapFile: function( file ) {
-                if ( !(file instanceof WUFile) ) {
-                    if ( !(file instanceof File) ) {
-                        if ( !this._ruid ) {
-                            throw new Error('Can\'t add external files.');
-                        }
-                        file = new File( this._ruid, file );
-                    }
-                    file = new WUFile( file );
-                }
-                return file;
-            },
-            acceptFile: function( file ) {
-                var invalid = !file || !file.size || this.accept &&
-                        rExt.exec( file.name ) && !this.accept.test( file.name );
-                return !invalid;
-            },
-            _addFile: function( file ) {
-                var me = this;
-                file = me._wrapFile( file );
-                if ( !me.owner.trigger( 'beforeFileQueued', file ) ) {
-                    return;
-                }
-                if ( !me.acceptFile( file ) ) {
-                    me.owner.trigger( 'error', 'Q_TYPE_DENIED', file );
-                    return;
-                }
-                me.queue.append( file );
-                me.owner.trigger( 'fileQueued', file );
-                return file;
-            },
-            getFile: function( fileId ) {
-                return this.queue.getFile( fileId );
-            },
-            addFile: function( files ) {
-                var me = this;
-                if ( !files.length ) {
-                    files = [ files ];
-                }
-                files = $.map( files, function( file ) {
-                    return me._addFile( file );
-                });
-                me.owner.trigger( 'filesQueued', files );
-                if ( me.options.auto ) {
-                    setTimeout(function() {
-                        me.request('start-upload');
-                    }, 20 );
-                }
-            },
-            getStats: function() {
-                return this.stats;
-            },
-            removeFile: function( file, remove ) {
-                var me = this;
-                file = file.id ? file : me.queue.getFile( file );
-                this.request( 'cancel-file', file );
-                if ( remove ) {
-                    this.queue.removeFile( file );
-                }
-            },
-            getFiles: function() {
-                return this.queue.getFiles.apply( this.queue, arguments );
-            },
-            fetchFile: function() {
-                return this.queue.fetch.apply( this.queue, arguments );
-            },
-            retry: function( file, noForceStart ) {
-                var me = this,
-                    files, i, len;
-                if ( file ) {
-                    file = file.id ? file : me.queue.getFile( file );
-                    file.setStatus( Status.QUEUED );
-                    noForceStart || me.request('start-upload');
-                    return;
-                }
-                files = me.queue.getFiles( Status.ERROR );
-                i = 0;
-                len = files.length;
-                for ( ; i < len; i++ ) {
-                    file = files[ i ];
-                    file.setStatus( Status.QUEUED );
-                }
-                me.request('start-upload');
-            },
-            sortFiles: function() {
-                return this.queue.sort.apply( this.queue, arguments );
-            },
-            reset: function() {
-                this.owner.trigger('reset');
-                this.queue = new Queue();
-                this.stats = this.queue.stats;
-            },
-            destroy: function() {
-                this.reset();
-                this.placeholder && this.placeholder.destroy();
-            }
-        });
-    });
-    define('widgets/runtime',[
-        'uploader',
-        'runtime/runtime',
-        'widgets/widget'
-    ], function( Uploader, Runtime ) {
-        Uploader.support = function() {
-            return Runtime.hasRuntime.apply( Runtime, arguments );
-        };
-        return Uploader.register({
-            name: 'runtime',
-            init: function() {
-                if ( !this.predictRuntimeType() ) {
-                    throw Error('Runtime Error');
-                }
-            },
-            predictRuntimeType: function() {
-                var orders = this.options.runtimeOrder || Runtime.orders,
-                    type = this.type,
-                    i, len;
-                if ( !type ) {
-                    orders = orders.split( /\s*,\s*/g );
-                    for ( i = 0, len = orders.length; i < len; i++ ) {
-                        if ( Runtime.hasRuntime( orders[ i ] ) ) {
-                            this.type = type = orders[ i ];
-                            break;
-                        }
-                    }
-                }
-                return type;
-            }
-        });
-    });
-    define('lib/transport',[
-        'base',
-        'runtime/client',
-        'mediator'
-    ], function( Base, RuntimeClient, Mediator ) {
-        var $ = Base.$;
-        function Transport( opts ) {
-            var me = this;
-            opts = me.options = $.extend( true, {}, Transport.options, opts || {} );
-            RuntimeClient.call( this, 'Transport' );
-            this._blob = null;
-            this._formData = opts.formData || {};
-            this._headers = opts.headers || {};
-            this.on( 'progress', this._timeout );
-            this.on( 'load error', function() {
-                me.trigger( 'progress', 1 );
-                clearTimeout( me._timer );
-            });
-        }
-        Transport.options = {
-            server: '',
-            method: 'POST',
-            withCredentials: false,
-            fileVal: 'file',
-            timeout: 2 * 60 * 1000,
-            formData: {},
-            headers: {},
-            sendAsBinary: false
-        };
-        $.extend( Transport.prototype, {
-            appendBlob: function( key, blob, filename ) {
-                var me = this,
-                    opts = me.options;
-                if ( me.getRuid() ) {
-                    me.disconnectRuntime();
-                }
-                me.connectRuntime( blob.ruid, function() {
-                    me.exec('init');
-                });
-                me._blob = blob;
-                opts.fileVal = key || opts.fileVal;
-                opts.filename = filename || opts.filename;
-            },
-            append: function( _xk, value ) {
-                if ( typeof _xk === 'object' ) {
-                    $.extend( this._formData, _xk );
-                } else {
-                    this._formData[ _xk ] = value;
-                }
-            },
-            setRequestHeader: function( _xk, value ) {
-                if ( typeof _xk === 'object' ) {
-                    $.extend( this._headers, _xk );
-                } else {
-                    this._headers[ _xk ] = value;
-                }
-            },
-            send: function( method ) {
-                this.exec( 'send', method );
-                this._timeout();
-            },
-            abort: function() {
-                clearTimeout( this._timer );
-                return this.exec('abort');
-            },
-            destroy: function() {
-                this.trigger('destroy');
-                this.off();
-                this.exec('destroy');
-                this.disconnectRuntime();
-            },
-            getResponse: function() {
-                return this.exec('getResponse');
-            },
-            getResponseAsJson: function() {
-                return this.exec('getResponseAsJson');
-            },
-            getStatus: function() {
-                return this.exec('getStatus');
-            },
-            _timeout: function() {
-                var me = this,
-                    duration = me.options.timeout;
-                if ( !duration ) {
-                    return;
-                }
-                clearTimeout( me._timer );
-                me._timer = setTimeout(function() {
-                    me.abort();
-                    me.trigger( 'error', 'timeout' );
-                }, duration );
-            }
-        });
-        Mediator.installTo( Transport.prototype );
-        return Transport;
-    });
-    define('widgets/upload',[
-        'base',
-        'uploader',
-        'file',
-        'lib/transport',
-        'widgets/widget'
-    ], function( Base, Uploader, WUFile, Transport ) {
-        var $ = Base.$,
-            isPromise = Base.isPromise,
-            Status = WUFile.Status;
-        $.extend( Uploader.options, {
-            prepareNextFile: false,
-            chunked: false,
-            chunkSize: 5 * 1024 * 1024,
-            chunkRetry: 2,
-            threads: 3,
-            formData: {}
-        });
-        function CuteFile( file, chunkSize ) {
-            var pending = [],
-                blob = file.source,
-                total = blob.size,
-                chunks = chunkSize ? Math.ceil( total / chunkSize ) : 1,
-                start = 0,
-                index = 0,
-                len, api;
-            api = {
-                file: file,
-                has: function() {
-                    return !!pending.length;
-                },
-                shift: function() {
-                    return pending.shift();
-                },
-                unshift: function( block ) {
-                    pending.unshift( block );
-                }
-            };
-            while ( index < chunks ) {
-                len = Math.min( chunkSize, total - start );
-                pending.push({
-                    file: file,
-                    start: start,
-                    end: chunkSize ? (start + len) : total,
-                    total: total,
-                    chunks: chunks,
-                    chunk: index++,
-                    cuted: api
-                });
-                start += len;
-            }
-            file.blocks = pending.concat();
-            file.remaning = pending.length;
-            return api;
-        }
-        Uploader.register({
-            name: 'upload',
-            init: function() {
-                var owner = this.owner,
-                    me = this;
-                this.runing = false;
-                this.progress = false;
-                owner
-                    .on( 'startUpload', function() {
-                        me.progress = true;
-                    })
-                    .on( 'uploadFinished', function() {
-                        me.progress = false;
-                    });
-                this.pool = [];
-                this.stack = [];
-                this.pending = [];
-                this.remaning = 0;
-                this.__tick = Base.bindFn( this._tick, this );
-                owner.on( 'uploadComplete', function( file ) {
-                    file.blocks && $.each( file.blocks, function( _, v ) {
-                        v.transport && (v.transport.abort(), v.transport.destroy());
-                        delete v.transport;
-                    });
-                    delete file.blocks;
-                    delete file.remaning;
-                });
-            },
-            reset: function() {
-                this.request( 'stop-upload', true );
-                this.runing = false;
-                this.pool = [];
-                this.stack = [];
-                this.pending = [];
-                this.remaning = 0;
-                this._trigged = false;
-                this._promise = null;
-            },
-            startUpload: function(file) {
-                var me = this;
-                $.each( me.request( 'get-files', Status.INVALID ), function() {
-                    me.request( 'remove-file', this );
-                });
-                if ( file ) {
-                    file = file.id ? file : me.request( 'get-file', file );
-                    if (file.getStatus() === Status.INTERRUPT) {
-                        $.each( me.pool, function( _, v ) {
-                            if (v.file !== file) {
-                                return;
-                            }
-                            v.transport && v.transport.send();
-                        });
-                        file.setStatus( Status.QUEUED );
-                    } else if (file.getStatus() === Status.PROGRESS) {
-                        return;
-                    } else {
-                        file.setStatus( Status.QUEUED );
-                    }
-                } else {
-                    $.each( me.request( 'get-files', [ Status.INITED ] ), function() {
-                        this.setStatus( Status.QUEUED );
-                    });
-                }
-                if ( me.runing ) {
-                    return;
-                }
-                me.runing = true;
-                var files = [];
-                $.each( me.pool, function( _, v ) {
-                    var file = v.file;
-                    if ( file.getStatus() === Status.INTERRUPT ) {
-                        files.push(file);
-                        me._trigged = false;
-                        v.transport && v.transport.send();
-                    }
-                });
-                var file;
-                while ( (file = files.shift()) ) {
-                    file.setStatus( Status.PROGRESS );
-                }
-                file || $.each( me.request( 'get-files',
-                        Status.INTERRUPT ), function() {
-                    this.setStatus( Status.PROGRESS );
-                });
-                me._trigged = false;
-                Base.nextTick( me.__tick );
-                me.owner.trigger('startUpload');
-            },
-            stopUpload: function( file, interrupt ) {
-                var me = this;
-                if (file === true) {
-                    interrupt = file;
-                    file = null;
-                }
-                if ( me.runing === false ) {
-                    return;
-                }
-                if ( file ) {
-                    file = file.id ? file : me.request( 'get-file', file );
-                    if ( file.getStatus() !== Status.PROGRESS &&
-                            file.getStatus() !== Status.QUEUED ) {
-                        return;
-                    }
-                    file.setStatus( Status.INTERRUPT );
-                    $.each( me.pool, function( _, v ) {
-                        if (v.file !== file) {
-                            return;
-                        }
-                        v.transport && v.transport.abort();
-                        me._putback(v);
-                        me._popBlock(v);
-                    });
-                    return Base.nextTick( me.__tick );
-                }
-                me.runing = false;
-                if (this._promise && this._promise.file) {
-                    this._promise.file.setStatus( Status.INTERRUPT );
-                }
-                interrupt && $.each( me.pool, function( _, v ) {
-                    v.transport && v.transport.abort();
-                    v.file.setStatus( Status.INTERRUPT );
-                });
-                me.owner.trigger('stopUpload');
-            },
-            cancelFile: function( file ) {
-                file = file.id ? file : this.request( 'get-file', file );
-                file.blocks && $.each( file.blocks, function( _, v ) {
-                    var _tr = v.transport;
-                    if ( _tr ) {
-                        _tr.abort();
-                        _tr.destroy();
-                        delete v.transport;
-                    }
-                });
-                file.setStatus( Status.CANCELLED );
-                this.owner.trigger( 'fileDequeued', file );
-            },
-            isInProgress: function() {
-                return !!this.progress;
-            },
-            _getStats: function() {
-                return this.request('get-stats');
-            },
-            skipFile: function( file, status ) {
-                file = file.id ? file : this.request( 'get-file', file );
-                file.setStatus( status || Status.COMPLETE );
-                file.skipped = true;
-                file.blocks && $.each( file.blocks, function( _, v ) {
-                    var _tr = v.transport;
-                    if ( _tr ) {
-                        _tr.abort();
-                        _tr.destroy();
-                        delete v.transport;
-                    }
-                });
-                this.owner.trigger( 'uploadSkip', file );
-            },
-            _tick: function() {
-                var me = this,
-                    opts = me.options,
-                    fn, val;
-                if ( me._promise ) {
-                    return me._promise.always( me.__tick );
-                }
-                if ( me.pool.length < opts.threads && (val = me._nextBlock()) ) {
-                    me._trigged = false;
-                    fn = function( val ) {
-                        me._promise = null;
-                        val && val.file && me._startSend( val );
-                        Base.nextTick( me.__tick );
-                    };
-                    me._promise = isPromise( val ) ? val.always( fn ) : fn( val );
-                } else if ( !me.remaning && !me._getStats().numOfQueue &&
-                    !me._getStats().numofInterrupt ) {
-                    me.runing = false;
-                    me._trigged || Base.nextTick(function() {
-                        me.owner.trigger('uploadFinished');
-                    });
-                    me._trigged = true;
-                }
-            },
-            _putback: function(block) {
-                var idx;
-                block.cuted.unshift(block);
-                idx = this.stack.indexOf(block.cuted);
-                if (!~idx) {
-                    this.stack.unshift(block.cuted);
-                }
-            },
-            _getStack: function() {
-                var i = 0,
-                    act;
-                while ( (act = this.stack[ i++ ]) ) {
-                    if ( act.has() && act.file.getStatus() === Status.PROGRESS ) {
-                        return act;
-                    } else if (!act.has() ||
-                            act.file.getStatus() !== Status.PROGRESS &&
-                            act.file.getStatus() !== Status.INTERRUPT ) {
-                        this.stack.splice( --i, 1 );
-                    }
-                }
-                return null;
-            },
-            _nextBlock: function() {
-                var me = this,
-                    opts = me.options,
-                    act, next, done, preparing;
-                if ( (act = this._getStack()) ) {
-                    if ( opts.prepareNextFile && !me.pending.length ) {
-                        me._prepareNextFile();
-                    }
-                    return act.shift();
-                } else if ( me.runing ) {
-                    if ( !me.pending.length && me._getStats().numOfQueue ) {
-                        me._prepareNextFile();
-                    }
-                    next = me.pending.shift();
-                    done = function( file ) {
-                        if ( !file ) {
-                            return null;
-                        }
-                        act = CuteFile( file, opts.chunked ? opts.chunkSize : 0 );
-                        me.stack.push(act);
-                        return act.shift();
-                    };
-                    if ( isPromise( next) ) {
-                        preparing = next.file;
-                        next = next[ next.pipe ? 'pipe' : 'then' ]( done );
-                        next.file = preparing;
-                        return next;
-                    }
-                    return done( next );
-                }
-            },
-            _prepareNextFile: function() {
-                var me = this,
-                    file = me.request('fetch-file'),
-                    pending = me.pending,
-                    promise;
-                if ( file ) {
-                    promise = me.request( 'before-send-file', file, function() {
-                        if ( file.getStatus() === Status.PROGRESS ||
-                            file.getStatus() === Status.INTERRUPT ) {
-                            return file;
-                        }
-                        return me._finishFile( file );
-                    });
-                    me.owner.trigger( 'uploadStart', file );
-                    file.setStatus( Status.PROGRESS );
-                    promise.file = file;
-                    promise.done(function() {
-                        var idx = $.inArray( promise, pending );
-                        ~idx && pending.splice( idx, 1, file );
-                    });
-                    promise.fail(function( reason ) {
-                        file.setStatus( Status.ERROR, reason );
-                        me.owner.trigger( 'uploadError', file, reason );
-                        me.owner.trigger( 'uploadComplete', file );
-                    });
-                    pending.push( promise );
-                }
-            },
-            _popBlock: function( block ) {
-                var idx = $.inArray( block, this.pool );
-                this.pool.splice( idx, 1 );
-                block.file.remaning--;
-                this.remaning--;
-            },
-            _startSend: function( block ) {
-                var me = this,
-                    file = block.file,
-                    promise;
-                if ( file.getStatus() !== Status.PROGRESS ) {
-                    if (file.getStatus() === Status.INTERRUPT) {
-                        me._putback(block);
-                    }
-                    return;
-                }
-                me.pool.push( block );
-                me.remaning++;
-                block.blob = block.chunks === 1 ? file.source :
-                        file.source.slice( block.start, block.end );
-                promise = me.request( 'before-send', block, function() {
-                    if ( file.getStatus() === Status.PROGRESS ) {
-                        me._doSend( block );
-                    } else {
-                        me._popBlock( block );
-                        Base.nextTick( me.__tick );
-                    }
-                });
-                promise.fail(function() {
-                    if ( file.remaning === 1 ) {
-                        me._finishFile( file ).always(function() {
-                            block.percentage = 1;
-                            me._popBlock( block );
-                            me.owner.trigger( 'uploadComplete', file );
-                            Base.nextTick( me.__tick );
-                        });
-                    } else {
-                        block.percentage = 1;
-                        me.updateFileProgress( file );
-                        me._popBlock( block );
-                        Base.nextTick( me.__tick );
-                    }
-                });
-            },
-            _doSend: function( block ) {
-                var me = this,
-                    owner = me.owner,
-                    opts = me.options,
-                    file = block.file,
-                    tr = new Transport( opts ),
-                    data = $.extend({}, opts.formData ),
-                    headers = $.extend({}, opts.headers ),
-                    requestAccept, ret;
-                block.transport = tr;
-                tr.on( 'destroy', function() {
-                    delete block.transport;
-                    me._popBlock( block );
-                    Base.nextTick( me.__tick );
-                });
-                tr.on( 'progress', function( percentage ) {
-                    block.percentage = percentage;
-                    me.updateFileProgress( file );
-                });
-                requestAccept = function( reject ) {
-                    var fn;
-                    ret = tr.getResponseAsJson() || {};
-                    ret._raw = tr.getResponse();
-                    fn = function( value ) {
-                        reject = value;
-                    };
-                    if ( !owner.trigger( 'uploadAccept', block, ret, fn ) ) {
-                        reject = reject || 'server';
-                    }
-                    return reject;
-                };
-                tr.on( 'error', function( type, flag ) {
-                    block.retried = block.retried || 0;
-                    if ( block.chunks > 1 && ~'http,abort'.indexOf( type ) &&
-                            block.retried < opts.chunkRetry ) {
-                        block.retried++;
-                        tr.send();
-                    } else {
-                        if ( !flag && type === 'server' ) {
-                            type = requestAccept( type );
-                        }
-                        file.setStatus( Status.ERROR, type );
-                        owner.trigger( 'uploadError', file, type );
-                        owner.trigger( 'uploadComplete', file );
-                    }
-                });
-                tr.on( 'load', function() {
-                    var reason;
-                    if ( (reason = requestAccept()) ) {
-                        tr.trigger( 'error', reason, true );
-                        return;
-                    }
-                    if ( file.remaning === 1 ) {
-                        me._finishFile( file, ret );
-                    } else {
-                        tr.destroy();
-                    }
-                });
-                data = $.extend( data, {
-                    id: file.id,
-                    name: file.name,
-                    type: file.type,
-                    lastModifiedDate: file.lastModifiedDate,
-                    size: file.size
-                });
-                block.chunks > 1 && $.extend( data, {
-                    chunks: block.chunks,
-                    chunk: block.chunk
-                });
-                owner.trigger( 'uploadBeforeSend', block, data, headers );
-                tr.appendBlob( opts.fileVal, block.blob, file.name );
-                tr.append( data );
-                tr.setRequestHeader( headers );
-                tr.send();
-            },
-            _finishFile: function( file, ret, hds ) {
-                var owner = this.owner;
-                return owner
-                        .request( 'after-send-file', arguments, function() {
-                            file.setStatus( Status.COMPLETE );
-                            owner.trigger( 'uploadSuccess', file, ret, hds );
-                        })
-                        .fail(function( reason ) {
-                            if ( file.getStatus() === Status.PROGRESS ) {
-                                file.setStatus( Status.ERROR, reason );
-                            }
-                            owner.trigger( 'uploadError', file, reason );
-                        })
-                        .always(function() {
-                            owner.trigger( 'uploadComplete', file );
-                        });
-            },
-            updateFileProgress: function(file) {
-                var totalPercent = 0,
-                    uploaded = 0;
-                if (!file.blocks) {
-                    return;
-                }
-                $.each( file.blocks, function( _, v ) {
-                    uploaded += (v.percentage || 0) * (v.end - v.start);
-                });
-                totalPercent = uploaded / file.size;
-                this.owner.trigger( 'uploadProgress', file, totalPercent || 0 );
-            }
-        });
-    });
-    define('widgets/validator',[
-        'base',
-        'uploader',
-        'file',
-        'widgets/widget'
-    ], function( Base, Uploader, WUFile ) {
-        var $ = Base.$,
-            validators = {},
-            api;
-        api = {
-            addValidator: function( type, cb ) {
-                validators[ type ] = cb;
-            },
-            removeValidator: function( type ) {
-                delete validators[ type ];
-            }
-        };
-        Uploader.register({
-            name: 'validator',
-            init: function() {
-                var me = this;
-                Base.nextTick(function() {
-                    $.each( validators, function() {
-                        this.call( me.owner );
-                    });
-                });
-            }
-        });
-        api.addValidator( 'fileNumLimit', function() {
-            var uploader = this,
-                opts = uploader.options,
-                count = 0,
-                max = parseInt( opts.fileNumLimit, 10 ),
-                flag = true;
-            if ( !max ) {
-                return;
-            }
-            uploader.on( 'beforeFileQueued', function( file ) {
-                if ( count >= max && flag ) {
-                    flag = false;
-                    this.trigger( 'error', 'Q_EXCEED_NUM_LIMIT', max, file );
-                    setTimeout(function() {
-                        flag = true;
-                    }, 1 );
-                }
-                return count >= max ? false : true;
-            });
-            uploader.on( 'fileQueued', function() {
-                count++;
-            });
-            uploader.on( 'fileDequeued', function() {
-                count--;
-            });
-            uploader.on( 'reset', function() {
-                count = 0;
-            });
-        });
-        api.addValidator( 'fileSizeLimit', function() {
-            var uploader = this,
-                opts = uploader.options,
-                count = 0,
-                max = parseInt( opts.fileSizeLimit, 10 ),
-                flag = true;
-            if ( !max ) {
-                return;
-            }
-            uploader.on( 'beforeFileQueued', function( file ) {
-                var invalid = count + file.size > max;
-                if ( invalid && flag ) {
-                    flag = false;
-                    this.trigger( 'error', 'Q_EXCEED_SIZE_LIMIT', max, file );
-                    setTimeout(function() {
-                        flag = true;
-                    }, 1 );
-                }
-                return invalid ? false : true;
-            });
-            uploader.on( 'fileQueued', function( file ) {
-                count += file.size;
-            });
-            uploader.on( 'fileDequeued', function( file ) {
-                count -= file.size;
-            });
-            uploader.on( 'reset', function() {
-                count = 0;
-            });
-        });
-        api.addValidator( 'fileSingleSizeLimit', function() {
-            var uploader = this,
-                opts = uploader.options,
-                max = opts.fileSingleSizeLimit;
-            if ( !max ) {
-                return;
-            }
-            uploader.on( 'beforeFileQueued', function( file ) {
-                if ( file.size > max ) {
-                    file.setStatus( WUFile.Status.INVALID, 'exceed_size' );
-                    this.trigger( 'error', 'F_EXCEED_SIZE', max, file );
-                    return false;
-                }
-            });
-        });
-        api.addValidator( 'duplicate', function() {
-            var uploader = this,
-                opts = uploader.options,
-                mapping = {};
-            if ( opts.duplicate ) {
-                return;
-            }
-            function hashString( str ) {
-                var hash = 0,
-                    i = 0,
-                    len = str.length,
-                    _char;
-                for ( ; i < len; i++ ) {
-                    _char = str.charCodeAt( i );
-                    hash = _char + (hash << 6) + (hash << 16) - hash;
-                }
-                return hash;
-            }
-            uploader.on( 'beforeFileQueued', function( file ) {
-                var hash = file.__hash || (file.__hash = hashString( file.name +
-                        file.size + file.lastModifiedDate ));
-                if ( mapping[ hash ] ) {
-                    this.trigger( 'error', 'F_DUPLICATE', file );
-                    return false;
-                }
-            });
-            uploader.on( 'fileQueued', function( file ) {
-                var hash = file.__hash;
-                hash && (mapping[ hash ] = true);
-            });
-            uploader.on( 'fileDequeued', function( file ) {
-                var hash = file.__hash;
-                hash && (delete mapping[ hash ]);
-            });
-            uploader.on( 'reset', function() {
-                mapping = {};
-            });
-        });
-        return api;
-    });
-    define('runtime/compbase',[],function() {
-        function CompBase( owner, runtime ) {
-            this.owner = owner;
-            this.options = owner.options;
-            this.getRuntime = function() {
-                return runtime;
-            };
-            this.getRuid = function() {
-                return runtime.uid;
-            };
-            this.trigger = function() {
-                return owner.trigger.apply( owner, arguments );
-            };
-        }
-        return CompBase;
-    });
-    define('runtime/html5/runtime',[
-        'base',
-        'runtime/runtime',
-        'runtime/compbase'
-    ], function( Base, Runtime, CompBase ) {
-        var type = 'html5',
-            components = {};
-        function Html5Runtime() {
-            var pool = {},
-                me = this,
-                destroy = this.destroy;
-            Runtime.apply( me, arguments );
-            me.type = type;
-            me.exec = function( comp, fn/*, args...*/) {
-                var client = this,
-                    uid = client.uid,
-                    args = Base.slice( arguments, 2 ),
-                    instance;
-                if ( components[ comp ] ) {
-                    instance = pool[ uid ] = pool[ uid ] ||
-                            new components[ comp ]( client, me );
-                    if ( instance[ fn ] ) {
-                        return instance[ fn ].apply( instance, args );
-                    }
-                }
-            };
-            me.destroy = function() {
-                return destroy && destroy.apply( this, arguments );
-            };
-        }
-        Base.inherits( Runtime, {
-            constructor: Html5Runtime,
-            init: function() {
-                var me = this;
-                setTimeout(function() {
-                    me.trigger('ready');
-                }, 1 );
-            }
-        });
-        Html5Runtime.register = function( name, component ) {
-            var klass = components[ name ] = Base.inherits( CompBase, component );
-            return klass;
-        };
-        if ( window.Blob && window.FileReader && window.DataView ) {
-            Runtime.addRuntime( type, Html5Runtime );
-        }
-        return Html5Runtime;
-    });
-    define('runtime/html5/blob',[
-        'runtime/html5/runtime',
-        'lib/blob'
-    ], function( Html5Runtime, Blob ) {
-        return Html5Runtime.register( 'Blob', {
-            slice: function( start, end ) {
-                var blob = this.owner.source,
-                    slice = blob.slice || blob.webkitSlice || blob.mozSlice;
-                blob = slice.call( blob, start, end );
-                return new Blob( this.getRuid(), blob );
-            }
-        });
-    });
-    define('runtime/html5/dnd',[
-        'base',
-        'runtime/html5/runtime',
-        'lib/file'
-    ], function( Base, Html5Runtime, File ) {
-        var $ = Base.$,
-            prefix = 'webuploader-dnd-';
-        return Html5Runtime.register( 'DragAndDrop', {
-            init: function() {
-                var elem = this.elem = this.options.container;
-                this.dragEnterHandler = Base.bindFn( this._dragEnterHandler, this );
-                this.dragOverHandler = Base.bindFn( this._dragOverHandler, this );
-                this.dragLeaveHandler = Base.bindFn( this._dragLeaveHandler, this );
-                this.dropHandler = Base.bindFn( this._dropHandler, this );
-                this.dndOver = false;
-                elem.on( 'dragenter', this.dragEnterHandler );
-                elem.on( 'dragover', this.dragOverHandler );
-                elem.on( 'dragleave', this.dragLeaveHandler );
-                elem.on( 'drop', this.dropHandler );
-                if ( this.options.disableGlobalDnd ) {
-                    $( document ).on( 'dragover', this.dragOverHandler );
-                    $( document ).on( 'drop', this.dropHandler );
-                }
-            },
-            _dragEnterHandler: function( e ) {
-                var me = this,
-                    denied = me._denied || false,
-                    items;
-                e = e.originalEvent || e;
-                if ( !me.dndOver ) {
-                    me.dndOver = true;
-                    items = e.dataTransfer.items;
-                    if ( items && items.length ) {
-                        me._denied = denied = !me.trigger( 'accept', items );
-                    }
-                    me.elem.addClass( prefix + 'over' );
-                    me.elem[ denied ? 'addClass' :
-                            'removeClass' ]( prefix + 'denied' );
-                }
-                e.dataTransfer.dropEffect = denied ? 'none' : 'copy';
-                return false;
-            },
-            _dragOverHandler: function( e ) {
-                var parentElem = this.elem.parent().get( 0 );
-                if ( parentElem && !$.contains( parentElem, e.currentTarget ) ) {
-                    return false;
-                }
-                clearTimeout( this._leaveTimer );
-                this._dragEnterHandler.call( this, e );
-                return false;
-            },
-            _dragLeaveHandler: function() {
-                var me = this,
-                    handler;
-                handler = function() {
-                    me.dndOver = false;
-                    me.elem.removeClass( prefix + 'over ' + prefix + 'denied' );
-                };
-                clearTimeout( me._leaveTimer );
-                me._leaveTimer = setTimeout( handler, 100 );
-                return false;
-            },
-            _dropHandler: function( e ) {
-                var me = this,
-                    ruid = me.getRuid(),
-                    parentElem = me.elem.parent().get( 0 ),
-                    dataTransfer, data;
-                if ( parentElem && !$.contains( parentElem, e.currentTarget ) ) {
-                    return false;
-                }
-                e = e.originalEvent || e;
-                dataTransfer = e.dataTransfer;
-                try {
-                    data = dataTransfer.getData('text/html');
-                } catch( err ) {
-                }
-                if ( data ) {
-                    return;
-                }
-                me._getTansferFiles( dataTransfer, function( results ) {
-                    me.trigger( 'drop', $.map( results, function( file ) {
-                        return new File( ruid, file );
-                    }) );
-                });
-                me.dndOver = false;
-                me.elem.removeClass( prefix + 'over' );
-                return false;
-            },
-            _getTansferFiles: function( dataTransfer, callback ) {
-                var results  = [],
-                    promises = [],
-                    items, files, file, item, i, len, canAccessFolder;
-                items = dataTransfer.items;
-                files = dataTransfer.files;
-                canAccessFolder = !!(items && items[ 0 ].webkitGetAsEntry);
-                for ( i = 0, len = files.length; i < len; i++ ) {
-                    file = files[ i ];
-                    item = items && items[ i ];
-                    if ( canAccessFolder && item.webkitGetAsEntry().isDirectory ) {
-                        promises.push( this._traverseDirectoryTree(
-                                item.webkitGetAsEntry(), results ) );
-                    } else {
-                        results.push( file );
-                    }
-                }
-                Base.when.apply( Base, promises ).done(function() {
-                    if ( !results.length ) {
-                        return;
-                    }
-                    callback( results );
-                });
-            },
-            _traverseDirectoryTree: function( entry, results ) {
-                var deferred = Base.Deferred(),
-                    me = this;
-                if ( entry.isFile ) {
-                    entry.file(function( file ) {
-                        results.push( file );
-                        deferred.resolve();
-                    });
-                } else if ( entry.isDirectory ) {
-                    entry.createReader().readEntries(function( entries ) {
-                        var len = entries.length,
-                            promises = [],
-                            arr = [],
-                            i;
-                        for ( i = 0; i < len; i++ ) {
-                            promises.push( me._traverseDirectoryTree(
-                                    entries[ i ], arr ) );
-                        }
-                        Base.when.apply( Base, promises ).then(function() {
-                            results.push.apply( results, arr );
-                            deferred.resolve();
-                        }, deferred.reject );
-                    });
-                }
-                return deferred.promise();
-            },
-            destroy: function() {
-                var elem = this.elem;
-                if (!elem) {
-                    return;
-                }
-                elem.off( 'dragenter', this.dragEnterHandler );
-                elem.off( 'dragover', this.dragOverHandler );
-                elem.off( 'dragleave', this.dragLeaveHandler );
-                elem.off( 'drop', this.dropHandler );
-                if ( this.options.disableGlobalDnd ) {
-                    $( document ).off( 'dragover', this.dragOverHandler );
-                    $( document ).off( 'drop', this.dropHandler );
-                }
-            }
-        });
-    });
-    define('runtime/html5/filepaste',[
-        'base',
-        'runtime/html5/runtime',
-        'lib/file'
-    ], function( Base, Html5Runtime, File ) {
-        return Html5Runtime.register( 'FilePaste', {
-            init: function() {
-                var opts = this.options,
-                    elem = this.elem = opts.container,
-                    accept = '.*',
-                    arr, i, len, item;
-                if ( opts.accept ) {
-                    arr = [];
-                    for ( i = 0, len = opts.accept.length; i < len; i++ ) {
-                        item = opts.accept[ i ].mimeTypes;
-                        item && arr.push( item );
-                    }
-                    if ( arr.length ) {
-                        accept = arr.join(',');
-                        accept = accept.replace( /,/g, '|' ).replace( /\*/g, '.*' );
-                    }
-                }
-                this.accept = accept = new RegExp( accept, 'i' );
-                this.hander = Base.bindFn( this._pasteHander, this );
-                elem.on( 'paste', this.hander );
-            },
-            _pasteHander: function( e ) {
-                var allowed = [],
-                    ruid = this.getRuid(),
-                    items, item, blob, i, len;
-                e = e.originalEvent || e;
-                items = e.clipboardData.items;
-                for ( i = 0, len = items.length; i < len; i++ ) {
-                    item = items[ i ];
-                    if ( item.kind !== 'file' || !(blob = item.getAsFile()) ) {
-                        continue;
-                    }
-                    allowed.push( new File( ruid, blob ) );
-                }
-                if ( allowed.length ) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    this.trigger( 'paste', allowed );
-                }
-            },
-            destroy: function() {
-                this.elem.off( 'paste', this.hander );
-            }
-        });
-    });
-    define('runtime/html5/filepicker',[
-        'base',
-        'runtime/html5/runtime'
-    ], function( Base, Html5Runtime ) {
-        var $ = Base.$;
-        return Html5Runtime.register( 'FilePicker', {
-            init: function() {
-                var container = this.getRuntime().getContainer(),
-                    me = this,
-                    owner = me.owner,
-                    opts = me.options,
-                    label = this.label = $( document.createElement('label') ),
-                    input =  this.input = $( document.createElement('input') ),
-                    arr, i, len, mouseHandler;
-                input.attr( 'type', 'file' );
-                input.attr( 'name', opts.name );
-                input.addClass('webuploader-element-invisible');
-                label.on( 'click', function() {
-                    input.trigger('click');
-                });
-                label.css({
-                    opacity: 0,
-                    width: '100%',
-                    height: '100%',
-                    display: 'block',
-                    cursor: 'pointer',
-                    background: '#ffffff'
-                });
-                if ( opts.multiple ) {
-                    input.attr( 'multiple', 'multiple' );
-                }
-                if ( opts.accept && opts.accept.length > 0 ) {
-                    arr = [];
-                    for ( i = 0, len = opts.accept.length; i < len; i++ ) {
-                        arr.push( opts.accept[ i ].mimeTypes );
-                    }
-                    input.attr( 'accept', arr.join(',') );
-                }
-                container.append( input );
-                container.append( label );
-                mouseHandler = function( e ) {
-                    owner.trigger( e.type );
-                };
-                input.on( 'change', function( e ) {
-                    var fn = arguments.callee,
-                        clone;
-                    me.files = e.target.files;
-                    clone = this.cloneNode( true );
-                    clone.value = null;
-                    this.parentNode.replaceChild( clone, this );
-                    input.off();
-                    input = $( clone ).on( 'change', fn )
-                            .on( 'mouseenter mouseleave', mouseHandler );
-                    owner.trigger('change');
-                });
-                label.on( 'mouseenter mouseleave', mouseHandler );
-            },
-            getFiles: function() {
-                return this.files;
-            },
-            destroy: function() {
-                this.input.off();
-                this.label.off();
-            }
-        });
-    });
-    define('runtime/html5/util',[
-        'base'
-    ], function( Base ) {
-        var urlAPI = window.createObjectURL && window ||
-                window.URL && URL.revokeObjectURL && URL ||
-                window.webkitURL,
-            createObjectURL = Base.noop,
-            revokeObjectURL = createObjectURL;
-        if ( urlAPI ) {
-            createObjectURL = function() {
-                return urlAPI.createObjectURL.apply( urlAPI, arguments );
-            };
-            revokeObjectURL = function() {
-                return urlAPI.revokeObjectURL.apply( urlAPI, arguments );
-            };
-        }
-        return {
-            createObjectURL: createObjectURL,
-            revokeObjectURL: revokeObjectURL,
-            dataURL2Blob: function( dataURI ) {
-                var byteStr, intArray, ab, i, mimetype, parts;
-                parts = dataURI.split(',');
-                if ( ~parts[ 0 ].indexOf('base64') ) {
-                    byteStr = atob( parts[ 1 ] );
-                } else {
-                    byteStr = decodeURIComponent( parts[ 1 ] );
-                }
-                ab = new ArrayBuffer( byteStr.length );
-                intArray = new Uint8Array( ab );
-                for ( i = 0; i < byteStr.length; i++ ) {
-                    intArray[ i ] = byteStr.charCodeAt( i );
-                }
-                mimetype = parts[ 0 ].split(':')[ 1 ].split(';')[ 0 ];
-                return this.arrayBufferToBlob( ab, mimetype );
-            },
-            dataURL2ArrayBuffer: function( dataURI ) {
-                var byteStr, intArray, i, parts;
-                parts = dataURI.split(',');
-                if ( ~parts[ 0 ].indexOf('base64') ) {
-                    byteStr = atob( parts[ 1 ] );
-                } else {
-                    byteStr = decodeURIComponent( parts[ 1 ] );
-                }
-                intArray = new Uint8Array( byteStr.length );
-                for ( i = 0; i < byteStr.length; i++ ) {
-                    intArray[ i ] = byteStr.charCodeAt( i );
-                }
-                return intArray.buffer;
-            },
-            arrayBufferToBlob: function( buffer, type ) {
-                var builder = window.BlobBuilder || window.WebKitBlobBuilder,
-                    bb;
-                if ( builder ) {
-                    bb = new builder();
-                    bb.append( buffer );
-                    return bb.getBlob( type );
-                }
-                return new Blob([ buffer ], type ? { type: type } : {} );
-            },
-            canvasToDataUrl: function( canvas, type, quality ) {
-                return canvas.toDataURL( type, quality / 100 );
-            },
-            parseMeta: function( blob, callback ) {
-                callback( false, {});
-            },
-            updateImageHead: function( data ) {
-                return data;
-            }
-        };
-    });
-    define('runtime/html5/imagemeta',[
-        'runtime/html5/util'
-    ], function( Util ) {
-        var api;
-        api = {
-            parsers: {
-                0xffe1: []
-            },
-            maxMetaDataSize: 262144,
-            parse: function( blob, cb ) {
-                var me = this,
-                    fr = new FileReader();
-                fr.onload = function() {
-                    cb( false, me._parse( this.result ) );
-                    fr = fr.onload = fr.onerror = null;
-                };
-                fr.onerror = function( e ) {
-                    cb( e.message );
-                    fr = fr.onload = fr.onerror = null;
-                };
-                blob = blob.slice( 0, me.maxMetaDataSize );
-                fr.readAsArrayBuffer( blob.getSource() );
-            },
-            _parse: function( buffer, noParse ) {
-                if ( buffer.byteLength < 6 ) {
-                    return;
-                }
-                var dataview = new DataView( buffer ),
-                    offset = 2,
-                    maxOffset = dataview.byteLength - 4,
-                    headLength = offset,
-                    ret = {},
-                    markerBytes, markerLength, parsers, i;
-                if ( dataview.getUint16( 0 ) === 0xffd8 ) {
-                    while ( offset < maxOffset ) {
-                        markerBytes = dataview.getUint16( offset );
-                        if ( markerBytes >= 0xffe0 && markerBytes <= 0xffef ||
-                                markerBytes === 0xfffe ) {
-                            markerLength = dataview.getUint16( offset + 2 ) + 2;
-                            if ( offset + markerLength > dataview.byteLength ) {
-                                break;
-                            }
-                            parsers = api.parsers[ markerBytes ];
-                            if ( !noParse && parsers ) {
-                                for ( i = 0; i < parsers.length; i += 1 ) {
-                                    parsers[ i ].call( api, dataview, offset,
-                                            markerLength, ret );
-                                }
-                            }
-                            offset += markerLength;
-                            headLength = offset;
-                        } else {
-                            break;
-                        }
-                    }
-                    if ( headLength > 6 ) {
-                        if ( buffer.slice ) {
-                            ret.imageHead = buffer.slice( 2, headLength );
-                        } else {
-                            ret.imageHead = new Uint8Array( buffer )
-                                    .subarray( 2, headLength );
-                        }
-                    }
-                }
-                return ret;
-            },
-            updateImageHead: function( buffer, head ) {
-                var data = this._parse( buffer, true ),
-                    buf1, buf2, bodyoffset;
-                bodyoffset = 2;
-                if ( data.imageHead ) {
-                    bodyoffset = 2 + data.imageHead.byteLength;
-                }
-                if ( buffer.slice ) {
-                    buf2 = buffer.slice( bodyoffset );
-                } else {
-                    buf2 = new Uint8Array( buffer ).subarray( bodyoffset );
-                }
-                buf1 = new Uint8Array( head.byteLength + 2 + buf2.byteLength );
-                buf1[ 0 ] = 0xFF;
-                buf1[ 1 ] = 0xD8;
-                buf1.set( new Uint8Array( head ), 2 );
-                buf1.set( new Uint8Array( buf2 ), head.byteLength + 2 );
-                return buf1.buffer;
-            }
-        };
-        Util.parseMeta = function() {
-            return api.parse.apply( api, arguments );
-        };
-        Util.updateImageHead = function() {
-            return api.updateImageHead.apply( api, arguments );
-        };
-        return api;
-    });
-    define('runtime/html5/imagemeta/exif',[
-        'base',
-        'runtime/html5/imagemeta'
-    ], function( Base, ImageMeta ) {
-        var EXIF = {};
-        EXIF.ExifMap = function() {
-            return this;
-        };
-        EXIF.ExifMap.prototype.map = {
-            'Orientation': 0x0112
-        };
-        EXIF.ExifMap.prototype.get = function( id ) {
-            return this[ id ] || this[ this.map[ id ] ];
-        };
-        EXIF.exifTagTypes = {
-            1: {
-                getValue: function( dataView, dataOffset ) {
-                    return dataView.getUint8( dataOffset );
-                },
-                size: 1
-            },
-            2: {
-                getValue: function( dataView, dataOffset ) {
-                    return String.fromCharCode( dataView.getUint8( dataOffset ) );
-                },
-                size: 1,
-                ascii: true
-            },
-            3: {
-                getValue: function( dataView, dataOffset, littleEndian ) {
-                    return dataView.getUint16( dataOffset, littleEndian );
-                },
-                size: 2
-            },
-            4: {
-                getValue: function( dataView, dataOffset, littleEndian ) {
-                    return dataView.getUint32( dataOffset, littleEndian );
-                },
-                size: 4
-            },
-            5: {
-                getValue: function( dataView, dataOffset, littleEndian ) {
-                    return dataView.getUint32( dataOffset, littleEndian ) /
-                        dataView.getUint32( dataOffset + 4, littleEndian );
-                },
-                size: 8
-            },
-            9: {
-                getValue: function( dataView, dataOffset, littleEndian ) {
-                    return dataView.getInt32( dataOffset, littleEndian );
-                },
-                size: 4
-            },
-            10: {
-                getValue: function( dataView, dataOffset, littleEndian ) {
-                    return dataView.getInt32( dataOffset, littleEndian ) /
-                        dataView.getInt32( dataOffset + 4, littleEndian );
-                },
-                size: 8
-            }
-        };
-        EXIF.exifTagTypes[ 7 ] = EXIF.exifTagTypes[ 1 ];
-        EXIF.getExifValue = function( dataView, tiffOffset, offset, type, length,
-                littleEndian ) {
-            var tagType = EXIF.exifTagTypes[ type ],
-                tagSize, dataOffset, values, i, str, c;
-            if ( !tagType ) {
-                Base.log('Invalid Exif data: Invalid tag type.');
-                return;
-            }
-            tagSize = tagType.size * length;
-            dataOffset = tagSize > 4 ? tiffOffset + dataView.getUint32( offset + 8,
-                    littleEndian ) : (offset + 8);
-            if ( dataOffset + tagSize > dataView.byteLength ) {
-                Base.log('Invalid Exif data: Invalid data offset.');
-                return;
-            }
-            if ( length === 1 ) {
-                return tagType.getValue( dataView, dataOffset, littleEndian );
-            }
-            values = [];
-            for ( i = 0; i < length; i += 1 ) {
-                values[ i ] = tagType.getValue( dataView,
-                        dataOffset + i * tagType.size, littleEndian );
-            }
-            if ( tagType.ascii ) {
-                str = '';
-                for ( i = 0; i < values.length; i += 1 ) {
-                    c = values[ i ];
-                    if ( c === '\u0000' ) {
-                        break;
-                    }
-                    str += c;
-                }
-                return str;
-            }
-            return values;
-        };
-        EXIF.parseExifTag = function( dataView, tiffOffset, offset, littleEndian,
-                data ) {
-            var tag = dataView.getUint16( offset, littleEndian );
-            data.exif[ tag ] = EXIF.getExifValue( dataView, tiffOffset, offset,
-                    dataView.getUint16( offset + 2, littleEndian ),
-                    dataView.getUint32( offset + 4, littleEndian ),
-                    littleEndian );
-        };
-        EXIF.parseExifTags = function( dataView, tiffOffset, dirOffset,
-                littleEndian, data ) {
-            var tagsNumber, dirEndOffset, i;
-            if ( dirOffset + 6 > dataView.byteLength ) {
-                Base.log('Invalid Exif data: Invalid directory offset.');
-                return;
-            }
-            tagsNumber = dataView.getUint16( dirOffset, littleEndian );
-            dirEndOffset = dirOffset + 2 + 12 * tagsNumber;
-            if ( dirEndOffset + 4 > dataView.byteLength ) {
-                Base.log('Invalid Exif data: Invalid directory size.');
-                return;
-            }
-            for ( i = 0; i < tagsNumber; i += 1 ) {
-                this.parseExifTag( dataView, tiffOffset,
-                        dirOffset + 2 + 12 * i,
-                        littleEndian, data );
-            }
-            return dataView.getUint32( dirEndOffset, littleEndian );
-        };
-        EXIF.parseExifData = function( dataView, offset, length, data ) {
-            var tiffOffset = offset + 10,
-                littleEndian, dirOffset;
-            if ( dataView.getUint32( offset + 4 ) !== 0x45786966 ) {
-                return;
-            }
-            if ( tiffOffset + 8 > dataView.byteLength ) {
-                Base.log('Invalid Exif data: Invalid segment size.');
-                return;
-            }
-            if ( dataView.getUint16( offset + 8 ) !== 0x0000 ) {
-                Base.log('Invalid Exif data: Missing byte alignment offset.');
-                return;
-            }
-            switch ( dataView.getUint16( tiffOffset ) ) {
-                case 0x4949:
-                    littleEndian = true;
-                    break;
-                case 0x4D4D:
-                    littleEndian = false;
-                    break;
-                default:
-                    Base.log('Invalid Exif data: Invalid byte alignment marker.');
-                    return;
-            }
-            if ( dataView.getUint16( tiffOffset + 2, littleEndian ) !== 0x002A ) {
-                Base.log('Invalid Exif data: Missing TIFF marker.');
-                return;
-            }
-            dirOffset = dataView.getUint32( tiffOffset + 4, littleEndian );
-            data.exif = new EXIF.ExifMap();
-            dirOffset = EXIF.parseExifTags( dataView, tiffOffset,
-                    tiffOffset + dirOffset, littleEndian, data );
-        };
-        ImageMeta.parsers[ 0xffe1 ].push( EXIF.parseExifData );
-        return EXIF;
-    });
-    define('runtime/html5/image',[
-        'base',
-        'runtime/html5/runtime',
-        'runtime/html5/util'
-    ], function( Base, Html5Runtime, Util ) {
-        var BLANK = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D';
-        return Html5Runtime.register( 'Image', {
-            modified: false,
-            init: function() {
-                var me = this,
-                    img = new Image();
-                img.onload = function() {
-                    me._info = {
-                        type: me.type,
-                        width: this.width,
-                        height: this.height
-                    };
-                    if ( !me._metas && 'image/jpeg' === me.type ) {
-                        Util.parseMeta( me._blob, function( error, ret ) {
-                            me._metas = ret;
-                            me.owner.trigger('load');
-                        });
-                    } else {
-                        me.owner.trigger('load');
-                    }
-                };
-                img.onerror = function() {
-                    me.owner.trigger('error');
-                };
-                me._img = img;
-            },
-            loadFromBlob: function( blob ) {
-                var me = this,
-                    img = me._img;
-                me._blob = blob;
-                me.type = blob.type;
-                img.src = Util.createObjectURL( blob.getSource() );
-                me.owner.once( 'load', function() {
-                    Util.revokeObjectURL( img.src );
-                });
-            },
-            resize: function( width, height ) {
-                var canvas = this._canvas ||
-                        (this._canvas = document.createElement('canvas'));
-                this._resize( this._img, canvas, width, height );
-                this._blob = null;
-                this.modified = true;
-                this.owner.trigger( 'complete', 'resize' );
-            },
-            crop: function( x, y, w, h, s ) {
-                var cvs = this._canvas ||
-                        (this._canvas = document.createElement('canvas')),
-                    opts = this.options,
-                    img = this._img,
-                    iw = img.naturalWidth,
-                    ih = img.naturalHeight,
-                    orientation = this.getOrientation();
-                s = s || 1;
-                cvs.width = w;
-                cvs.height = h;
-                opts.preserveHeaders || this._rotate2Orientaion( cvs, orientation );
-                this._renderImageToCanvas( cvs, img, -x, -y, iw * s, ih * s );
-                this._blob = null;
-                this.modified = true;
-                this.owner.trigger( 'complete', 'crop' );
-            },
-            getAsBlob: function( type ) {
-                var blob = this._blob,
-                    opts = this.options,
-                    canvas;
-                type = type || this.type;
-                if ( this.modified || this.type !== type ) {
-                    canvas = this._canvas;
-                    if ( type === 'image/jpeg' ) {
-                        blob = Util.canvasToDataUrl( canvas, type, opts.quality );
-                        if ( opts.preserveHeaders && this._metas &&
-                                this._metas.imageHead ) {
-                            blob = Util.dataURL2ArrayBuffer( blob );
-                            blob = Util.updateImageHead( blob,
-                                    this._metas.imageHead );
-                            blob = Util.arrayBufferToBlob( blob, type );
-                            return blob;
-                        }
-                    } else {
-                        blob = Util.canvasToDataUrl( canvas, type );
-                    }
-                    blob = Util.dataURL2Blob( blob );
-                }
-                return blob;
-            },
-            getAsDataUrl: function( type ) {
-                var opts = this.options;
-                type = type || this.type;
-                if ( type === 'image/jpeg' ) {
-                    return Util.canvasToDataUrl( this._canvas, type, opts.quality );
-                } else {
-                    return this._canvas.toDataURL( type );
-                }
-            },
-            getOrientation: function() {
-                return this._metas && this._metas.exif &&
-                        this._metas.exif.get('Orientation') || 1;
-            },
-            info: function( val ) {
-                if ( val ) {
-                    this._info = val;
-                    return this;
-                }
-                return this._info;
-            },
-            meta: function( val ) {
-                if ( val ) {
-                    this._meta = val;
-                    return this;
-                }
-                return this._meta;
-            },
-            destroy: function() {
-                var canvas = this._canvas;
-                this._img.onload = null;
-                if ( canvas ) {
-                    canvas.getContext('2d')
-                            .clearRect( 0, 0, canvas.width, canvas.height );
-                    canvas.width = canvas.height = 0;
-                    this._canvas = null;
-                }
-                this._img.src = BLANK;
-                this._img = this._blob = null;
-            },
-            _resize: function( img, cvs, width, height ) {
-                var opts = this.options,
-                    naturalWidth = img.width,
-                    naturalHeight = img.height,
-                    orientation = this.getOrientation(),
-                    scale, w, h, x, y;
-                if ( ~[ 5, 6, 7, 8 ].indexOf( orientation ) ) {
-                    width ^= height;
-                    height ^= width;
-                    width ^= height;
-                }
-                scale = Math[ opts.crop ? 'max' : 'min' ]( width / naturalWidth,
-                        height / naturalHeight );
-                opts.allowMagnify || (scale = Math.min( 1, scale ));
-                w = naturalWidth * scale;
-                h = naturalHeight * scale;
-                if ( opts.crop ) {
-                    cvs.width = width;
-                    cvs.height = height;
-                } else {
-                    cvs.width = w;
-                    cvs.height = h;
-                }
-                x = (cvs.width - w) / 2;
-                y = (cvs.height - h) / 2;
-                opts.preserveHeaders || this._rotate2Orientaion( cvs, orientation );
-                this._renderImageToCanvas( cvs, img, x, y, w, h );
-            },
-            _rotate2Orientaion: function( canvas, orientation ) {
-                var width = canvas.width,
-                    height = canvas.height,
-                    ctx = canvas.getContext('2d');
-                switch ( orientation ) {
-                    case 5:
-                    case 6:
-                    case 7:
-                    case 8:
-                        canvas.width = height;
-                        canvas.height = width;
-                        break;
-                }
-                switch ( orientation ) {
-                    case 2:
-                        ctx.translate( width, 0 );
-                        ctx.scale( -1, 1 );
-                        break;
-                    case 3:
-                        ctx.translate( width, height );
-                        ctx.rotate( Math.PI );
-                        break;
-                    case 4:
-                        ctx.translate( 0, height );
-                        ctx.scale( 1, -1 );
-                        break;
-                    case 5:
-                        ctx.rotate( 0.5 * Math.PI );
-                        ctx.scale( 1, -1 );
-                        break;
-                    case 6:
-                        ctx.rotate( 0.5 * Math.PI );
-                        ctx.translate( 0, -height );
-                        break;
-                    case 7:
-                        ctx.rotate( 0.5 * Math.PI );
-                        ctx.translate( width, -height );
-                        ctx.scale( -1, 1 );
-                        break;
-                    case 8:
-                        ctx.rotate( -0.5 * Math.PI );
-                        ctx.translate( -width, 0 );
-                        break;
-                }
-            },
-            _renderImageToCanvas: (function() {
-                if ( !Base.os.ios ) {
-                    return function( canvas ) {
-                        var args = Base.slice( arguments, 1 ),
-                            ctx = canvas.getContext('2d');
-                        ctx.drawImage.apply( ctx, args );
-                    };
-                }
-                function detectVerticalSquash( img, iw, ih ) {
-                    var canvas = document.createElement('canvas'),
-                        ctx = canvas.getContext('2d'),
-                        sy = 0,
-                        ey = ih,
-                        py = ih,
-                        data, alpha, ratio;
-                    canvas.width = 1;
-                    canvas.height = ih;
-                    ctx.drawImage( img, 0, 0 );
-                    data = ctx.getImageData( 0, 0, 1, ih ).data;
-                    while ( py > sy ) {
-                        alpha = data[ (py - 1) * 4 + 3 ];
-                        if ( alpha === 0 ) {
-                            ey = py;
-                        } else {
-                            sy = py;
-                        }
-                        py = (ey + sy) >> 1;
-                    }
-                    ratio = (py / ih);
-                    return (ratio === 0) ? 1 : ratio;
-                }
-                if ( Base.os.ios >= 7 ) {
-                    return function( canvas, img, x, y, w, h ) {
-                        var iw = img.naturalWidth,
-                            ih = img.naturalHeight,
-                            vertSquashRatio = detectVerticalSquash( img, iw, ih );
-                        return canvas.getContext('2d').drawImage( img, 0, 0,
-                                iw * vertSquashRatio, ih * vertSquashRatio,
-                                x, y, w, h );
-                    };
-                }
-                function detectSubsampling( img ) {
-                    var iw = img.naturalWidth,
-                        ih = img.naturalHeight,
-                        canvas, ctx;
-                    if ( iw * ih > 1024 * 1024 ) {
-                        canvas = document.createElement('canvas');
-                        canvas.width = canvas.height = 1;
-                        ctx = canvas.getContext('2d');
-                        ctx.drawImage( img, -iw + 1, 0 );
-                        return ctx.getImageData( 0, 0, 1, 1 ).data[ 3 ] === 0;
-                    } else {
-                        return false;
-                    }
-                }
-                return function( canvas, img, x, y, width, height ) {
-                    var iw = img.naturalWidth,
-                        ih = img.naturalHeight,
-                        ctx = canvas.getContext('2d'),
-                        subsampled = detectSubsampling( img ),
-                        doSquash = this.type === 'image/jpeg',
-                        d = 1024,
-                        sy = 0,
-                        dy = 0,
-                        tmpCanvas, tmpCtx, vertSquashRatio, dw, dh, sx, dx;
-                    if ( subsampled ) {
-                        iw /= 2;
-                        ih /= 2;
-                    }
-                    ctx.save();
-                    tmpCanvas = document.createElement('canvas');
-                    tmpCanvas.width = tmpCanvas.height = d;
-                    tmpCtx = tmpCanvas.getContext('2d');
-                    vertSquashRatio = doSquash ?
-                            detectVerticalSquash( img, iw, ih ) : 1;
-                    dw = Math.ceil( d * width / iw );
-                    dh = Math.ceil( d * height / ih / vertSquashRatio );
-                    while ( sy < ih ) {
-                        sx = 0;
-                        dx = 0;
-                        while ( sx < iw ) {
-                            tmpCtx.clearRect( 0, 0, d, d );
-                            tmpCtx.drawImage( img, -sx, -sy );
-                            ctx.drawImage( tmpCanvas, 0, 0, d, d,
-                                    x + dx, y + dy, dw, dh );
-                            sx += d;
-                            dx += dw;
-                        }
-                        sy += d;
-                        dy += dh;
-                    }
-                    ctx.restore();
-                    tmpCanvas = tmpCtx = null;
-                };
-            })()
-        });
-    });
-    define('runtime/html5/transport',[
-        'base',
-        'runtime/html5/runtime'
-    ], function( Base, Html5Runtime ) {
-        var noop = Base.noop,
-            $ = Base.$;
-        return Html5Runtime.register( 'Transport', {
-            init: function() {
-                this._status = 0;
-                this._response = null;
-            },
-            send: function() {
-                var owner = this.owner,
-                    opts = this.options,
-                    xhr = this._initAjax(),
-                    blob = owner._blob,
-                    server = opts.server,
-                    formData, binary, fr;
-                if ( opts.sendAsBinary ) {
-                    server += (/\?/.test( server ) ? '&' : '?') +
-                            $.param( owner._formData );
-                    binary = blob.getSource();
-                } else {
-                    formData = new FormData();
-                    $.each( owner._formData, function( k, v ) {
-                        formData.append( k, v );
-                    });
-                    formData.append( opts.fileVal, blob.getSource(),
-                            opts.filename || owner._formData.name || '' );
-                }
-                if ( opts.withCredentials && 'withCredentials' in xhr ) {
-                    xhr.open( opts.method, server, true );
-                    xhr.withCredentials = true;
-                } else {
-                    xhr.open( opts.method, server );
-                }
-                this._setRequestHeader( xhr, opts.headers );
-                if ( binary ) {
-                    xhr.overrideMimeType &&
-                            xhr.overrideMimeType('application/octet-stream');
-                    if ( Base.os.android ) {
-                        fr = new FileReader();
-                        fr.onload = function() {
-                            xhr.send( this.result );
-                            fr = fr.onload = null;
-                        };
-                        fr.readAsArrayBuffer( binary );
-                    } else {
-                        xhr.send( binary );
-                    }
-                } else {
-                    xhr.send( formData );
-                }
-            },
-            getResponse: function() {
-                return this._response;
-            },
-            getResponseAsJson: function() {
-                return this._parseJson( this._response );
-            },
-            getStatus: function() {
-                return this._status;
-            },
-            abort: function() {
-                var xhr = this._xhr;
-                if ( xhr ) {
-                    xhr.upload.onprogress = noop;
-                    xhr.onreadystatechange = noop;
-                    xhr.abort();
-                    this._xhr = xhr = null;
-                }
-            },
-            destroy: function() {
-                this.abort();
-            },
-            _initAjax: function() {
-                var me = this,
-                    xhr = new XMLHttpRequest(),
-                    opts = this.options;
-                if ( opts.withCredentials && !('withCredentials' in xhr) &&
-                        typeof XDomainRequest !== 'undefined' ) {
-                    xhr = new XDomainRequest();
-                }
-                xhr.upload.onprogress = function( e ) {
-                    var percentage = 0;
-                    if ( e.lengthComputable ) {
-                        percentage = e.loaded / e.total;
-                    }
-                    return me.trigger( 'progress', percentage );
-                };
-                xhr.onreadystatechange = function() {
-                    if ( xhr.readyState !== 4 ) {
-                        return;
-                    }
-                    xhr.upload.onprogress = noop;
-                    xhr.onreadystatechange = noop;
-                    me._xhr = null;
-                    me._status = xhr.status;
-                    if ( xhr.status >= 200 && xhr.status < 300 ) {
-                        me._response = xhr.responseText;
-                        return me.trigger('load');
-                    } else if ( xhr.status >= 500 && xhr.status < 600 ) {
-                        me._response = xhr.responseText;
-                        return me.trigger( 'error', 'server' );
-                    }
-                    return me.trigger( 'error', me._status ? 'http' : 'abort' );
-                };
-                me._xhr = xhr;
-                return xhr;
-            },
-            _setRequestHeader: function( xhr, headers ) {
-                $.each( headers, function( key, val ) {
-                    xhr.setRequestHeader( key, val );
-                });
-            },
-            _parseJson: function( str ) {
-                var json;
-                try {
-                    json = JSON.parse( str );
-                } catch ( ex ) {
-                    json = {};
-                }
-                return json;
-            }
-        });
-    });
-    define('preset/html5only',[
-        'base',
-        'widgets/filednd',
-        'widgets/filepaste',
-        'widgets/filepicker',
-        'widgets/image',
-        'widgets/queue',
-        'widgets/runtime',
-        'widgets/upload',
-        'widgets/validator',
-        'runtime/html5/blob',
-        'runtime/html5/dnd',
-        'runtime/html5/filepaste',
-        'runtime/html5/filepicker',
-        'runtime/html5/imagemeta/exif',
-        'runtime/html5/image',
-        'runtime/html5/transport'
-    ], function( Base ) {
-        return Base;
-    });
-    define('webuploader',[
-        'preset/html5only'
-    ], function( preset ) {
-        return preset;
-    });
-    return require('webuploader');
-});
-
+/* Zepto 1.2.0 - zepto event deferred callbacks - zeptojs.com/license */
+!function(t,e){"function"==typeof define&&define.amd?define(function(){return e(t)}):e(t)}(window,function(t){var e=function(){function $(t){return null==t?String(t):C[O.call(t)]||"object"}function j(t){return"function"==$(t)}function D(t){return null!=t&&t==t.window}function Z(t){return null!=t&&t.nodeType==t.DOCUMENT_NODE}function M(t){return"object"==$(t)}function F(t){return M(t)&&!D(t)&&Object.getPrototypeOf(t)==Object.prototype}function z(t){var e=!!t&&"length"in t&&t.length,n=i.type(t);return"function"!=n&&!D(t)&&("array"==n||0===e||"number"==typeof e&&e>0&&e-1 in t)}function V(t){return u.call(t,function(t){return null!=t})}function W(t){return t.length>0?i.fn.concat.apply([],t):t}function _(t){return t.replace(/::/g,"/").replace(/([A-Z]+)([A-Z][a-z])/g,"$1_$2").replace(/([a-z\d])([A-Z])/g,"$1_$2").replace(/_/g,"-").toLowerCase()}function q(t){return t in l?l[t]:l[t]=new RegExp("(^|\\s)"+t+"(\\s|$)")}function B(t,e){return"number"!=typeof e||h[_(t)]?e:e+"px"}function I(t){var e,n;return c[t]||(e=a.createElement(t),a.body.appendChild(e),n=getComputedStyle(e,"").getPropertyValue("display"),e.parentNode.removeChild(e),"none"==n&&(n="block"),c[t]=n),c[t]}function R(t){return"children"in t?f.call(t.children):i.map(t.childNodes,function(t){return 1==t.nodeType?t:void 0})}function H(t,e){var n,i=t?t.length:0;for(n=0;i>n;n++)this[n]=t[n];this.length=i,this.selector=e||""}function X(t,i,r){for(n in i)r&&(F(i[n])||L(i[n]))?(F(i[n])&&!F(t[n])&&(t[n]={}),L(i[n])&&!L(t[n])&&(t[n]=[]),X(t[n],i[n],r)):i[n]!==e&&(t[n]=i[n])}function Y(t,e){return null==e?i(t):i(t).filter(e)}function J(t,e,n,i){return j(e)?e.call(t,n,i):e}function U(t,e,n){null==n?t.removeAttribute(e):t.setAttribute(e,n)}function G(t,n){var i=t.className||"",r=i&&i.baseVal!==e;return n===e?r?i.baseVal:i:void(r?i.baseVal=n:t.className=n)}function K(t){try{return t?"true"==t||("false"==t?!1:"null"==t?null:+t+""==t?+t:/^[\[\{]/.test(t)?i.parseJSON(t):t):t}catch(e){return t}}function Q(t,e){e(t);for(var n=0,i=t.childNodes.length;i>n;n++)Q(t.childNodes[n],e)}var e,n,i,r,A,P,o=[],s=o.concat,u=o.filter,f=o.slice,a=t.document,c={},l={},h={"column-count":1,columns:1,"font-weight":1,"line-height":1,opacity:1,"z-index":1,zoom:1},p=/^\s*<(\w+|!)[^>]*>/,d=/^<(\w+)\s*\/?>(?:<\/\1>|)$/,m=/<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,g=/^(?:body|html)$/i,v=/([A-Z])/g,y=["val","css","html","text","data","width","height","offset"],b=["after","prepend","before","append"],E=a.createElement("table"),w=a.createElement("tr"),x={tr:a.createElement("tbody"),tbody:E,thead:E,tfoot:E,td:w,th:w,"*":a.createElement("div")},N=/^[\w-]*$/,C={},O=C.toString,S={},T=a.createElement("div"),k={tabindex:"tabIndex",readonly:"readOnly","for":"htmlFor","class":"className",maxlength:"maxLength",cellspacing:"cellSpacing",cellpadding:"cellPadding",rowspan:"rowSpan",colspan:"colSpan",usemap:"useMap",frameborder:"frameBorder",contenteditable:"contentEditable"},L=Array.isArray||function(t){return t instanceof Array};return S.matches=function(t,e){if(!e||!t||1!==t.nodeType)return!1;var n=t.matches||t.webkitMatchesSelector||t.mozMatchesSelector||t.oMatchesSelector||t.matchesSelector;if(n)return n.call(t,e);var i,r=t.parentNode,o=!r;return o&&(r=T).appendChild(t),i=~S.qsa(r,e).indexOf(t),o&&T.removeChild(t),i},A=function(t){return t.replace(/-+(.)?/g,function(t,e){return e?e.toUpperCase():""})},P=function(t){return u.call(t,function(e,n){return t.indexOf(e)==n})},S.fragment=function(t,n,r){var o,s,u;return d.test(t)&&(o=i(a.createElement(RegExp.$1))),o||(t.replace&&(t=t.replace(m,"<$1></$2>")),n===e&&(n=p.test(t)&&RegExp.$1),n in x||(n="*"),u=x[n],u.innerHTML=""+t,o=i.each(f.call(u.childNodes),function(){u.removeChild(this)})),F(r)&&(s=i(o),i.each(r,function(t,e){y.indexOf(t)>-1?s[t](e):s.attr(t,e)})),o},S.Z=function(t,e){return new H(t,e)},S.isZ=function(t){return t instanceof S.Z},S.init=function(t,n){var r;if(!t)return S.Z();if("string"==typeof t)if(t=t.trim(),"<"==t[0]&&p.test(t))r=S.fragment(t,RegExp.$1,n),t=null;else{if(n!==e)return i(n).find(t);r=S.qsa(a,t)}else{if(j(t))return i(a).ready(t);if(S.isZ(t))return t;if(L(t))r=V(t);else if(M(t))r=[t],t=null;else if(p.test(t))r=S.fragment(t.trim(),RegExp.$1,n),t=null;else{if(n!==e)return i(n).find(t);r=S.qsa(a,t)}}return S.Z(r,t)},i=function(t,e){return S.init(t,e)},i.extend=function(t){var e,n=f.call(arguments,1);return"boolean"==typeof t&&(e=t,t=n.shift()),n.forEach(function(n){X(t,n,e)}),t},S.qsa=function(t,e){var n,i="#"==e[0],r=!i&&"."==e[0],o=i||r?e.slice(1):e,s=N.test(o);return t.getElementById&&s&&i?(n=t.getElementById(o))?[n]:[]:1!==t.nodeType&&9!==t.nodeType&&11!==t.nodeType?[]:f.call(s&&!i&&t.getElementsByClassName?r?t.getElementsByClassName(o):t.getElementsByTagName(e):t.querySelectorAll(e))},i.contains=a.documentElement.contains?function(t,e){return t!==e&&t.contains(e)}:function(t,e){for(;e&&(e=e.parentNode);)if(e===t)return!0;return!1},i.type=$,i.isFunction=j,i.isWindow=D,i.isArray=L,i.isPlainObject=F,i.isEmptyObject=function(t){var e;for(e in t)return!1;return!0},i.isNumeric=function(t){var e=Number(t),n=typeof t;return null!=t&&"boolean"!=n&&("string"!=n||t.length)&&!isNaN(e)&&isFinite(e)||!1},i.inArray=function(t,e,n){return o.indexOf.call(e,t,n)},i.camelCase=A,i.trim=function(t){return null==t?"":String.prototype.trim.call(t)},i.uuid=0,i.support={},i.expr={},i.noop=function(){},i.map=function(t,e){var n,r,o,i=[];if(z(t))for(r=0;r<t.length;r++)n=e(t[r],r),null!=n&&i.push(n);else for(o in t)n=e(t[o],o),null!=n&&i.push(n);return W(i)},i.each=function(t,e){var n,i;if(z(t)){for(n=0;n<t.length;n++)if(e.call(t[n],n,t[n])===!1)return t}else for(i in t)if(e.call(t[i],i,t[i])===!1)return t;return t},i.grep=function(t,e){return u.call(t,e)},t.JSON&&(i.parseJSON=JSON.parse),i.each("Boolean Number String Function Array Date RegExp Object Error".split(" "),function(t,e){C["[object "+e+"]"]=e.toLowerCase()}),i.fn={constructor:S.Z,length:0,forEach:o.forEach,reduce:o.reduce,push:o.push,sort:o.sort,splice:o.splice,indexOf:o.indexOf,concat:function(){var t,e,n=[];for(t=0;t<arguments.length;t++)e=arguments[t],n[t]=S.isZ(e)?e.toArray():e;return s.apply(S.isZ(this)?this.toArray():this,n)},map:function(t){return i(i.map(this,function(e,n){return t.call(e,n,e)}))},slice:function(){return i(f.apply(this,arguments))},ready:function(e){if("complete"===a.readyState||"loading"!==a.readyState&&!a.documentElement.doScroll)setTimeout(function(){e(i)},0);else{var n=function(){a.removeEventListener("DOMContentLoaded",n,!1),t.removeEventListener("load",n,!1),e(i)};a.addEventListener("DOMContentLoaded",n,!1),t.addEventListener("load",n,!1)}return this},get:function(t){return t===e?f.call(this):this[t>=0?t:t+this.length]},toArray:function(){return this.get()},size:function(){return this.length},remove:function(){return this.each(function(){null!=this.parentNode&&this.parentNode.removeChild(this)})},each:function(t){return o.every.call(this,function(e,n){return t.call(e,n,e)!==!1}),this},filter:function(t){return j(t)?this.not(this.not(t)):i(u.call(this,function(e){return S.matches(e,t)}))},add:function(t,e){return i(P(this.concat(i(t,e))))},is:function(t){return"string"==typeof t?this.length>0&&S.matches(this[0],t):t&&this.selector==t.selector},not:function(t){var n=[];if(j(t)&&t.call!==e)this.each(function(e){t.call(this,e)||n.push(this)});else{var r="string"==typeof t?this.filter(t):z(t)&&j(t.item)?f.call(t):i(t);this.forEach(function(t){r.indexOf(t)<0&&n.push(t)})}return i(n)},has:function(t){return this.filter(function(){return M(t)?i.contains(this,t):i(this).find(t).size()})},eq:function(t){return-1===t?this.slice(t):this.slice(t,+t+1)},first:function(){var t=this[0];return t&&!M(t)?t:i(t)},last:function(){var t=this[this.length-1];return t&&!M(t)?t:i(t)},find:function(t){var e,n=this;return e=t?"object"==typeof t?i(t).filter(function(){var t=this;return o.some.call(n,function(e){return i.contains(e,t)})}):1==this.length?i(S.qsa(this[0],t)):this.map(function(){return S.qsa(this,t)}):i()},closest:function(t,e){var n=[],r="object"==typeof t&&i(t);return this.each(function(i,o){for(;o&&!(r?r.indexOf(o)>=0:S.matches(o,t));)o=o!==e&&!Z(o)&&o.parentNode;o&&n.indexOf(o)<0&&n.push(o)}),i(n)},parents:function(t){for(var e=[],n=this;n.length>0;)n=i.map(n,function(t){return(t=t.parentNode)&&!Z(t)&&e.indexOf(t)<0?(e.push(t),t):void 0});return Y(e,t)},parent:function(t){return Y(P(this.pluck("parentNode")),t)},children:function(t){return Y(this.map(function(){return R(this)}),t)},contents:function(){return this.map(function(){return this.contentDocument||f.call(this.childNodes)})},siblings:function(t){return Y(this.map(function(t,e){return u.call(R(e.parentNode),function(t){return t!==e})}),t)},empty:function(){return this.each(function(){this.innerHTML=""})},pluck:function(t){return i.map(this,function(e){return e[t]})},show:function(){return this.each(function(){"none"==this.style.display&&(this.style.display=""),"none"==getComputedStyle(this,"").getPropertyValue("display")&&(this.style.display=I(this.nodeName))})},replaceWith:function(t){return this.before(t).remove()},wrap:function(t){var e=j(t);if(this[0]&&!e)var n=i(t).get(0),r=n.parentNode||this.length>1;return this.each(function(o){i(this).wrapAll(e?t.call(this,o):r?n.cloneNode(!0):n)})},wrapAll:function(t){if(this[0]){i(this[0]).before(t=i(t));for(var e;(e=t.children()).length;)t=e.first();i(t).append(this)}return this},wrapInner:function(t){var e=j(t);return this.each(function(n){var r=i(this),o=r.contents(),s=e?t.call(this,n):t;o.length?o.wrapAll(s):r.append(s)})},unwrap:function(){return this.parent().each(function(){i(this).replaceWith(i(this).children())}),this},clone:function(){return this.map(function(){return this.cloneNode(!0)})},hide:function(){return this.css("display","none")},toggle:function(t){return this.each(function(){var n=i(this);(t===e?"none"==n.css("display"):t)?n.show():n.hide()})},prev:function(t){return i(this.pluck("previousElementSibling")).filter(t||"*")},next:function(t){return i(this.pluck("nextElementSibling")).filter(t||"*")},html:function(t){return 0 in arguments?this.each(function(e){var n=this.innerHTML;i(this).empty().append(J(this,t,e,n))}):0 in this?this[0].innerHTML:null},text:function(t){return 0 in arguments?this.each(function(e){var n=J(this,t,e,this.textContent);this.textContent=null==n?"":""+n}):0 in this?this.pluck("textContent").join(""):null},attr:function(t,i){var r;return"string"!=typeof t||1 in arguments?this.each(function(e){if(1===this.nodeType)if(M(t))for(n in t)U(this,n,t[n]);else U(this,t,J(this,i,e,this.getAttribute(t)))}):0 in this&&1==this[0].nodeType&&null!=(r=this[0].getAttribute(t))?r:e},removeAttr:function(t){return this.each(function(){1===this.nodeType&&t.split(" ").forEach(function(t){U(this,t)},this)})},prop:function(t,e){return t=k[t]||t,"string"!=typeof t||1 in arguments?this.each(function(i){if(M(t))for(n in t)this[k[n]||n]=t[n];else this[t]=J(this,e,i,this[t])}):this[0]&&this[0][t]},removeProp:function(t){return t=k[t]||t,this.each(function(){delete this[t]})},data:function(t,n){var i="data-"+t.replace(v,"-$1").toLowerCase(),r=1 in arguments?this.attr(i,n):this.attr(i);return null!==r?K(r):e},val:function(t){return 0 in arguments?(null==t&&(t=""),this.each(function(e){this.value=J(this,t,e,this.value)})):this[0]&&(this[0].multiple?i(this[0]).find("option").filter(function(){return this.selected}).pluck("value"):this[0].value)},offset:function(e){if(e)return this.each(function(t){var n=i(this),r=J(this,e,t,n.offset()),o=n.offsetParent().offset(),s={top:r.top-o.top,left:r.left-o.left};"static"==n.css("position")&&(s.position="relative"),n.css(s)});if(!this.length)return null;if(a.documentElement!==this[0]&&!i.contains(a.documentElement,this[0]))return{top:0,left:0};var n=this[0].getBoundingClientRect();return{left:n.left+t.pageXOffset,top:n.top+t.pageYOffset,width:Math.round(n.width),height:Math.round(n.height)}},css:function(t,e){if(arguments.length<2){var r=this[0];if("string"==typeof t){if(!r)return;return r.style[A(t)]||getComputedStyle(r,"").getPropertyValue(t)}if(L(t)){if(!r)return;var o={},s=getComputedStyle(r,"");return i.each(t,function(t,e){o[e]=r.style[A(e)]||s.getPropertyValue(e)}),o}}var u="";if("string"==$(t))e||0===e?u=_(t)+":"+B(t,e):this.each(function(){this.style.removeProperty(_(t))});else for(n in t)t[n]||0===t[n]?u+=_(n)+":"+B(n,t[n])+";":this.each(function(){this.style.removeProperty(_(n))});return this.each(function(){this.style.cssText+=";"+u})},index:function(t){return t?this.indexOf(i(t)[0]):this.parent().children().indexOf(this[0])},hasClass:function(t){return t?o.some.call(this,function(t){return this.test(G(t))},q(t)):!1},addClass:function(t){return t?this.each(function(e){if("className"in this){r=[];var n=G(this),o=J(this,t,e,n);o.split(/\s+/g).forEach(function(t){i(this).hasClass(t)||r.push(t)},this),r.length&&G(this,n+(n?" ":"")+r.join(" "))}}):this},removeClass:function(t){return this.each(function(n){if("className"in this){if(t===e)return G(this,"");r=G(this),J(this,t,n,r).split(/\s+/g).forEach(function(t){r=r.replace(q(t)," ")}),G(this,r.trim())}})},toggleClass:function(t,n){return t?this.each(function(r){var o=i(this),s=J(this,t,r,G(this));s.split(/\s+/g).forEach(function(t){(n===e?!o.hasClass(t):n)?o.addClass(t):o.removeClass(t)})}):this},scrollTop:function(t){if(this.length){var n="scrollTop"in this[0];return t===e?n?this[0].scrollTop:this[0].pageYOffset:this.each(n?function(){this.scrollTop=t}:function(){this.scrollTo(this.scrollX,t)})}},scrollLeft:function(t){if(this.length){var n="scrollLeft"in this[0];return t===e?n?this[0].scrollLeft:this[0].pageXOffset:this.each(n?function(){this.scrollLeft=t}:function(){this.scrollTo(t,this.scrollY)})}},position:function(){if(this.length){var t=this[0],e=this.offsetParent(),n=this.offset(),r=g.test(e[0].nodeName)?{top:0,left:0}:e.offset();return n.top-=parseFloat(i(t).css("margin-top"))||0,n.left-=parseFloat(i(t).css("margin-left"))||0,r.top+=parseFloat(i(e[0]).css("border-top-width"))||0,r.left+=parseFloat(i(e[0]).css("border-left-width"))||0,{top:n.top-r.top,left:n.left-r.left}}},offsetParent:function(){return this.map(function(){for(var t=this.offsetParent||a.body;t&&!g.test(t.nodeName)&&"static"==i(t).css("position");)t=t.offsetParent;return t})}},i.fn.detach=i.fn.remove,["width","height"].forEach(function(t){var n=t.replace(/./,function(t){return t[0].toUpperCase()});i.fn[t]=function(r){var o,s=this[0];return r===e?D(s)?s["inner"+n]:Z(s)?s.documentElement["scroll"+n]:(o=this.offset())&&o[t]:this.each(function(e){s=i(this),s.css(t,J(this,r,e,s[t]()))})}}),b.forEach(function(n,r){var o=r%2;i.fn[n]=function(){var n,u,s=i.map(arguments,function(t){var r=[];return n=$(t),"array"==n?(t.forEach(function(t){return t.nodeType!==e?r.push(t):i.zepto.isZ(t)?r=r.concat(t.get()):void(r=r.concat(S.fragment(t)))}),r):"object"==n||null==t?t:S.fragment(t)}),f=this.length>1;return s.length<1?this:this.each(function(e,n){u=o?n:n.parentNode,n=0==r?n.nextSibling:1==r?n.firstChild:2==r?n:null;var c=i.contains(a.documentElement,u);s.forEach(function(e){if(f)e=e.cloneNode(!0);else if(!u)return i(e).remove();u.insertBefore(e,n),c&&Q(e,function(e){if(!(null==e.nodeName||"SCRIPT"!==e.nodeName.toUpperCase()||e.type&&"text/javascript"!==e.type||e.src)){var n=e.ownerDocument?e.ownerDocument.defaultView:t;n.eval.call(n,e.innerHTML)}})})})},i.fn[o?n+"To":"insert"+(r?"Before":"After")]=function(t){return i(t)[n](this),this}}),S.Z.prototype=H.prototype=i.fn,S.uniq=P,S.deserializeValue=K,i.zepto=S,i}();return t.Zepto=e,void 0===t.$&&(t.$=e),function(e){function h(t){return t._zid||(t._zid=n++)}function p(t,e,n,i){if(e=d(e),e.ns)var r=m(e.ns);return(u[h(t)]||[]).filter(function(t){return t&&(!e.e||t.e==e.e)&&(!e.ns||r.test(t.ns))&&(!n||h(t.fn)===h(n))&&(!i||t.sel==i)})}function d(t){var e=(""+t).split(".");return{e:e[0],ns:e.slice(1).sort().join(" ")}}function m(t){return new RegExp("(?:^| )"+t.replace(" "," .* ?")+"(?: |$)")}function g(t,e){return t.del&&!a&&t.e in c||!!e}function v(t){return l[t]||a&&c[t]||t}function y(t,n,r,o,s,f,a){var c=h(t),p=u[c]||(u[c]=[]);n.split(/\s/).forEach(function(n){if("ready"==n)return e(document).ready(r);var u=d(n);u.fn=r,u.sel=s,u.e in l&&(r=function(t){var n=t.relatedTarget;return!n||n!==this&&!e.contains(this,n)?u.fn.apply(this,arguments):void 0}),u.del=f;var c=f||r;u.proxy=function(e){if(e=C(e),!e.isImmediatePropagationStopped()){e.data=o;var n=c.apply(t,e._args==i?[e]:[e].concat(e._args));return n===!1&&(e.preventDefault(),e.stopPropagation()),n}},u.i=p.length,p.push(u),"addEventListener"in t&&t.addEventListener(v(u.e),u.proxy,g(u,a))})}function b(t,e,n,i,r){var o=h(t);(e||"").split(/\s/).forEach(function(e){p(t,e,n,i).forEach(function(e){delete u[o][e.i],"removeEventListener"in t&&t.removeEventListener(v(e.e),e.proxy,g(e,r))})})}function C(t,n){if(n||!t.isDefaultPrevented){n||(n=t),e.each(N,function(e,i){var r=n[e];t[e]=function(){return this[i]=E,r&&r.apply(n,arguments)},t[i]=w});try{t.timeStamp||(t.timeStamp=Date.now())}catch(r){}(n.defaultPrevented!==i?n.defaultPrevented:"returnValue"in n?n.returnValue===!1:n.getPreventDefault&&n.getPreventDefault())&&(t.isDefaultPrevented=E)}return t}function O(t){var e,n={originalEvent:t};for(e in t)x.test(e)||t[e]===i||(n[e]=t[e]);return C(n,t)}var i,n=1,r=Array.prototype.slice,o=e.isFunction,s=function(t){return"string"==typeof t},u={},f={},a="onfocusin"in t,c={focus:"focusin",blur:"focusout"},l={mouseenter:"mouseover",mouseleave:"mouseout"};f.click=f.mousedown=f.mouseup=f.mousemove="MouseEvents",e.event={add:y,remove:b},e.proxy=function(t,n){var i=2 in arguments&&r.call(arguments,2);if(o(t)){var u=function(){return t.apply(n,i?i.concat(r.call(arguments)):arguments)};return u._zid=h(t),u}if(s(n))return i?(i.unshift(t[n],t),e.proxy.apply(null,i)):e.proxy(t[n],t);throw new TypeError("expected function")},e.fn.bind=function(t,e,n){return this.on(t,e,n)},e.fn.unbind=function(t,e){return this.off(t,e)},e.fn.one=function(t,e,n,i){return this.on(t,e,n,i,1)};var E=function(){return!0},w=function(){return!1},x=/^([A-Z]|returnValue$|layer[XY]$|webkitMovement[XY]$)/,N={preventDefault:"isDefaultPrevented",stopImmediatePropagation:"isImmediatePropagationStopped",stopPropagation:"isPropagationStopped"};e.fn.delegate=function(t,e,n){return this.on(e,t,n)},e.fn.undelegate=function(t,e,n){return this.off(e,t,n)},e.fn.live=function(t,n){return e(document.body).delegate(this.selector,t,n),this},e.fn.die=function(t,n){return e(document.body).undelegate(this.selector,t,n),this},e.fn.on=function(t,n,u,f,a){var c,l,h=this;return t&&!s(t)?(e.each(t,function(t,e){h.on(t,n,u,e,a)}),h):(s(n)||o(f)||f===!1||(f=u,u=n,n=i),(f===i||u===!1)&&(f=u,u=i),f===!1&&(f=w),h.each(function(i,o){a&&(c=function(t){return b(o,t.type,f),f.apply(this,arguments)}),n&&(l=function(t){var i,s=e(t.target).closest(n,o).get(0);return s&&s!==o?(i=e.extend(O(t),{currentTarget:s,liveFired:o}),(c||f).apply(s,[i].concat(r.call(arguments,1)))):void 0}),y(o,t,f,u,n,l||c)}))},e.fn.off=function(t,n,r){var u=this;return t&&!s(t)?(e.each(t,function(t,e){u.off(t,n,e)}),u):(s(n)||o(r)||r===!1||(r=n,n=i),r===!1&&(r=w),u.each(function(){b(this,t,r,n)}))},e.fn.trigger=function(t,n){return t=s(t)||e.isPlainObject(t)?e.Event(t):C(t),t._args=n,this.each(function(){t.type in c&&"function"==typeof this[t.type]?this[t.type]():"dispatchEvent"in this?this.dispatchEvent(t):e(this).triggerHandler(t,n)})},e.fn.triggerHandler=function(t,n){var i,r;return this.each(function(o,u){i=O(s(t)?e.Event(t):t),i._args=n,i.target=u,e.each(p(u,t.type||t),function(t,e){return r=e.proxy(i),i.isImmediatePropagationStopped()?!1:void 0})}),r},"focusin focusout focus blur load resize scroll unload click dblclick mousedown mouseup mousemove mouseover mouseout mouseenter mouseleave change select keydown keypress keyup error".split(" ").forEach(function(t){e.fn[t]=function(e){return 0 in arguments?this.bind(t,e):this.trigger(t)}}),e.Event=function(t,e){s(t)||(e=t,t=e.type);var n=document.createEvent(f[t]||"Events"),i=!0;if(e)for(var r in e)"bubbles"==r?i=!!e[r]:n[r]=e[r];return n.initEvent(t,i,!0),C(n)}}(e),function(t){function n(e){var i=[["resolve","done",t.Callbacks({once:1,memory:1}),"resolved"],["reject","fail",t.Callbacks({once:1,memory:1}),"rejected"],["notify","progress",t.Callbacks({memory:1})]],r="pending",o={state:function(){return r},always:function(){return s.done(arguments).fail(arguments),this},then:function(){var e=arguments;return n(function(n){t.each(i,function(i,r){var u=t.isFunction(e[i])&&e[i];s[r[1]](function(){var e=u&&u.apply(this,arguments);if(e&&t.isFunction(e.promise))e.promise().done(n.resolve).fail(n.reject).progress(n.notify);else{var i=this===o?n.promise():this,s=u?[e]:arguments;n[r[0]+"With"](i,s)}})}),e=null}).promise()},promise:function(e){return null!=e?t.extend(e,o):o}},s={};return t.each(i,function(t,e){var n=e[2],u=e[3];o[e[1]]=n.add,u&&n.add(function(){r=u},i[1^t][2].disable,i[2][2].lock),s[e[0]]=function(){return s[e[0]+"With"](this===s?o:this,arguments),this},s[e[0]+"With"]=n.fireWith}),o.promise(s),e&&e.call(s,s),s}var e=Array.prototype.slice;t.when=function(i){var a,c,l,r=e.call(arguments),o=r.length,s=0,u=1!==o||i&&t.isFunction(i.promise)?o:0,f=1===u?i:n(),h=function(t,n,i){return function(r){n[t]=this,i[t]=arguments.length>1?e.call(arguments):r,i===a?f.notifyWith(n,i):--u||f.resolveWith(n,i)}};if(o>1)for(a=new Array(o),c=new Array(o),l=new Array(o);o>s;++s)r[s]&&t.isFunction(r[s].promise)?r[s].promise().done(h(s,l,r)).fail(f.reject).progress(h(s,c,a)):--u;return u||f.resolveWith(l,r),f.promise()},t.Deferred=n}(e),function(t){t.Callbacks=function(e){e=t.extend({},e);var n,i,r,o,s,u,f=[],a=!e.once&&[],c=function(t){for(n=e.memory&&t,i=!0,u=o||0,o=0,s=f.length,r=!0;f&&s>u;++u)if(f[u].apply(t[0],t[1])===!1&&e.stopOnFalse){n=!1;break}r=!1,f&&(a?a.length&&c(a.shift()):n?f.length=0:l.disable())},l={add:function(){if(f){var i=f.length,u=function(n){t.each(n,function(t,n){"function"==typeof n?e.unique&&l.has(n)||f.push(n):n&&n.length&&"string"!=typeof n&&u(n)})};u(arguments),r?s=f.length:n&&(o=i,c(n))}return this},remove:function(){return f&&t.each(arguments,function(e,n){for(var i;(i=t.inArray(n,f,i))>-1;)f.splice(i,1),r&&(s>=i&&--s,u>=i&&--u)}),this},has:function(e){return!(!f||!(e?t.inArray(e,f)>-1:f.length))},empty:function(){return s=f.length=0,this},disable:function(){return f=a=n=void 0,this},disabled:function(){return!f},lock:function(){return a=void 0,n||l.disable(),this},locked:function(){return!a},fireWith:function(t,e){return!f||i&&!a||(e=e||[],e=[t,e.slice?e.slice():e],r?a.push(e):c(e)),this},fire:function(){return l.fireWith(this,arguments)},fired:function(){return!!i}};return l}}(e),e});
+/* WebUploader 0.1.8-alpha */!function(a,b){var c,d={},e=function(a,b){var c,d,e;if("string"==typeof a)return h(a);for(c=[],d=a.length,e=0;d>e;e++)c.push(h(a[e]));return b.apply(null,c)},f=function(a,b,c){2===arguments.length&&(c=b,b=null),e(b||[],function(){g(a,c,arguments)})},g=function(a,b,c){var f,g={exports:b};"function"==typeof b&&(c.length||(c=[e,g.exports,g]),f=b.apply(null,c),void 0!==f&&(g.exports=f)),d[a]=g.exports},h=function(b){var c=d[b]||a[b];if(!c)throw new Error("`"+b+"` is undefined");return c},i=function(a){var b,c,e,f,g,h;h=function(a){return a&&a.charAt(0).toUpperCase()+a.substr(1)};for(b in d)if(c=a,d.hasOwnProperty(b)){for(e=b.split("/"),g=h(e.pop());f=h(e.shift());)c[f]=c[f]||{},c=c[f];c[g]=d[b]}return a},j=function(c){return a.__dollar=c,i(b(a,f,e))};"object"==typeof module&&"object"==typeof module.exports?module.exports=j():"function"==typeof define&&define.amd?define(["jquery"],j):(c=a.WebUploader,a.WebUploader=j(),a.WebUploader.noConflict=function(){a.WebUploader=c})}(window,function(a,b,c){return b("dollar-third",[],function(){var b=a.require,c=a.__dollar||a.jQuery||a.Zepto||b("jquery")||b("zepto");if(!c)throw new Error("jQuery or Zepto not found!");return c}),b("dollar",["dollar-third"],function(a){return a}),b("promise-third",["dollar"],function(a){return{Deferred:a.Deferred,when:a.when,isPromise:function(a){return a&&"function"==typeof a.then}}}),b("promise",["promise-third"],function(a){return a}),b("base",["dollar","promise"],function(b,c){function d(a){return function(){return h.apply(a,arguments)}}function e(a,b){return function(){return a.apply(b,arguments)}}function f(a){var b;return Object.create?Object.create(a):(b=function(){},b.prototype=a,new b)}var g=function(){},h=Function.call;return{version:"0.1.8-alpha",$:b,Deferred:c.Deferred,isPromise:c.isPromise,when:c.when,browser:function(a){var b={},c=a.match(/WebKit\/([\d.]+)/),d=a.match(/Chrome\/([\d.]+)/)||a.match(/CriOS\/([\d.]+)/),e=a.match(/MSIE\s([\d\.]+)/)||a.match(/(?:trident)(?:.*rv:([\w.]+))?/i),f=a.match(/Firefox\/([\d.]+)/),g=a.match(/Safari\/([\d.]+)/),h=a.match(/OPR\/([\d.]+)/);return c&&(b.webkit=parseFloat(c[1])),d&&(b.chrome=parseFloat(d[1])),e&&(b.ie=parseFloat(e[1])),f&&(b.firefox=parseFloat(f[1])),g&&(b.safari=parseFloat(g[1])),h&&(b.opera=parseFloat(h[1])),b}(navigator.userAgent),os:function(a){var b={},c=a.match(/(?:Android);?[\s\/]+([\d.]+)?/),d=a.match(/(?:iPad|iPod|iPhone).*OS\s([\d_]+)/);return c&&(b.android=parseFloat(c[1])),d&&(b.ios=parseFloat(d[1].replace(/_/g,"."))),b}(navigator.userAgent),inherits:function(a,c,d){var e;return"function"==typeof c?(e=c,c=null):e=c&&c.hasOwnProperty("constructor")?c.constructor:function(){return a.apply(this,arguments)},b.extend(!0,e,a,d||{}),e.__super__=a.prototype,e.prototype=f(a.prototype),c&&b.extend(!0,e.prototype,c),e},noop:g,bindFn:e,log:function(){return a.console?e(console.log,console):g}(),nextTick:function(){return function(a){setTimeout(a,1)}}(),slice:d([].slice),guid:function(){var a=0;return function(b){for(var c=(+new Date).toString(32),d=0;5>d;d++)c+=Math.floor(65535*Math.random()).toString(32);return(b||"wu_")+c+(a++).toString(32)}}(),formatSize:function(a,b,c){var d;for(c=c||["B","K","M","G","TB"];(d=c.shift())&&a>1024;)a/=1024;return("B"===d?a:a.toFixed(b||2))+d}}}),b("mediator",["base"],function(a){function b(a,b,c,d){return f.grep(a,function(a){return!(!a||b&&a.e!==b||c&&a.cb!==c&&a.cb._cb!==c||d&&a.ctx!==d)})}function c(a,b,c){f.each((a||"").split(h),function(a,d){c(d,b)})}function d(a,b){for(var c,d=!1,e=-1,f=a.length;++e<f;)if(c=a[e],c.cb.apply(c.ctx2,b)===!1){d=!0;break}return!d}var e,f=a.$,g=[].slice,h=/\s+/;return e={on:function(a,b,d){var e,f=this;return b?(e=this._events||(this._events=[]),c(a,b,function(a,b){var c={e:a};c.cb=b,c.ctx=d,c.ctx2=d||f,c.id=e.length,e.push(c)}),this):this},once:function(a,b,d){var e=this;return b?(c(a,b,function(a,b){var c=function(){return e.off(a,c),b.apply(d||e,arguments)};c._cb=b,e.on(a,c,d)}),e):e},off:function(a,d,e){var g=this._events;return g?a||d||e?(c(a,d,function(a,c){f.each(b(g,a,c,e),function(){delete g[this.id]})}),this):(this._events=[],this):this},trigger:function(a){var c,e,f;return this._events&&a?(c=g.call(arguments,1),e=b(this._events,a),f=b(this._events,"all"),d(e,c)&&d(f,arguments)):this}},f.extend({installTo:function(a){return f.extend(a,e)}},e)}),b("uploader",["base","mediator"],function(a,b){function c(a){this.options=d.extend(!0,{},c.options,a),this._init(this.options)}var d=a.$;return c.options={},b.installTo(c.prototype),d.each({upload:"start-upload",stop:"stop-upload",getFile:"get-file",getFiles:"get-files",addFile:"add-file",addFiles:"add-file",sort:"sort-files",removeFile:"remove-file",cancelFile:"cancel-file",skipFile:"skip-file",retry:"retry",isInProgress:"is-in-progress",makeThumb:"make-thumb",md5File:"md5-file",getDimension:"get-dimension",addButton:"add-btn",predictRuntimeType:"predict-runtime-type",refresh:"refresh",disable:"disable",enable:"enable",reset:"reset"},function(a,b){c.prototype[a]=function(){return this.request(b,arguments)}}),d.extend(c.prototype,{state:"pending",_init:function(a){var b=this;b.request("init",a,function(){b.state="ready",b.trigger("ready")})},option:function(a,b){var c=this.options;return arguments.length>1?(d.isPlainObject(b)&&d.isPlainObject(c[a])?d.extend(c[a],b):c[a]=b,void 0):a?c[a]:c},getStats:function(){var a=this.request("get-stats");return a?{successNum:a.numOfSuccess,progressNum:a.numOfProgress,cancelNum:a.numOfCancel,invalidNum:a.numOfInvalid,uploadFailNum:a.numOfUploadFailed,queueNum:a.numOfQueue,interruptNum:a.numOfInterrupt}:{}},trigger:function(a){var c=[].slice.call(arguments,1),e=this.options,f="on"+a.substring(0,1).toUpperCase()+a.substring(1);return b.trigger.apply(this,arguments)===!1||d.isFunction(e[f])&&e[f].apply(this,c)===!1||d.isFunction(this[f])&&this[f].apply(this,c)===!1||b.trigger.apply(b,[this,a].concat(c))===!1?!1:!0},destroy:function(){this.request("destroy",arguments),this.off()},request:a.noop}),a.create=c.create=function(a){return new c(a)},a.Uploader=c,c}),b("runtime/runtime",["base","mediator"],function(a,b){function c(b){this.options=d.extend({container:document.body},b),this.uid=a.guid("rt_")}var d=a.$,e={},f=function(a){for(var b in a)if(a.hasOwnProperty(b))return b;return null};return d.extend(c.prototype,{getContainer:function(){var a,b,c=this.options;return this._container?this._container:(a=d(c.container||document.body),b=d(document.createElement("div")),b.attr("id","rt_"+this.uid),b.css({position:"absolute",top:"0px",left:"0px",width:"1px",height:"1px",overflow:"hidden"}),a.append(b),a.addClass("webuploader-container"),this._container=b,this._parent=a,b)},init:a.noop,exec:a.noop,destroy:function(){this._container&&this._container.remove(),this._parent&&this._parent.removeClass("webuploader-container"),this.off()}}),c.orders="html5,flash",c.addRuntime=function(a,b){e[a]=b},c.hasRuntime=function(a){return!!(a?e[a]:f(e))},c.create=function(a,b){var g,h;if(b=b||c.orders,d.each(b.split(/\s*,\s*/g),function(){return e[this]?(g=this,!1):void 0}),g=g||f(e),!g)throw new Error("Runtime Error");return h=new e[g](a)},b.installTo(c.prototype),c}),b("runtime/client",["base","mediator","runtime/runtime"],function(a,b,c){function d(b,d){var f,g=a.Deferred();this.uid=a.guid("client_"),this.runtimeReady=function(a){return g.done(a)},this.connectRuntime=function(b,h){if(f)throw new Error("already connected!");return g.done(h),"string"==typeof b&&e.get(b)&&(f=e.get(b)),f=f||e.get(null,d),f?(a.$.extend(f.options,b),f.__promise.then(g.resolve),f.__client++):(f=c.create(b,b.runtimeOrder),f.__promise=g.promise(),f.once("ready",g.resolve),f.init(),e.add(f),f.__client=1),d&&(f.__standalone=d),f},this.getRuntime=function(){return f},this.disconnectRuntime=function(){f&&(f.__client--,f.__client<=0&&(e.remove(f),delete f.__promise,f.destroy()),f=null)},this.exec=function(){if(f){var c=a.slice(arguments);return b&&c.unshift(b),f.exec.apply(this,c)}},this.getRuid=function(){return f&&f.uid},this.destroy=function(a){return function(){a&&a.apply(this,arguments),this.trigger("destroy"),this.off(),this.exec("destroy"),this.disconnectRuntime()}}(this.destroy)}var e;return e=function(){var a={};return{add:function(b){a[b.uid]=b},get:function(b,c){var d;if(b)return a[b];for(d in a)if(!c||!a[d].__standalone)return a[d];return null},remove:function(b){delete a[b.uid]}}}(),b.installTo(d.prototype),d}),b("lib/dnd",["base","mediator","runtime/client"],function(a,b,c){function d(a){a=this.options=e.extend({},d.options,a),a.container=e(a.container),a.container.length&&c.call(this,"DragAndDrop")}var e=a.$;return d.options={accept:null,disableGlobalDnd:!1},a.inherits(c,{constructor:d,init:function(){var a=this;a.connectRuntime(a.options,function(){a.exec("init"),a.trigger("ready")})}}),b.installTo(d.prototype),d}),b("widgets/widget",["base","uploader"],function(a,b){function c(a){if(!a)return!1;var b=a.length,c=e.type(a);return 1===a.nodeType&&b?!0:"array"===c||"function"!==c&&"string"!==c&&(0===b||"number"==typeof b&&b>0&&b-1 in a)}function d(a){this.owner=a,this.options=a.options}var e=a.$,f=b.prototype._init,g=b.prototype.destroy,h={},i=[];return e.extend(d.prototype,{init:a.noop,invoke:function(a,b){var c=this.responseMap;return c&&a in c&&c[a]in this&&e.isFunction(this[c[a]])?this[c[a]].apply(this,b):h},request:function(){return this.owner.request.apply(this.owner,arguments)}}),e.extend(b.prototype,{_init:function(){var a=this,b=a._widgets=[],c=a.options.disableWidgets||"";return e.each(i,function(d,e){(!c||!~c.indexOf(e._name))&&b.push(new e(a))}),f.apply(a,arguments)},request:function(b,d,e){var f,g,i,j,k=0,l=this._widgets,m=l&&l.length,n=[],o=[];for(d=c(d)?d:[d];m>k;k++)f=l[k],g=f.invoke(b,d),g!==h&&(a.isPromise(g)?o.push(g):n.push(g));return e||o.length?(i=a.when.apply(a,o),j=i.pipe?"pipe":"then",i[j](function(){var b=a.Deferred(),c=arguments;return 1===c.length&&(c=c[0]),setTimeout(function(){b.resolve(c)},1),b.promise()})[e?j:"done"](e||a.noop)):n[0]},destroy:function(){g.apply(this,arguments),this._widgets=null}}),b.register=d.register=function(b,c){var f,g={init:"init",destroy:"destroy",name:"anonymous"};return 1===arguments.length?(c=b,e.each(c,function(a){return"_"===a[0]||"name"===a?("name"===a&&(g.name=c.name),void 0):(g[a.replace(/[A-Z]/g,"-$&").toLowerCase()]=a,void 0)})):g=e.extend(g,b),c.responseMap=g,f=a.inherits(d,c),f._name=g.name,i.push(f),f},b.unRegister=d.unRegister=function(a){if(a&&"anonymous"!==a)for(var b=i.length;b--;)i[b]._name===a&&i.splice(b,1)},d}),b("widgets/filednd",["base","uploader","lib/dnd","widgets/widget"],function(a,b,c){var d=a.$;return b.options.dnd="",b.register({name:"dnd",init:function(b){if(b.dnd&&"html5"===this.request("predict-runtime-type")){var e,f=this,g=a.Deferred(),h=d.extend({},{disableGlobalDnd:b.disableGlobalDnd,container:b.dnd,accept:b.accept});return this.dnd=e=new c(h),e.once("ready",g.resolve),e.on("drop",function(a){f.request("add-file",[a])}),e.on("accept",function(a){return f.owner.trigger("dndAccept",a)}),e.init(),g.promise()}},destroy:function(){this.dnd&&this.dnd.destroy()}})}),b("lib/filepaste",["base","mediator","runtime/client"],function(a,b,c){function d(a){a=this.options=e.extend({},a),a.container=e(a.container||document.body),c.call(this,"FilePaste")}var e=a.$;return a.inherits(c,{constructor:d,init:function(){var a=this;a.connectRuntime(a.options,function(){a.exec("init"),a.trigger("ready")})}}),b.installTo(d.prototype),d}),b("widgets/filepaste",["base","uploader","lib/filepaste","widgets/widget"],function(a,b,c){var d=a.$;return b.register({name:"paste",init:function(b){if(b.paste&&"html5"===this.request("predict-runtime-type")){var e,f=this,g=a.Deferred(),h=d.extend({},{container:b.paste,accept:b.accept});return this.paste=e=new c(h),e.once("ready",g.resolve),e.on("paste",function(a){f.owner.request("add-file",[a])}),e.init(),g.promise()}},destroy:function(){this.paste&&this.paste.destroy()}})}),b("lib/blob",["base","runtime/client"],function(a,b){function c(a,c){var d=this;d.source=c,d.ruid=a,this.size=c.size||0,this.type=!c.type&&this.ext&&~"jpg,jpeg,png,gif,bmp".indexOf(this.ext)?"image/"+("jpg"===this.ext?"jpeg":this.ext):c.type||"application/octet-stream",b.call(d,"Blob"),this.uid=c.uid||this.uid,a&&d.connectRuntime(a)}return a.inherits(b,{constructor:c,slice:function(a,b){return this.exec("slice",a,b)},getSource:function(){return this.source}}),c}),b("lib/file",["base","lib/blob"],function(a,b){function c(a,c){var f;this.name=c.name||"untitled"+d++,f=e.exec(c.name)?RegExp.$1.toLowerCase():"",!f&&c.type&&(f=/\/(jpg|jpeg|png|gif|bmp)$/i.exec(c.type)?RegExp.$1.toLowerCase():"",this.name+="."+f),this.ext=f,this.lastModifiedDate=c.lastModifiedDate||c.lastModified&&new Date(c.lastModified).toLocaleString()||(new Date).toLocaleString(),b.apply(this,arguments)}var d=1,e=/\.([^.]+)$/;return a.inherits(b,c)}),b("lib/filepicker",["base","runtime/client","lib/file"],function(b,c,d){function e(a){if(a=this.options=f.extend({},e.options,a),a.container=f(a.id),!a.container.length)throw new Error("按钮指定错误");a.innerHTML=a.innerHTML||a.label||a.container.html()||"",a.button=f(a.button||document.createElement("div")),a.button.html(a.innerHTML),a.container.html(a.button),c.call(this,"FilePicker",!0)}var f=b.$;return e.options={button:null,container:null,label:null,innerHTML:null,multiple:!0,accept:null,name:"file",style:"webuploader-pick"},b.inherits(c,{constructor:e,init:function(){var c=this,e=c.options,g=e.button,h=e.style;h&&g.addClass("webuploader-pick"),c.on("all",function(a){var b;switch(a){case"mouseenter":h&&g.addClass("webuploader-pick-hover");break;case"mouseleave":h&&g.removeClass("webuploader-pick-hover");break;case"change":b=c.exec("getFiles"),c.trigger("select",f.map(b,function(a){return a=new d(c.getRuid(),a),a._refer=e.container,a}),e.container)}}),c.connectRuntime(e,function(){c.refresh(),c.exec("init",e),c.trigger("ready")}),this._resizeHandler=b.bindFn(this.refresh,this),f(a).on("resize",this._resizeHandler)},refresh:function(){var a=this.getRuntime().getContainer(),b=this.options.button,c=b[0]&&b[0].offsetWidth||b.outerWidth()||b.width(),d=b[0]&&b[0].offsetHeight||b.outerHeight()||b.height(),e=b.offset();c&&d&&a.css({bottom:"auto",right:"auto",width:c+"px",height:d+"px"}).offset(e)},enable:function(){var a=this.options.button;a.removeClass("webuploader-pick-disable"),this.refresh()},disable:function(){var a=this.options.button;this.getRuntime().getContainer().css({top:"-99999px"}),a.addClass("webuploader-pick-disable")},destroy:function(){var b=this.options.button;f(a).off("resize",this._resizeHandler),b.removeClass("webuploader-pick-disable webuploader-pick-hover webuploader-pick")}}),e}),b("widgets/filepicker",["base","uploader","lib/filepicker","widgets/widget"],function(a,b,c){var d=a.$;return d.extend(b.options,{pick:null,accept:null}),b.register({name:"picker",init:function(a){return this.pickers=[],a.pick&&this.addBtn(a.pick)},refresh:function(){d.each(this.pickers,function(){this.refresh()})},addBtn:function(b){var e=this,f=e.options,g=f.accept,h=[];if(b)return d.isPlainObject(b)||(b={id:b}),d(b.id).each(function(){var i,j,k;k=a.Deferred(),i=d.extend({},b,{accept:d.isPlainObject(g)?[g]:g,swf:f.swf,runtimeOrder:f.runtimeOrder,id:this}),j=new c(i),j.once("ready",k.resolve),j.on("select",function(a){e.owner.request("add-file",[a])}),j.on("dialogopen",function(){e.owner.trigger("dialogOpen",j.button)}),j.init(),e.pickers.push(j),h.push(k.promise())}),a.when.apply(a,h)},disable:function(){d.each(this.pickers,function(){this.disable()})},enable:function(){d.each(this.pickers,function(){this.enable()})},destroy:function(){d.each(this.pickers,function(){this.destroy()}),this.pickers=null}})}),b("lib/image",["base","runtime/client","lib/blob"],function(a,b,c){function d(a){this.options=e.extend({},d.options,a),b.call(this,"Image"),this.on("load",function(){this._info=this.exec("info"),this._meta=this.exec("meta")})}var e=a.$;return d.options={quality:90,crop:!1,preserveHeaders:!1,allowMagnify:!1},a.inherits(b,{constructor:d,info:function(a){return a?(this._info=a,this):this._info},meta:function(a){return a?(this._meta=a,this):this._meta},loadFromBlob:function(a){var b=this,c=a.getRuid();this.connectRuntime(c,function(){b.exec("init",b.options),b.exec("loadFromBlob",a)})},resize:function(){var b=a.slice(arguments);return this.exec.apply(this,["resize"].concat(b))},crop:function(){var b=a.slice(arguments);return this.exec.apply(this,["crop"].concat(b))},getAsDataUrl:function(a){return this.exec("getAsDataUrl",a)},getAsBlob:function(a){var b=this.exec("getAsBlob",a);return new c(this.getRuid(),b)}}),d}),b("widgets/image",["base","uploader","lib/image","widgets/widget"],function(a,b,c){var d,e=a.$;return d=function(a){var b=0,c=[],d=function(){for(var d;c.length&&a>b;)d=c.shift(),b+=d[0],d[1]()};return function(a,e,f){c.push([e,f]),a.once("destroy",function(){b-=e,setTimeout(d,1)}),setTimeout(d,1)}}(5242880),e.extend(b.options,{thumb:{width:110,height:110,quality:70,allowMagnify:!0,crop:!0,preserveHeaders:!1,type:"image/jpeg"},compress:{width:1600,height:1600,quality:90,allowMagnify:!1,crop:!1,preserveHeaders:!0}}),b.register({name:"image",makeThumb:function(a,b,f,g){var h,i;return a=this.request("get-file",a),a.type.match(/^image/)?(h=e.extend({},this.options.thumb),e.isPlainObject(f)&&(h=e.extend(h,f),f=null),f=f||h.width,g=g||h.height,i=new c(h),i.once("load",function(){a._info=a._info||i.info(),a._meta=a._meta||i.meta(),1>=f&&f>0&&(f=a._info.width*f),1>=g&&g>0&&(g=a._info.height*g),i.resize(f,g)}),i.once("complete",function(){b(!1,i.getAsDataUrl(h.type)),i.destroy()}),i.once("error",function(a){b(a||!0),i.destroy()}),d(i,a.source.size,function(){a._info&&i.info(a._info),a._meta&&i.meta(a._meta),i.loadFromBlob(a.source)}),void 0):(b(!0),void 0)},beforeSendFile:function(b){var d,f,g=this.options.compress||this.options.resize,h=g&&g.compressSize||0,i=g&&g.noCompressIfLarger||!1;return b=this.request("get-file",b),!g||!~"image/jpeg,image/jpg".indexOf(b.type)||b.size<h||b._compressed?void 0:(g=e.extend({},g),f=a.Deferred(),d=new c(g),f.always(function(){d.destroy(),d=null}),d.once("error",f.reject),d.once("load",function(){var a=g.width,c=g.height;b._info=b._info||d.info(),b._meta=b._meta||d.meta(),1>=a&&a>0&&(a=b._info.width*a),1>=c&&c>0&&(c=b._info.height*c),d.resize(a,c)}),d.once("complete",function(){var a,c;try{a=d.getAsBlob(g.type),c=b.size,(!i||a.size<c)&&(b.source=a,b.size=a.size,b.trigger("resize",a.size,c)),b._compressed=!0,f.resolve()}catch(e){f.resolve()}}),b._info&&d.info(b._info),b._meta&&d.meta(b._meta),d.loadFromBlob(b.source),f.promise())}})}),b("file",["base","mediator"],function(a,b){function c(){return f+g++}function d(a){this.name=a.name||"Untitled",this.size=a.size||0,this.type=a.type||"application/octet-stream",this.lastModifiedDate=a.lastModifiedDate||1*new Date,this.id=c(),this.ext=h.exec(this.name)?RegExp.$1:"",this.statusText="",i[this.id]=d.Status.INITED,this.source=a,this.loaded=0,this.on("error",function(a){this.setStatus(d.Status.ERROR,a)})}var e=a.$,f="WU_FILE_",g=0,h=/\.([^.]+)$/,i={};return e.extend(d.prototype,{setStatus:function(a,b){var c=i[this.id];"undefined"!=typeof b&&(this.statusText=b),a!==c&&(i[this.id]=a,this.trigger("statuschange",a,c))},getStatus:function(){return i[this.id]},getSource:function(){return this.source},destroy:function(){this.off(),delete i[this.id]}}),b.installTo(d.prototype),d.Status={INITED:"inited",QUEUED:"queued",PROGRESS:"progress",ERROR:"error",COMPLETE:"complete",CANCELLED:"cancelled",INTERRUPT:"interrupt",INVALID:"invalid"},d}),b("queue",["base","mediator","file"],function(a,b,c){function d(){this.stats={numOfQueue:0,numOfSuccess:0,numOfCancel:0,numOfProgress:0,numOfUploadFailed:0,numOfInvalid:0,numOfDeleted:0,numOfInterrupt:0},this._queue=[],this._map={}}var e=a.$,f=c.Status;return e.extend(d.prototype,{append:function(a){return this._queue.push(a),this._fileAdded(a),this},prepend:function(a){return this._queue.unshift(a),this._fileAdded(a),this},getFile:function(a){return"string"!=typeof a?a:this._map[a]},fetch:function(a){var b,c,d=this._queue.length;for(a=a||f.QUEUED,b=0;d>b;b++)if(c=this._queue[b],a===c.getStatus())return c;return null},sort:function(a){"function"==typeof a&&this._queue.sort(a)},getFiles:function(){for(var a,b=[].slice.call(arguments,0),c=[],d=0,f=this._queue.length;f>d;d++)a=this._queue[d],(!b.length||~e.inArray(a.getStatus(),b))&&c.push(a);return c},removeFile:function(a){var b=this._map[a.id];b&&(delete this._map[a.id],this._delFile(a),a.destroy(),this.stats.numOfDeleted++)},_fileAdded:function(a){var b=this,c=this._map[a.id];c||(this._map[a.id]=a,a.on("statuschange",function(a,c){b._onFileStatusChange(a,c)}))},_delFile:function(a){for(var b=this._queue.length-1;b>=0;b--)if(this._queue[b]==a){this._queue.splice(b,1);break}},_onFileStatusChange:function(a,b){var c=this.stats;switch(b){case f.PROGRESS:c.numOfProgress--;break;case f.QUEUED:c.numOfQueue--;break;case f.ERROR:c.numOfUploadFailed--;break;case f.INVALID:c.numOfInvalid--;break;case f.INTERRUPT:c.numOfInterrupt--}switch(a){case f.QUEUED:c.numOfQueue++;break;case f.PROGRESS:c.numOfProgress++;break;case f.ERROR:c.numOfUploadFailed++;break;case f.COMPLETE:c.numOfSuccess++;break;case f.CANCELLED:c.numOfCancel++;break;case f.INVALID:c.numOfInvalid++;break;case f.INTERRUPT:c.numOfInterrupt++}}}),b.installTo(d.prototype),d}),b("widgets/queue",["base","uploader","queue","file","lib/file","runtime/client","widgets/widget"],function(a,b,c,d,e,f){var g=a.$,h=/\.\w+$/,i=d.Status;return b.register({name:"queue",init:function(b){var d,e,h,i,j,k,l,m=this;if(g.isPlainObject(b.accept)&&(b.accept=[b.accept]),b.accept){for(j=[],h=0,e=b.accept.length;e>h;h++)i=b.accept[h].extensions,i&&j.push(i);j.length&&(k="\\."+j.join(",").replace(/,/g,"$|\\.").replace(/\*/g,".*")+"$"),m.accept=new RegExp(k,"i")}return m.queue=new c,m.stats=m.queue.stats,"html5"===this.request("predict-runtime-type")?(d=a.Deferred(),this.placeholder=l=new f("Placeholder"),l.connectRuntime({runtimeOrder:"html5"},function(){m._ruid=l.getRuid(),d.resolve()}),d.promise()):void 0},_wrapFile:function(a){if(!(a instanceof d)){if(!(a instanceof e)){if(!this._ruid)throw new Error("Can't add external files.");a=new e(this._ruid,a)}a=new d(a)}return a},acceptFile:function(a){var b=!a||!a.size||this.accept&&h.exec(a.name)&&!this.accept.test(a.name);return!b},_addFile:function(a){var b=this;return a=b._wrapFile(a),b.owner.trigger("beforeFileQueued",a)?b.acceptFile(a)?(b.queue.append(a),b.owner.trigger("fileQueued",a),a):(b.owner.trigger("error","Q_TYPE_DENIED",a),void 0):void 0},getFile:function(a){return this.queue.getFile(a)},addFile:function(a){var b=this;a.length||(a=[a]),a=g.map(a,function(a){return b._addFile(a)}),a.length&&(b.owner.trigger("filesQueued",a),b.options.auto&&setTimeout(function(){b.request("start-upload")},20))},getStats:function(){return this.stats},removeFile:function(a,b){var c=this;a=a.id?a:c.queue.getFile(a),this.request("cancel-file",a),b&&this.queue.removeFile(a)},getFiles:function(){return this.queue.getFiles.apply(this.queue,arguments)},fetchFile:function(){return this.queue.fetch.apply(this.queue,arguments)},retry:function(a,b){var c,d,e,f=this;if(a)return a=a.id?a:f.queue.getFile(a),a.setStatus(i.QUEUED),b||f.request("start-upload"),void 0;for(c=f.queue.getFiles(i.ERROR),d=0,e=c.length;e>d;d++)a=c[d],a.setStatus(i.QUEUED);f.request("start-upload")},sortFiles:function(){return this.queue.sort.apply(this.queue,arguments)},reset:function(){this.owner.trigger("reset"),this.queue=new c,this.stats=this.queue.stats},destroy:function(){this.reset(),this.placeholder&&this.placeholder.destroy()}})}),b("widgets/runtime",["uploader","runtime/runtime","widgets/widget"],function(a,b){return a.support=function(){return b.hasRuntime.apply(b,arguments)},a.register({name:"runtime",init:function(){if(!this.predictRuntimeType())throw Error("Runtime Error")},predictRuntimeType:function(){var a,c,d=this.options.runtimeOrder||b.orders,e=this.type;if(!e)for(d=d.split(/\s*,\s*/g),a=0,c=d.length;c>a;a++)if(b.hasRuntime(d[a])){this.type=e=d[a];break}return e}})}),b("lib/transport",["base","runtime/client","mediator"],function(a,b,c){function d(a){var c=this;a=c.options=e.extend(!0,{},d.options,a||{}),b.call(this,"Transport"),this._blob=null,this._formData=a.formData||{},this._headers=a.headers||{},this.on("progress",this._timeout),this.on("load error",function(){c.trigger("progress",1),clearTimeout(c._timer)})}var e=a.$;return d.options={server:"",method:"POST",withCredentials:!1,fileVal:"file",timeout:12e4,formData:{},headers:{},sendAsBinary:!1},e.extend(d.prototype,{appendBlob:function(a,b,c){var d=this,e=d.options;d.getRuid()&&d.disconnectRuntime(),d.connectRuntime(b.ruid,function(){d.exec("init")}),d._blob=b,e.fileVal=a||e.fileVal,e.filename=c||e.filename},append:function(a,b){"object"==typeof a?e.extend(this._formData,a):this._formData[a]=b},setRequestHeader:function(a,b){"object"==typeof a?e.extend(this._headers,a):this._headers[a]=b},send:function(a){this.exec("send",a),this._timeout()},abort:function(){return clearTimeout(this._timer),this.exec("abort")},destroy:function(){this.trigger("destroy"),this.off(),this.exec("destroy"),this.disconnectRuntime()},getResponseHeaders:function(){return this.exec("getResponseHeaders")},getResponse:function(){return this.exec("getResponse")},getResponseAsJson:function(){return this.exec("getResponseAsJson")},getStatus:function(){return this.exec("getStatus")},_timeout:function(){var a=this,b=a.options.timeout;b&&(clearTimeout(a._timer),a._timer=setTimeout(function(){a.abort(),a.trigger("error","timeout")},b))}}),c.installTo(d.prototype),d}),b("widgets/upload",["base","uploader","file","lib/transport","widgets/widget"],function(a,b,c,d){function e(a,b){var c,d,e=[],f=a.source,g=f.size,h=b?Math.ceil(g/b):1,i=0,j=0;for(d={file:a,has:function(){return!!e.length},shift:function(){return e.shift()},unshift:function(a){e.unshift(a)}};h>j;)c=Math.min(b,g-i),e.push({file:a,start:i,end:b?i+c:g,total:g,chunks:h,chunk:j++,cuted:d}),i+=c;return a.blocks=e.concat(),a.remaning=e.length,d}var f=a.$,g=a.isPromise,h=c.Status;f.extend(b.options,{prepareNextFile:!1,chunked:!1,chunkSize:5242880,chunkRetry:2,chunkRetryDelay:1e3,threads:3,formData:{}}),b.register({name:"upload",init:function(){var b=this.owner,c=this;this.runing=!1,this.progress=!1,b.on("startUpload",function(){c.progress=!0}).on("uploadFinished",function(){c.progress=!1}),this.pool=[],this.stack=[],this.pending=[],this.remaning=0,this.__tick=a.bindFn(this._tick,this),b.on("uploadComplete",function(a){a.blocks&&f.each(a.blocks,function(a,b){b.transport&&(b.transport.abort(),b.transport.destroy()),delete b.transport}),delete a.blocks,delete a.remaning})},reset:function(){this.request("stop-upload",!0),this.runing=!1,this.pool=[],this.stack=[],this.pending=[],this.remaning=0,this._trigged=!1,this._promise=null},startUpload:function(b){var c=this;if(f.each(c.request("get-files",h.INVALID),function(){c.request("remove-file",this)}),b?(b=b.id?b:c.request("get-file",b),b.getStatus()===h.INTERRUPT?(b.setStatus(h.QUEUED),f.each(c.pool,function(a,c){c.file===b&&(c.transport&&c.transport.send(),b.setStatus(h.PROGRESS))})):b.getStatus()!==h.PROGRESS&&b.setStatus(h.QUEUED)):f.each(c.request("get-files",[h.INITED]),function(){this.setStatus(h.QUEUED)}),c.runing)return c.owner.trigger("startUpload",b),a.nextTick(c.__tick);c.runing=!0;var d=[];b||f.each(c.pool,function(a,b){var e=b.file;if(e.getStatus()===h.INTERRUPT){if(c._trigged=!1,d.push(e),b.waiting)return;b.transport?b.transport.send():c._doSend(b)}}),f.each(d,function(){this.setStatus(h.PROGRESS)}),b||f.each(c.request("get-files",h.INTERRUPT),function(){this.setStatus(h.PROGRESS)}),c._trigged=!1,a.nextTick(c.__tick),c.owner.trigger("startUpload")},stopUpload:function(b,c){var d=this;if(b===!0&&(c=b,b=null),d.runing!==!1){if(b){if(b=b.id?b:d.request("get-file",b),b.getStatus()!==h.PROGRESS&&b.getStatus()!==h.QUEUED)return;return b.setStatus(h.INTERRUPT),f.each(d.pool,function(a,e){e.file===b&&(e.transport&&e.transport.abort(),c&&(d._putback(e),d._popBlock(e)))}),d.owner.trigger("stopUpload",b),a.nextTick(d.__tick)}d.runing=!1,this._promise&&this._promise.file&&this._promise.file.setStatus(h.INTERRUPT),c&&f.each(d.pool,function(a,b){b.transport&&b.transport.abort(),b.file.setStatus(h.INTERRUPT)}),d.owner.trigger("stopUpload")}},cancelFile:function(a){a=a.id?a:this.request("get-file",a),a.blocks&&f.each(a.blocks,function(a,b){var c=b.transport;c&&(c.abort(),c.destroy(),delete b.transport)}),a.setStatus(h.CANCELLED),this.owner.trigger("fileDequeued",a)},isInProgress:function(){return!!this.progress},_getStats:function(){return this.request("get-stats")},skipFile:function(a,b){a=a.id?a:this.request("get-file",a),a.setStatus(b||h.COMPLETE),a.skipped=!0,a.blocks&&f.each(a.blocks,function(a,b){var c=b.transport;c&&(c.abort(),c.destroy(),delete b.transport)}),this.owner.trigger("uploadSkip",a)},_tick:function(){var b,c,d=this,e=d.options;return d._promise?d._promise.always(d.__tick):(d.pool.length<e.threads&&(c=d._nextBlock())?(d._trigged=!1,b=function(b){d._promise=null,b&&b.file&&d._startSend(b),a.nextTick(d.__tick)},d._promise=g(c)?c.always(b):b(c)):d.remaning||d._getStats().numOfQueue||d._getStats().numOfInterrupt||(d.runing=!1,d._trigged||a.nextTick(function(){d.owner.trigger("uploadFinished")}),d._trigged=!0),void 0)},_putback:function(a){var b;a.cuted.unshift(a),b=this.stack.indexOf(a.cuted),~b||(this.remaning++,a.file.remaning++,this.stack.unshift(a.cuted))},_getStack:function(){for(var a,b=0;a=this.stack[b++];){if(a.has()&&a.file.getStatus()===h.PROGRESS)return a;(!a.has()||a.file.getStatus()!==h.PROGRESS&&a.file.getStatus()!==h.INTERRUPT)&&this.stack.splice(--b,1)}return null},_nextBlock:function(){var a,b,c,d,f=this,h=f.options;return(a=this._getStack())?(h.prepareNextFile&&!f.pending.length&&f._prepareNextFile(),a.shift()):f.runing?(!f.pending.length&&f._getStats().numOfQueue&&f._prepareNextFile(),b=f.pending.shift(),c=function(b){return b?(a=e(b,h.chunked?h.chunkSize:0),f.stack.push(a),a.shift()):null},g(b)?(d=b.file,b=b[b.pipe?"pipe":"then"](c),b.file=d,b):c(b)):void 0},_prepareNextFile:function(){var a,b=this,c=b.request("fetch-file"),d=b.pending;c&&(a=b.request("before-send-file",c,function(){return c.getStatus()===h.PROGRESS||c.getStatus()===h.INTERRUPT?c:b._finishFile(c)}),b.owner.trigger("uploadStart",c),c.setStatus(h.PROGRESS),a.file=c,a.done(function(){var b=f.inArray(a,d);~b&&d.splice(b,1,c)}),a.fail(function(a){c.setStatus(h.ERROR,a),b.owner.trigger("uploadError",c,a),b.owner.trigger("uploadComplete",c)}),d.push(a))},_popBlock:function(a){var b=f.inArray(a,this.pool);this.pool.splice(b,1),a.file.remaning--,this.remaning--},_startSend:function(b){var c,d=this,e=b.file;return e.getStatus()!==h.PROGRESS?(e.getStatus()===h.INTERRUPT&&d._putback(b),void 0):(d.pool.push(b),d.remaning++,b.blob=1===b.chunks?e.source:e.source.slice(b.start,b.end),b.waiting=c=d.request("before-send",b,function(){delete b.waiting,e.getStatus()===h.PROGRESS?d._doSend(b):b.file.getStatus()!==h.INTERRUPT&&d._popBlock(b),a.nextTick(d.__tick)}),c.fail(function(){delete b.waiting,1===e.remaning?d._finishFile(e).always(function(){b.percentage=1,d._popBlock(b),d.owner.trigger("uploadComplete",e),a.nextTick(d.__tick)}):(b.percentage=1,d.updateFileProgress(e),d._popBlock(b),a.nextTick(d.__tick))}),void 0)},_doSend:function(b){var c,e,g=this,i=g.owner,j=f.extend({},g.options,b.options),k=b.file,l=new d(j),m=f.extend({},j.formData),n=f.extend({},j.headers);b.transport=l,l.on("destroy",function(){delete b.transport,g._popBlock(b),a.nextTick(g.__tick)}),l.on("progress",function(a){b.percentage=a,g.updateFileProgress(k)}),c=function(a){var c;return e=l.getResponseAsJson()||{},e._raw=l.getResponse(),e._headers=l.getResponseHeaders(),b.response=e,c=function(b){a=b},i.trigger("uploadAccept",b,e,c)||(a=a||"server"),a},l.on("error",function(a,d){var e,f,m=a.split("|");a=m[0],e=parseFloat(m[1]),f=m[2],b.retried=b.retried||0,b.chunks>1&&~"http,abort,server".indexOf(a.replace(/-.*/,""))&&b.retried<j.chunkRetry?(b.retried++,g.retryTimer=setTimeout(function(){l.send()
+},j.chunkRetryDelay||1e3)):(d||"server"!==a||(a=c(a)),k.setStatus(h.ERROR,a),i.trigger("uploadError",k,a,e,f),i.trigger("uploadComplete",k))}),l.on("load",function(){var a;return(a=c())?(l.trigger("error",a,!0),void 0):(1===k.remaning?g._finishFile(k,e):l.destroy(),void 0)}),m=f.extend(m,{id:k.id,name:k.name,type:k.type,lastModifiedDate:k.lastModifiedDate,size:k.size}),b.chunks>1&&f.extend(m,{chunks:b.chunks,chunk:b.chunk}),i.trigger("uploadBeforeSend",b,m,n),l.appendBlob(j.fileVal,b.blob,k.name),l.append(m),l.setRequestHeader(n),l.send()},_finishFile:function(a,b,c){var d=this.owner;return d.request("after-send-file",arguments,function(){a.setStatus(h.COMPLETE),d.trigger("uploadSuccess",a,b,c)}).fail(function(b){a.getStatus()===h.PROGRESS&&a.setStatus(h.ERROR,b),d.trigger("uploadError",a,b)}).always(function(){d.trigger("uploadComplete",a)})},updateFileProgress:function(a){var b=0,c=0;a.blocks&&(f.each(a.blocks,function(a,b){c+=(b.percentage||0)*(b.end-b.start)}),b=c/a.size,this.owner.trigger("uploadProgress",a,b||0))},destroy:function(){clearTimeout(this.retryTimer)}})}),b("widgets/validator",["base","uploader","file","widgets/widget"],function(a,b,c){var d,e=a.$,f={};return d={addValidator:function(a,b){f[a]=b},removeValidator:function(a){delete f[a]}},b.register({name:"validator",init:function(){var b=this;a.nextTick(function(){e.each(f,function(){this.call(b.owner)})})}}),d.addValidator("fileNumLimit",function(){var a=this,b=a.options,c=0,d=parseInt(b.fileNumLimit,10),e=!0;d&&(a.on("beforeFileQueued",function(a){return this.trigger("beforeFileQueuedCheckfileNumLimit",a,c)?(c>=d&&e&&(e=!1,this.trigger("error","Q_EXCEED_NUM_LIMIT",d,a),setTimeout(function(){e=!0},1)),c>=d?!1:!0):!1}),a.on("fileQueued",function(){c++}),a.on("fileDequeued",function(){c--}),a.on("reset",function(){c=0}))}),d.addValidator("fileSizeLimit",function(){var a=this,b=a.options,c=0,d=parseInt(b.fileSizeLimit,10),e=!0;d&&(a.on("beforeFileQueued",function(a){var b=c+a.size>d;return b&&e&&(e=!1,this.trigger("error","Q_EXCEED_SIZE_LIMIT",d,a),setTimeout(function(){e=!0},1)),b?!1:!0}),a.on("fileQueued",function(a){c+=a.size}),a.on("fileDequeued",function(a){c-=a.size}),a.on("reset",function(){c=0}))}),d.addValidator("fileSingleSizeLimit",function(){var a=this,b=a.options,d=b.fileSingleSizeLimit;d&&a.on("beforeFileQueued",function(a){return a.size>d?(a.setStatus(c.Status.INVALID,"exceed_size"),this.trigger("error","F_EXCEED_SIZE",d,a),!1):void 0})}),d.addValidator("duplicate",function(){function a(a){for(var b,c=0,d=0,e=a.length;e>d;d++)b=a.charCodeAt(d),c=b+(c<<6)+(c<<16)-c;return c}var b=this,c=b.options,d={};c.duplicate||(b.on("beforeFileQueued",function(b){var c=b.__hash||(b.__hash=a(b.name+b.size+b.lastModifiedDate));return d[c]?(this.trigger("error","F_DUPLICATE",b),!1):void 0}),b.on("fileQueued",function(a){var b=a.__hash;b&&(d[b]=!0)}),b.on("fileDequeued",function(a){var b=a.__hash;b&&delete d[b]}),b.on("reset",function(){d={}}))}),d}),b("runtime/compbase",[],function(){function a(a,b){this.owner=a,this.options=a.options,this.getRuntime=function(){return b},this.getRuid=function(){return b.uid},this.trigger=function(){return a.trigger.apply(a,arguments)}}return a}),b("runtime/html5/runtime",["base","runtime/runtime","runtime/compbase"],function(b,c,d){function e(){var a={},d=this,e=this.destroy;c.apply(d,arguments),d.type=f,d.exec=function(c,e){var f,h=this,i=h.uid,j=b.slice(arguments,2);return g[c]&&(f=a[i]=a[i]||new g[c](h,d),f[e])?f[e].apply(f,j):void 0},d.destroy=function(){return e&&e.apply(this,arguments)}}var f="html5",g={};return b.inherits(c,{constructor:e,init:function(){var a=this;setTimeout(function(){a.trigger("ready")},1)}}),e.register=function(a,c){var e=g[a]=b.inherits(d,c);return e},a.Blob&&a.FileReader&&a.DataView&&c.addRuntime(f,e),e}),b("runtime/html5/blob",["runtime/html5/runtime","lib/blob"],function(a,b){return a.register("Blob",{slice:function(a,c){var d=this.owner.source,e=d.slice||d.webkitSlice||d.mozSlice;return d=e.call(d,a,c),new b(this.getRuid(),d)}})}),b("runtime/html5/dnd",["base","runtime/html5/runtime","lib/file"],function(a,b,c){var d=a.$,e="webuploader-dnd-";return b.register("DragAndDrop",{init:function(){var b=this.elem=this.options.container;this.dragEnterHandler=a.bindFn(this._dragEnterHandler,this),this.dragOverHandler=a.bindFn(this._dragOverHandler,this),this.dragLeaveHandler=a.bindFn(this._dragLeaveHandler,this),this.dropHandler=a.bindFn(this._dropHandler,this),this.dndOver=!1,b.on("dragenter",this.dragEnterHandler),b.on("dragover",this.dragOverHandler),b.on("dragleave",this.dragLeaveHandler),b.on("drop",this.dropHandler),this.options.disableGlobalDnd&&(d(document).on("dragover",this.dragOverHandler),d(document).on("drop",this.dropHandler))},_dragEnterHandler:function(a){var b,c=this,d=c._denied||!1;return a=a.originalEvent||a,c.dndOver||(c.dndOver=!0,b=a.dataTransfer.items,b&&b.length&&(c._denied=d=!c.trigger("accept",b)),c.elem.addClass(e+"over"),c.elem[d?"addClass":"removeClass"](e+"denied")),a.dataTransfer.dropEffect=d?"none":"copy",!1},_dragOverHandler:function(a){var b=this.elem.parent().get(0);return b&&!d.contains(b,a.currentTarget)?!1:(clearTimeout(this._leaveTimer),this._dragEnterHandler.call(this,a),!1)},_dragLeaveHandler:function(){var a,b=this;return a=function(){b.dndOver=!1,b.elem.removeClass(e+"over "+e+"denied")},clearTimeout(b._leaveTimer),b._leaveTimer=setTimeout(a,100),!1},_dropHandler:function(a){var b,f,g=this,h=g.getRuid(),i=g.elem.parent().get(0);if(i&&!d.contains(i,a.currentTarget))return!1;a=a.originalEvent||a,b=a.dataTransfer;try{f=b.getData("text/html")}catch(j){}return g.dndOver=!1,g.elem.removeClass(e+"over"),b&&!f?(g._getTansferFiles(b,function(a){g.trigger("drop",d.map(a,function(a){return new c(h,a)}))}),!1):void 0},_getTansferFiles:function(b,c){var d,e,f,g,h,i,j,k=[],l=[];for(d=b.items,e=b.files,j=!(!d||!d[0].webkitGetAsEntry),h=0,i=e.length;i>h;h++)f=e[h],g=d&&d[h],j&&g.webkitGetAsEntry().isDirectory?l.push(this._traverseDirectoryTree(g.webkitGetAsEntry(),k)):k.push(f);a.when.apply(a,l).done(function(){k.length&&c(k)})},_traverseDirectoryTree:function(b,c){var d=a.Deferred(),e=this;return b.isFile?b.file(function(a){c.push(a),d.resolve()}):b.isDirectory&&b.createReader().readEntries(function(b){var f,g=b.length,h=[],i=[];for(f=0;g>f;f++)h.push(e._traverseDirectoryTree(b[f],i));a.when.apply(a,h).then(function(){c.push.apply(c,i),d.resolve()},d.reject)}),d.promise()},destroy:function(){var a=this.elem;a&&(a.off("dragenter",this.dragEnterHandler),a.off("dragover",this.dragOverHandler),a.off("dragleave",this.dragLeaveHandler),a.off("drop",this.dropHandler),this.options.disableGlobalDnd&&(d(document).off("dragover",this.dragOverHandler),d(document).off("drop",this.dropHandler)))}})}),b("runtime/html5/filepaste",["base","runtime/html5/runtime","lib/file"],function(a,b,c){return b.register("FilePaste",{init:function(){var b,c,d,e,f=this.options,g=this.elem=f.container,h=".*";if(f.accept){for(b=[],c=0,d=f.accept.length;d>c;c++)e=f.accept[c].mimeTypes,e&&b.push(e);b.length&&(h=b.join(","),h=h.replace(/,/g,"|").replace(/\*/g,".*"))}this.accept=h=new RegExp(h,"i"),this.hander=a.bindFn(this._pasteHander,this),g.on("paste",this.hander)},_pasteHander:function(a){var b,d,e,f,g,h=[],i=this.getRuid();for(a=a.originalEvent||a,b=a.clipboardData.items,f=0,g=b.length;g>f;f++)d=b[f],"file"===d.kind&&(e=d.getAsFile())&&h.push(new c(i,e));h.length&&(a.preventDefault(),a.stopPropagation(),this.trigger("paste",h))},destroy:function(){this.elem.off("paste",this.hander)}})}),b("runtime/html5/filepicker",["base","runtime/html5/runtime"],function(a,b){var c=a.$;return b.register("FilePicker",{init:function(){var a,b,d,e,f,g=this.getRuntime().getContainer(),h=this,i=h.owner,j=h.options,k=this.label=c(document.createElement("label")),l=this.input=c(document.createElement("input"));if(l.attr("type","file"),l.attr("capture","camera"),l.attr("name",j.name),l.addClass("webuploader-element-invisible"),k.on("click",function(a){l.trigger("click"),a.stopPropagation(),i.trigger("dialogopen")}),k.css({opacity:0,width:"100%",height:"100%",display:"block",cursor:"pointer",background:"#ffffff"}),j.multiple&&l.attr("multiple","multiple"),j.accept&&j.accept.length>0){for(a=[],b=0,d=j.accept.length;d>b;b++)a.push(j.accept[b].mimeTypes);l.attr("accept",a.join(","))}g.append(l),g.append(k),e=function(a){i.trigger(a.type)},f=function(a){var b;return 0===a.target.files.length?!1:(h.files=a.target.files,b=this.cloneNode(!0),b.value=null,this.parentNode.replaceChild(b,this),l.off(),l=c(b).on("change",f).on("mouseenter mouseleave",e),i.trigger("change"),void 0)},l.on("change",f),k.on("mouseenter mouseleave",e)},getFiles:function(){return this.files},destroy:function(){this.input.off(),this.label.off()}})}),b("runtime/html5/util",["base"],function(b){var c=a.createObjectURL&&a||a.URL&&URL.revokeObjectURL&&URL||a.webkitURL,d=b.noop,e=d;return c&&(d=function(){return c.createObjectURL.apply(c,arguments)},e=function(){return c.revokeObjectURL.apply(c,arguments)}),{createObjectURL:d,revokeObjectURL:e,dataURL2Blob:function(a){var b,c,d,e,f,g;for(g=a.split(","),b=~g[0].indexOf("base64")?atob(g[1]):decodeURIComponent(g[1]),d=new ArrayBuffer(b.length),c=new Uint8Array(d),e=0;e<b.length;e++)c[e]=b.charCodeAt(e);return f=g[0].split(":")[1].split(";")[0],this.arrayBufferToBlob(d,f)},dataURL2ArrayBuffer:function(a){var b,c,d,e;for(e=a.split(","),b=~e[0].indexOf("base64")?atob(e[1]):decodeURIComponent(e[1]),c=new Uint8Array(b.length),d=0;d<b.length;d++)c[d]=b.charCodeAt(d);return c.buffer},arrayBufferToBlob:function(b,c){var d,e=a.BlobBuilder||a.WebKitBlobBuilder;return e?(d=new e,d.append(b),d.getBlob(c)):new Blob([b],c?{type:c}:{})},canvasToDataUrl:function(a,b,c){return a.toDataURL(b,c/100)},parseMeta:function(a,b){b(!1,{})},updateImageHead:function(a){return a}}}),b("runtime/html5/imagemeta",["runtime/html5/util"],function(a){var b;return b={parsers:{65505:[]},maxMetaDataSize:262144,parse:function(a,b){var c=this,d=new FileReader;d.onload=function(){b(!1,c._parse(this.result)),d=d.onload=d.onerror=null},d.onerror=function(a){b(a.message),d=d.onload=d.onerror=null},a=a.slice(0,c.maxMetaDataSize),d.readAsArrayBuffer(a.getSource())},_parse:function(a,c){if(!(a.byteLength<6)){var d,e,f,g,h=new DataView(a),i=2,j=h.byteLength-4,k=i,l={};if(65496===h.getUint16(0)){for(;j>i&&(d=h.getUint16(i),d>=65504&&65519>=d||65534===d)&&(e=h.getUint16(i+2)+2,!(i+e>h.byteLength));){if(f=b.parsers[d],!c&&f)for(g=0;g<f.length;g+=1)f[g].call(b,h,i,e,l);i+=e,k=i}k>6&&(l.imageHead=a.slice?a.slice(2,k):new Uint8Array(a).subarray(2,k))}return l}},updateImageHead:function(a,b){var c,d,e,f=this._parse(a,!0);return e=2,f.imageHead&&(e=2+f.imageHead.byteLength),d=a.slice?a.slice(e):new Uint8Array(a).subarray(e),c=new Uint8Array(b.byteLength+2+d.byteLength),c[0]=255,c[1]=216,c.set(new Uint8Array(b),2),c.set(new Uint8Array(d),b.byteLength+2),c.buffer}},a.parseMeta=function(){return b.parse.apply(b,arguments)},a.updateImageHead=function(){return b.updateImageHead.apply(b,arguments)},b}),b("runtime/html5/imagemeta/exif",["base","runtime/html5/imagemeta"],function(a,b){var c={};return c.ExifMap=function(){return this},c.ExifMap.prototype.map={Orientation:274},c.ExifMap.prototype.get=function(a){return this[a]||this[this.map[a]]},c.exifTagTypes={1:{getValue:function(a,b){return a.getUint8(b)},size:1},2:{getValue:function(a,b){return String.fromCharCode(a.getUint8(b))},size:1,ascii:!0},3:{getValue:function(a,b,c){return a.getUint16(b,c)},size:2},4:{getValue:function(a,b,c){return a.getUint32(b,c)},size:4},5:{getValue:function(a,b,c){return a.getUint32(b,c)/a.getUint32(b+4,c)},size:8},9:{getValue:function(a,b,c){return a.getInt32(b,c)},size:4},10:{getValue:function(a,b,c){return a.getInt32(b,c)/a.getInt32(b+4,c)},size:8}},c.exifTagTypes[7]=c.exifTagTypes[1],c.getExifValue=function(b,d,e,f,g,h){var i,j,k,l,m,n,o=c.exifTagTypes[f];if(!o)return a.log("Invalid Exif data: Invalid tag type."),void 0;if(i=o.size*g,j=i>4?d+b.getUint32(e+8,h):e+8,j+i>b.byteLength)return a.log("Invalid Exif data: Invalid data offset."),void 0;if(1===g)return o.getValue(b,j,h);for(k=[],l=0;g>l;l+=1)k[l]=o.getValue(b,j+l*o.size,h);if(o.ascii){for(m="",l=0;l<k.length&&(n=k[l],"\0"!==n);l+=1)m+=n;return m}return k},c.parseExifTag=function(a,b,d,e,f){var g=a.getUint16(d,e);f.exif[g]=c.getExifValue(a,b,d,a.getUint16(d+2,e),a.getUint32(d+4,e),e)},c.parseExifTags=function(b,c,d,e,f){var g,h,i;if(d+6>b.byteLength)return a.log("Invalid Exif data: Invalid directory offset."),void 0;if(g=b.getUint16(d,e),h=d+2+12*g,h+4>b.byteLength)return a.log("Invalid Exif data: Invalid directory size."),void 0;for(i=0;g>i;i+=1)this.parseExifTag(b,c,d+2+12*i,e,f);return b.getUint32(h,e)},c.parseExifData=function(b,d,e,f){var g,h,i=d+10;if(1165519206===b.getUint32(d+4)){if(i+8>b.byteLength)return a.log("Invalid Exif data: Invalid segment size."),void 0;if(0!==b.getUint16(d+8))return a.log("Invalid Exif data: Missing byte alignment offset."),void 0;switch(b.getUint16(i)){case 18761:g=!0;break;case 19789:g=!1;break;default:return a.log("Invalid Exif data: Invalid byte alignment marker."),void 0}if(42!==b.getUint16(i+2,g))return a.log("Invalid Exif data: Missing TIFF marker."),void 0;h=b.getUint32(i+4,g),f.exif=new c.ExifMap,h=c.parseExifTags(b,i,i+h,g,f)}},b.parsers[65505].push(c.parseExifData),c}),b("runtime/html5/image",["base","runtime/html5/runtime","runtime/html5/util"],function(a,b,c){var d="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D";return b.register("Image",{modified:!1,init:function(){var a=this,b=new Image;b.onload=function(){a._info={type:a.type,width:this.width,height:this.height},a._metas||"image/jpeg"!==a.type?a.owner.trigger("load"):c.parseMeta(a._blob,function(b,c){a._metas=c,a.owner.trigger("load")})},b.onerror=function(){a.owner.trigger("error")},a._img=b},loadFromBlob:function(a){var b=this,d=b._img;b._blob=a,b.type=a.type,d.src=c.createObjectURL(a.getSource()),b.owner.once("load",function(){c.revokeObjectURL(d.src)})},resize:function(a,b){var c=this._canvas||(this._canvas=document.createElement("canvas"));this._resize(this._img,c,a,b),this._blob=null,this.modified=!0,this.owner.trigger("complete","resize")},crop:function(a,b,c,d,e){var f=this._canvas||(this._canvas=document.createElement("canvas")),g=this.options,h=this._img,i=h.naturalWidth,j=h.naturalHeight,k=this.getOrientation();e=e||1,f.width=c,f.height=d,g.preserveHeaders||this._rotate2Orientaion(f,k),this._renderImageToCanvas(f,h,-a,-b,i*e,j*e),this._blob=null,this.modified=!0,this.owner.trigger("complete","crop")},getAsBlob:function(a){var b,d=this._blob,e=this.options;if(a=a||this.type,this.modified||this.type!==a){if(b=this._canvas,"image/jpeg"===a){if(d=c.canvasToDataUrl(b,a,e.quality),e.preserveHeaders&&this._metas&&this._metas.imageHead)return d=c.dataURL2ArrayBuffer(d),d=c.updateImageHead(d,this._metas.imageHead),d=c.arrayBufferToBlob(d,a)}else d=c.canvasToDataUrl(b,a);d=c.dataURL2Blob(d)}return d},getAsDataUrl:function(a){var b=this.options;return a=a||this.type,"image/jpeg"===a?c.canvasToDataUrl(this._canvas,a,b.quality):this._canvas.toDataURL(a)},getOrientation:function(){return this._metas&&this._metas.exif&&this._metas.exif.get("Orientation")||1},info:function(a){return a?(this._info=a,this):this._info},meta:function(a){return a?(this._metas=a,this):this._metas},destroy:function(){var a=this._canvas;this._img.onload=null,a&&(a.getContext("2d").clearRect(0,0,a.width,a.height),a.width=a.height=0,this._canvas=null),this._img.src=d,this._img=this._blob=null},_resize:function(a,b,c,d){var e,f,g,h,i,j=this.options,k=a.width,l=a.height,m=this.getOrientation();~[5,6,7,8].indexOf(m)&&(c^=d,d^=c,c^=d),e=Math[j.crop?"max":"min"](c/k,d/l),j.allowMagnify||(e=Math.min(1,e)),f=k*e,g=l*e,j.crop?(b.width=c,b.height=d):(b.width=f,b.height=g),h=(b.width-f)/2,i=(b.height-g)/2,j.preserveHeaders||this._rotate2Orientaion(b,m),this._renderImageToCanvas(b,a,h,i,f,g)},_rotate2Orientaion:function(a,b){var c=a.width,d=a.height,e=a.getContext("2d");switch(b){case 5:case 6:case 7:case 8:a.width=d,a.height=c}switch(b){case 2:e.translate(c,0),e.scale(-1,1);break;case 3:e.translate(c,d),e.rotate(Math.PI);break;case 4:e.translate(0,d),e.scale(1,-1);break;case 5:e.rotate(.5*Math.PI),e.scale(1,-1);break;case 6:e.rotate(.5*Math.PI),e.translate(0,-d);break;case 7:e.rotate(.5*Math.PI),e.translate(c,-d),e.scale(-1,1);break;case 8:e.rotate(-.5*Math.PI),e.translate(-c,0)}},_renderImageToCanvas:function(){function b(a,b,c){var d,e,f,g=document.createElement("canvas"),h=g.getContext("2d"),i=0,j=c,k=c;for(g.width=1,g.height=c,h.drawImage(a,0,0),d=h.getImageData(0,0,1,c).data;k>i;)e=d[4*(k-1)+3],0===e?j=k:i=k,k=j+i>>1;return f=k/c,0===f?1:f}function c(a){var b,c,d=a.naturalWidth,e=a.naturalHeight;return d*e>1048576?(b=document.createElement("canvas"),b.width=b.height=1,c=b.getContext("2d"),c.drawImage(a,-d+1,0),0===c.getImageData(0,0,1,1).data[3]):!1}return a.os.ios?a.os.ios>=7?function(a,c,d,e,f,g){var h=c.naturalWidth,i=c.naturalHeight,j=b(c,h,i);return a.getContext("2d").drawImage(c,0,0,h*j,i*j,d,e,f,g)}:function(a,d,e,f,g,h){var i,j,k,l,m,n,o,p=d.naturalWidth,q=d.naturalHeight,r=a.getContext("2d"),s=c(d),t="image/jpeg"===this.type,u=1024,v=0,w=0;for(s&&(p/=2,q/=2),r.save(),i=document.createElement("canvas"),i.width=i.height=u,j=i.getContext("2d"),k=t?b(d,p,q):1,l=Math.ceil(u*g/p),m=Math.ceil(u*h/q/k);q>v;){for(n=0,o=0;p>n;)j.clearRect(0,0,u,u),j.drawImage(d,-n,-v),r.drawImage(i,0,0,u,u,e+o,f+w,l,m),n+=u,o+=l;v+=u,w+=m}r.restore(),i=j=null}:function(b){var c=a.slice(arguments,1),d=b.getContext("2d");d.drawImage.apply(d,c)}}()})}),b("runtime/html5/transport",["base","runtime/html5/runtime"],function(a,b){var c=a.noop,d=a.$;return b.register("Transport",{init:function(){this._status=0,this._response=null},send:function(){var b,c,e,f=this.owner,g=this.options,h=this._initAjax(),i=f._blob,j=g.server;g.sendAsBinary?(j+=g.attachInfoToQuery!==!1?(/\?/.test(j)?"&":"?")+d.param(f._formData):"",c=i.getSource()):(b=new FormData,d.each(f._formData,function(a,c){b.append(a,c)}),b.append(g.fileVal,i.getSource(),g.filename||f._formData.name||"")),g.withCredentials&&"withCredentials"in h?(h.open(g.method,j,!0),h.withCredentials=!0):h.open(g.method,j),this._setRequestHeader(h,g.headers),c?(h.overrideMimeType&&h.overrideMimeType("application/octet-stream"),a.os.android?(e=new FileReader,e.onload=function(){h.send(this.result),e=e.onload=null},e.readAsArrayBuffer(c)):h.send(c)):h.send(b)},getResponse:function(){return this._response},getResponseAsJson:function(){return this._parseJson(this._response)},getResponseHeaders:function(){return this._headers},getStatus:function(){return this._status},abort:function(){var a=this._xhr;a&&(a.upload.onprogress=c,a.onreadystatechange=c,a.abort(),this._xhr=a=null)},destroy:function(){this.abort()},_parseHeader:function(a){var b={};return a&&a.replace(/^([^\:]+):(.*)$/gm,function(a,c,d){b[c.trim()]=d.trim()}),b},_initAjax:function(){var a=this,b=new XMLHttpRequest,d=this.options;return!d.withCredentials||"withCredentials"in b||"undefined"==typeof XDomainRequest||(b=new XDomainRequest),b.upload.onprogress=function(b){var c=0;return b.lengthComputable&&(c=b.loaded/b.total),a.trigger("progress",c)},b.onreadystatechange=function(){if(4===b.readyState){b.upload.onprogress=c,b.onreadystatechange=c,a._xhr=null,a._status=b.status;var d="|",e=d+b.status+d+b.statusText;return b.status>=200&&b.status<300?(a._response=b.responseText,a._headers=a._parseHeader(b.getAllResponseHeaders()),a.trigger("load")):b.status>=500&&b.status<600?(a._response=b.responseText,a._headers=a._parseHeader(b.getAllResponseHeaders()),a.trigger("error","server"+e)):a.trigger("error",a._status?"http"+e:"abort")}},a._xhr=b,b},_setRequestHeader:function(a,b){d.each(b,function(b,c){a.setRequestHeader(b,c)})},_parseJson:function(a){var b;try{b=JSON.parse(a)}catch(c){b={}}return b}})}),b("preset/html5only",["base","widgets/filednd","widgets/filepaste","widgets/filepicker","widgets/image","widgets/queue","widgets/runtime","widgets/upload","widgets/validator","runtime/html5/blob","runtime/html5/dnd","runtime/html5/filepaste","runtime/html5/filepicker","runtime/html5/imagemeta/exif","runtime/html5/image","runtime/html5/transport"],function(a){return a}),b("webuploader",["preset/html5only"],function(a){return a}),c("webuploader")});
 /*******************************************************************************
 * KindEditor - WYSIWYG HTML Editor for Internet
 * Copyright (C) 2006-2011 kindsoft.net
@@ -12776,3 +9279,240 @@ KindEditor.plugin('fixtoolbar', function (K) {
         self.afterCreate(init);
     }
 });
+
+/*******************************************************************************
+* KindEditor - WYSIWYG HTML Editor for Internet
+* Copyright (C) 2006-2011 kindsoft.net
+*
+* @author Roddy <luolonghao@gmail.com>
+* @site http://www.kindsoft.net/
+* @licence http://www.kindsoft.net/license.php
+*******************************************************************************/
+KindEditor.lang({
+	source : 'HTML代码',
+	preview : '预览',
+	undo : '后退(Ctrl+Z)',
+	redo : '前进(Ctrl+Y)',
+	cut : '剪切(Ctrl+X)',
+	copy : '复制(Ctrl+C)',
+	paste : '粘贴(Ctrl+V)',
+	plainpaste : '粘贴为无格式文本',
+	wordpaste : '从Word粘贴',
+	selectall : '全选(Ctrl+A)',
+	justifyleft : '左对齐',
+	justifycenter : '居中',
+	justifyright : '右对齐',
+	justifyfull : '两端对齐',
+	insertorderedlist : '编号',
+	insertunorderedlist : '项目符号',
+	indent : '增加缩进',
+	outdent : '减少缩进',
+	subscript : '下标',
+	superscript : '上标',
+	formatblock : '段落',
+	fontname : '字体',
+	fontsize : '文字大小',
+	forecolor : '文字颜色',
+	hilitecolor : '文字背景',
+	bold : '粗体(Ctrl+B)',
+	italic : '斜体(Ctrl+I)',
+	underline : '下划线(Ctrl+U)',
+	strikethrough : '删除线',
+	removeformat : '删除格式',
+	image : '图片',
+	multiimage : '批量图片上传',
+	flash : 'Flash',
+	media : '视音频',
+	table : '表格',
+	tablecell : '单元格',
+	hr : '插入横线',
+	emoticons : '插入表情',
+	link : '超级链接',
+	unlink : '取消超级链接',
+	fullscreen : '全屏显示',
+	about : '关于',
+	print : '打印(Ctrl+P)',
+	filemanager : '文件空间',
+	code : '插入程序代码',
+	map : 'Google地图',
+	baidumap : '百度地图',
+	lineheight : '行距',
+	clearhtml : '清理HTML代码',
+	pagebreak : '插入分页符',
+	quickformat : '一键排版',
+	insertfile : '插入文件',
+	template : '插入模板',
+	anchor : '锚点',
+	yes : '确定',
+	no : '取消',
+	close : '关闭',
+	editImage : '图片属性',
+	deleteImage : '删除图片',
+	editFlash : 'Flash属性',
+	deleteFlash : '删除Flash',
+	editMedia : '视音频属性',
+	deleteMedia : '删除视音频',
+	editLink : '超级链接属性',
+	deleteLink : '取消超级链接',
+	editAnchor : '锚点属性',
+	deleteAnchor : '删除锚点',
+	tableprop : '表格属性',
+	tablecellprop : '单元格属性',
+	tableinsert : '插入表格',
+	tabledelete : '删除表格',
+	tablecolinsertleft : '左侧插入列',
+	tablecolinsertright : '右侧插入列',
+	tablerowinsertabove : '上方插入行',
+	tablerowinsertbelow : '下方插入行',
+	tablerowmerge : '向下合并单元格',
+	tablecolmerge : '向右合并单元格',
+	tablerowsplit : '拆分行',
+	tablecolsplit : '拆分列',
+	tablecoldelete : '删除列',
+	tablerowdelete : '删除行',
+	noColor : '无颜色',
+	pleaseSelectFile : '请选择文件。',
+	invalidImg : "请输入有效的URL地址。\n只允许jpg,gif,bmp,png格式。",
+	invalidMedia : "请输入有效的URL地址。\n只允许swf,flv,mp3,wav,wma,wmv,mid,avi,mpg,asf,rm,rmvb格式。",
+	invalidWidth : "宽度必须为数字。",
+	invalidHeight : "高度必须为数字。",
+	invalidBorder : "边框必须为数字。",
+	invalidUrl : "请输入有效的URL地址。",
+	invalidRows : '行数为必选项，只允许输入大于0的数字。',
+	invalidCols : '列数为必选项，只允许输入大于0的数字。',
+	invalidPadding : '边距必须为数字。',
+	invalidSpacing : '间距必须为数字。',
+	invalidJson : '服务器发生故障。',
+	uploadSuccess : '上传成功。',
+	cutError : '您的浏览器安全设置不允许使用剪切操作，请使用快捷键(Ctrl+X)来完成。',
+	copyError : '您的浏览器安全设置不允许使用复制操作，请使用快捷键(Ctrl+C)来完成。',
+	pasteError : '您的浏览器安全设置不允许使用粘贴操作，请使用快捷键(Ctrl+V)来完成。',
+	ajaxLoading : '加载中，请稍候 ...',
+	uploadLoading : '上传中，请稍候 ...',
+	uploadError : '上传错误',
+	'plainpaste.comment' : '请使用快捷键(Ctrl+V)把内容粘贴到下面的方框里。',
+	'wordpaste.comment' : '请使用快捷键(Ctrl+V)把内容粘贴到下面的方框里。',
+	'code.pleaseInput' : '请输入程序代码。',
+	'link.url' : 'URL',
+	'link.linkType' : '打开类型',
+	'link.newWindow' : '新窗口',
+	'link.selfWindow' : '当前窗口',
+	'flash.url' : 'URL',
+	'flash.width' : '宽度',
+	'flash.height' : '高度',
+	'flash.upload' : '上传',
+	'flash.viewServer' : '文件空间',
+	'media.url' : 'URL',
+	'media.width' : '宽度',
+	'media.height' : '高度',
+	'media.autostart' : '自动播放',
+	'media.upload' : '上传',
+	'media.viewServer' : '文件空间',
+	'image.remoteImage' : '网络图片',
+	'image.localImage' : '本地上传',
+	'image.remoteUrl' : '图片地址',
+	'image.localUrl' : '上传文件',
+	'image.size' : '图片大小',
+	'image.width' : '宽',
+	'image.height' : '高',
+	'image.resetSize' : '重置大小',
+	'image.align' : '对齐方式',
+	'image.defaultAlign' : '默认方式',
+	'image.leftAlign' : '左对齐',
+	'image.rightAlign' : '右对齐',
+	'image.imgTitle' : '图片说明',
+	'image.upload' : '浏览...',
+	'image.viewServer' : '图片空间',
+	'multiimage.uploadDesc' : '允许用户同时上传<%=uploadLimit%>张图片，单张图片容量不超过<%=sizeLimit%>',
+	'multiimage.startUpload' : '开始上传',
+	'multiimage.clearAll' : '全部清空',
+	'multiimage.insertAll' : '全部插入',
+	'multiimage.queueLimitExceeded' : '文件数量超过限制。',
+	'multiimage.fileExceedsSizeLimit' : '文件大小超过限制。',
+	'multiimage.zeroByteFile' : '无法上传空文件。',
+	'multiimage.invalidFiletype' : '文件类型不正确。',
+	'multiimage.unknownError' : '发生异常，无法上传。',
+	'multiimage.pending' : '等待上传',
+	'multiimage.uploadError' : '上传失败',
+	'filemanager.emptyFolder' : '空文件夹',
+	'filemanager.moveup' : '移到上一级文件夹',
+	'filemanager.viewType' : '显示方式：',
+	'filemanager.viewImage' : '缩略图',
+	'filemanager.listImage' : '详细信息',
+	'filemanager.orderType' : '排序方式：',
+	'filemanager.fileName' : '名称',
+	'filemanager.fileSize' : '大小',
+	'filemanager.fileType' : '类型',
+	'insertfile.url' : 'URL',
+	'insertfile.title' : '文件说明',
+	'insertfile.upload' : '上传',
+	'insertfile.viewServer' : '文件空间',
+	'table.cells' : '单元格数',
+	'table.rows' : '行数',
+	'table.cols' : '列数',
+	'table.size' : '大小',
+	'table.width' : '宽度',
+	'table.height' : '高度',
+	'table.percent' : '%',
+	'table.px' : 'px',
+	'table.space' : '边距间距',
+	'table.padding' : '边距',
+	'table.spacing' : '间距',
+	'table.align' : '对齐方式',
+	'table.textAlign' : '水平对齐',
+	'table.verticalAlign' : '垂直对齐',
+	'table.alignDefault' : '默认',
+	'table.alignLeft' : '左对齐',
+	'table.alignCenter' : '居中',
+	'table.alignRight' : '右对齐',
+	'table.alignTop' : '顶部',
+	'table.alignMiddle' : '中部',
+	'table.alignBottom' : '底部',
+	'table.alignBaseline' : '基线',
+	'table.border' : '边框',
+	'table.borderWidth' : '边框',
+	'table.borderColor' : '颜色',
+	'table.backgroundColor' : '背景颜色',
+	'map.address' : '地址: ',
+	'map.search' : '搜索',
+	'baidumap.address' : '地址: ',
+	'baidumap.search' : '搜索',
+	'baidumap.insertDynamicMap' : '插入动态地图',
+	'anchor.name' : '锚点名称',
+	'formatblock.formatBlock' : {
+		h1 : '标题 1',
+		h2 : '标题 2',
+		h3 : '标题 3',
+		h4 : '标题 4',
+		p : '正 文'
+	},
+	'fontname.fontName' : {
+		'SimSun' : '宋体',
+		'NSimSun' : '新宋体',
+		'FangSong_GB2312' : '仿宋_GB2312',
+		'KaiTi_GB2312' : '楷体_GB2312',
+		'SimHei' : '黑体',
+		'Microsoft YaHei' : '微软雅黑',
+		'Arial' : 'Arial',
+		'Arial Black' : 'Arial Black',
+		'Times New Roman' : 'Times New Roman',
+		'Courier New' : 'Courier New',
+		'Tahoma' : 'Tahoma',
+		'Verdana' : 'Verdana'
+	},
+	'lineheight.lineHeight' : [
+		{'1' : '单倍行距'},
+		{'1.5' : '1.5倍行距'},
+		{'2' : '2倍行距'},
+		{'2.5' : '2.5倍行距'},
+		{'3' : '3倍行距'}
+	],
+	'template.selectTemplate' : '可选模板',
+	'template.replaceContent' : '替换当前内容',
+	'template.fileList' : {
+		'1.html' : '图片和文字',
+		'2.html' : '表格',
+		'3.html' : '项目编号'
+	}
+}, 'zh-CN');
+KindEditor.options.langType = 'zh-CN';
