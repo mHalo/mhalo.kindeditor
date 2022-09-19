@@ -1,17 +1,40 @@
 {
-	"name": "KindEditor",
-	"version": "4.1.12",
-	"filename": "kindeditor",
-	"repository": "kindsoft/kindeditor",
-	"devDependencies": {
-		"grunt": "~0.4.1",
-		"grunt-connect-proxy": "^0.2.0",
-		"grunt-contrib-compress": "~0.5.3",
-		"grunt-contrib-concat": "~0.3.0",
-		"grunt-contrib-livereload": "^0.1.2",
-		"grunt-contrib-uglify": "~0.2.7",
-		"gulp-connect": "^5.7.0",
-		"gulp-livereload": "^4.0.2"
-	},
-	"license": "LGPL-2.1"
+  "name": "mhalo.kindeditor",
+  "version": "4.1.15",
+  "filename": "kindeditor",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mHalo/mhalo.kindeditor"
+  },
+  "license": "LGPL-2.1",
+  "description": "KindEditor is a lightweight, Open Source(LGPL), cross browser, web based WYSIWYG HTML editor. KindEditor has the ability to convert standard textareas to rich text editing. @MHalo fork from original respotiory(https://github.com/kindsoft/kindeditor) and modify some module.",
+  "bugs": {
+    "url": "https://github.com/mHalo/mhalo.kindeditor/issues"
+  },
+  "homepage": "https://github.com/mHalo/mhalo.kindeditor#readme",
+  "main": "index.js",
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-connect-proxy": "^0.2.0",
+    "grunt-contrib-compress": "~0.5.3",
+    "grunt-contrib-concat": "~0.3.0",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-livereload": "^0.1.2",
+    "grunt-contrib-uglify": "~0.2.7",
+    "gulp-connect": "^5.7.0",
+    "gulp-livereload": "^4.0.2"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "publish": "grunt build",
+    "run": "gulp"
+  },
+  "keywords": [
+    "kindeditor",
+    "wysiwyg",
+    "rich_text",
+    "kindsoft",
+    "kindeditor.net"
+  ],
+  "author": "kindsoft"
 }

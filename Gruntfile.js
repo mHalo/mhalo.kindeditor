@@ -2,7 +2,11 @@
 
 module.exports = function(grunt) {
 
-var BANNER = '/* <%= pkg.name %> <%= pkg.version %> (<%= grunt.template.today("yyyy-mm-dd") %>), Copyright (C) kindeditor.net, Licence: http://kindeditor.net/license.php */\r\n';
+var BANNER = `/*
+<%= pkg.name %> <%= pkg.version %> (<%= grunt.template.today("yyyy-mm-dd") %>), 
+Copyright (C) kindeditor.net, Licence: http://kindeditor.net/license.php 
+*/
+`;
 
 var SRC_FILES = [
 	'src/header.js',
@@ -72,20 +76,32 @@ grunt.initConfig({
 				src = src.replace(/[ \t]+$/mg, '');
 				src = src.replace(/(\r\n|\n){2,}/g, '$1');
 				return src;
-			}
+			},
+			stripBanners: true,
+			banner: `
+;(function (global, factory) {
+	typeof exports !== 'undefined' && typeof module !== 'undefined' ? module.exports = factory() :
+		typeof define === 'function' && define.amd ? define(factory) :
+		(global = global || self, global.KindEditor = factory());
+}(this, function () {
+`,
+			footer: `
+return KindEditor;
+}));`
 		},
 		build : {
 			src : SRC_FILES.concat('lang/' + lang + '.js').concat(PLUGIN_FILES),
-			dest : 'kindeditor-all.js'
+			dest : 'dist/kindeditor-all.js'
 		}
 	},
 	uglify : {
 		options : {
 			banner : BANNER,
+			footer : ''
 		},
 		build : {
-			src : '<%= pkg.filename %>-all.js',
-			dest : '<%= pkg.filename %>-all-min.js'
+			src : 'dist/<%= pkg.filename %>-all.js',
+			dest : 'dist/<%= pkg.filename %>-all-min.js'
 		}
 	},
 	compress : {
@@ -103,14 +119,30 @@ grunt.initConfig({
 			]
 		}
 	},
+	copy: {
+		main: {
+		  src: 'themes/**/*',
+		  dest: 'dist/',
+		  options: {
+			// process: function (content, srcpath) {
+			//   return content.replace(/[sad ]/g,"_");
+			// },
+		  },
+		},
+		index: {
+			src: 'index.js',
+		  	dest: 'dist/',
+		}
+	},
 });
 
 grunt.loadNpmTasks('grunt-contrib-concat');
 grunt.loadNpmTasks('grunt-contrib-uglify');
 grunt.loadNpmTasks('grunt-contrib-compress');
+grunt.loadNpmTasks('grunt-contrib-copy');
 
 
-grunt.registerTask('build', ['concat', 'uglify']);
+grunt.registerTask('build', ['concat', 'uglify', 'copy']);
 grunt.registerTask('zip', ['build', 'compress']);
 
 

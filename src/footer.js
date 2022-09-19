@@ -8,10 +8,6 @@
 * @version ${VERSION}
 *******************************************************************************/
 
-(function (window, undefined) {
-
-	if (window.KindEditor) {
-		return;
-	}
-
+(function (window) {
+	if (window.KindEditor) { return window.KindEditor; }
 })(window);

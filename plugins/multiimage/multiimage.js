@@ -123,7 +123,6 @@
                 }
             });
             self.uploader.on('error', function(type){
-                console.info('type', type)
                 var error = '部分或全部文件上传出现错误，请检查后重试！';
                 if(type === 'Q_TYPE_DENIED'){
                     //文件类型不正确

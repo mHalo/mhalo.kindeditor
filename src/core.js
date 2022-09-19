@@ -1,13 +1,10 @@
 
 /**/ var undefined;
-
 if (!window.console) {
-	window.console = {};
+	window.console = {
+		log: function () {}
+	};
 }
-if (!console.log) {
-	console.log = function () {};
-}
-
 var _VERSION = '${VERSION}',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
