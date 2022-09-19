@@ -18,5 +18,6 @@ MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https:/
 具体使用方式并无二致，可参考（[http://kindeditor.net/doc.php](http://kindeditor.net/doc.php)）。
 
 
+<img width="1066" alt="image" src="https://user-images.githubusercontent.com/19524115/190976990-6089d387-8886-4fda-b6ed-41a541d4ee5a.png">
 
 
