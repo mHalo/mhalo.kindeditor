@@ -187,7 +187,7 @@ function _queryAll(expr, root) {
 		return select(parts[0], root);
 	}
 	var isChild = false, part, els, subResults, val, v, i, j, k, length, len, l;
-	for (i = 0, lenth = parts.length; i < lenth; i++) {
+	for (i = 0, length = parts.length; i < length; i++) {
 		part = parts[i];
 		if (part === '>') {
 			isChild = true;

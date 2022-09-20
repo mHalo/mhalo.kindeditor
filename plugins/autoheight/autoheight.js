@@ -29,7 +29,7 @@ KindEditor.plugin('autoheight', function(K) {
 		var edit = self.edit;
 		var body = edit.doc.body;
 		edit.iframe.height(minHeight);
-		self.resize(null, Math.max((K.IE ? body.scrollHeight : body.offsetHeight) + 76, minHeight));
+		self.resize(null, Math.max((K.IE ? body.scrollHeight : body.offsetHeight) + 176, minHeight));
 	}
 
 	function init() {

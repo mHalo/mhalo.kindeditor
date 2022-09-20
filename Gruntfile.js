@@ -10,6 +10,7 @@ Copyright (C) kindeditor.net, Licence: http://kindeditor.net/license.php
 
 var SRC_FILES = [
 	'src/header.js',
+	'src/upload.js',
 	'src/core.js',
 	'src/config.js',
 	'src/event.js',
@@ -91,7 +92,7 @@ return KindEditor;
 		},
 		build : {
 			src : SRC_FILES.concat('lang/' + lang + '.js').concat(PLUGIN_FILES),
-			dest : 'dist/kindeditor-all.js'
+			dest : 'publish/dist/kindeditor-all.js'
 		}
 	},
 	uglify : {
@@ -100,8 +101,8 @@ return KindEditor;
 			footer : ''
 		},
 		build : {
-			src : 'dist/<%= pkg.filename %>-all.js',
-			dest : 'dist/<%= pkg.filename %>-all-min.js'
+			src : 'publish/dist/<%= pkg.filename %>-all.js',
+			dest : 'publish/dist/<%= pkg.filename %>-all-min.js'
 		}
 	},
 	compress : {
@@ -122,16 +123,32 @@ return KindEditor;
 	copy: {
 		main: {
 		  src: 'themes/**/*',
-		  dest: 'dist/',
+		  dest: 'publish/',
 		  options: {
 			// process: function (content, srcpath) {
 			//   return content.replace(/[sad ]/g,"_");
 			// },
 		  },
 		},
+		plugins: {
+			src: 'plugins/**/*',
+		  	dest: 'publish/',
+		},
 		index: {
 			src: 'index.js',
-		  	dest: 'dist/',
+		  	dest: 'publish/',
+		},
+		pkg: {
+			src: 'package.json',
+		  	dest: 'publish/',
+		},
+		license: {
+			src: 'license.txt',
+		  	dest: 'publish/',
+		},
+		readme: {
+			src: 'README.md',
+		  	dest: 'publish/',
 		}
 	},
 });

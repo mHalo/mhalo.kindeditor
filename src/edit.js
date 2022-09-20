@@ -208,11 +208,12 @@ _extend(KEdit, KWidget, {
 			cssPath = options.cssPath,
 			cssData = options.cssData,
 			documentMode = _undef(options.documentMode, false);
-			isDocumentDomain = location.protocol != 'res:' && location.host.replace(/:\d+/, '') !== document.domain,
-			srcScript = ('document.open();' +
+		var isDocumentDomain = location.protocol != 'res:' && location.host.replace(/:\d+/, '') !== document.domain;
+
+		var srcScript = ('document.open();' +
 				(isDocumentDomain ? 'document.domain="' + document.domain + '";' : '') +
-				'document.close();'),
-			iframeSrc = _IE ? ' src="javascript:void(function(){' + encodeURIComponent(srcScript) + '}())"' : '';
+				'document.close();');
+		var	iframeSrc = _IE ? ' src="javascript:void(function(){' + encodeURIComponent(srcScript) + '}())"' : '';
 		self.iframe = K('<iframe class="ke-edit-iframe" hidefocus="true" frameborder="0"' + iframeSrc + '></iframe>').css('width', '100%');
 		self.textarea = K('<textarea class="ke-edit-textarea" hidefocus="true"></textarea>').css('width', '100%');
 		self.tabIndex = isNaN(parseInt(options.tabIndex, 10)) ? self.srcElement.attr('tabindex') : parseInt(options.tabIndex, 10);

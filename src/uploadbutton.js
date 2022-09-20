@@ -32,54 +32,80 @@ _extend(KUploadButton, {
 			'<input type="file" class="ke-upload-file" name="' + fieldName + '" tabindex="-1" />',
 			(options.form ? '</div>' : '</form>'),
 			'</div>'].join('');
-
 		var div = K(html, button.doc);
 		button.hide();
 		button.before(div);
 
 		self.div = div;
 		self.button = button;
-		self.iframe = options.target ? K('iframe[name="' + target + '"]') : K('iframe', div);
-		self.form = options.form ? K(options.form) : K('form', div);
+		// self.iframe = options.target ? K('iframe[name="' + target + '"]') : K('iframe', div);
 		self.fileBox = K('.ke-upload-file', div);
+		self.form = options.form ? K(options.form) : K('form', div);
+
+		var imageSizeLimit = K.undef(self.imageSizeLimit, '1MB'),
+			imageFileTypes = K.undef(self.imageFileTypes, '*.jpg;*.gif;*.png');
+		self.uploader = WebUploader.create({
+			// 文件接收服务端。
+			server: options.uploadUrl,
+			// 不压缩image, 默认如果是jpeg，文件上传前会压缩一把再上传！
+			resize: false,
+			fileVal: 'file',
+			accept: {
+				title: 'Images',
+				extensions: imageFileTypes.replace(/\*\./g,'').replace(/;/g,','),
+				mimeTypes: 'image/*'
+			},
+			headers: options.uploadHeader,
+			formData: options.uploadData,
+			fileNumLimit: 1,
+			fileSingleSizeLimit: imageSizeLimit.replace(/MB/g,'') * 1 * 1024 *1024
+		});
+		
+		self.uploader.on('uploadStart', function(file){
+			
+		});
+		self.uploader.on('uploadSuccess', function(file, response){
+			self.options.afterUpload.call(self, response.data);
+		});
+		self.uploader.on('error', function(type){
+			var error = '文件上传出现错误，请检查后重试！';
+			if(type === 'Q_TYPE_DENIED'){
+				//文件类型不正确
+				error = ('['+arguments[1].name +']文件类型不正确！')
+			}
+			else if(type === "F_EXCEED_SIZE"){
+				error = ('文件大小超出限制（最大'+ options.fileSizeLimit.replace(/MB/g,'') * 1  +'M）！')
+			}
+			else if(type === "F_DUPLICATE"){
+				error = ('['+arguments[1].name +']文件已存在于待上传列表中！')
+			}
+			console.error('文件上传出现错误，请检查后重试！', arguments);
+			self.uploader.reset();
+			self.options.afterUpload.call(self, {
+				error: 1,
+				message: error
+			});
+			self.form && self.form[0] && self.form[0].reset && self.form[0].reset();
+		});
+		self.fileBox.bind('change', function(){
+			self.uploader.reset();
+			this.files && self.uploader.addFiles(this.files)
+		})
 		var width = options.width || K('.ke-button-common', div).width();
 		K('.ke-upload-area', div).width(width);
 		self.options = options;
 	},
 	submit : function() {
-		var self = this,
-			iframe = self.iframe;
-		iframe.bind('load', function() {
-			iframe.unbind();
-			// 清空file
-			var tempForm = document.createElement('form');
-			self.fileBox.before(tempForm);
-			K(tempForm).append(self.fileBox);
-			tempForm.reset();
-			K(tempForm).remove(true);
-
-			var doc = K.iframeDoc(iframe),
-				pre = doc.getElementsByTagName('pre')[0],
-				str = '', data;
-			if (pre) {
-				str = pre.innerHTML;
-			} else {
-				str = doc.body.innerHTML;
-			}
-			// Bugfix: https://github.com/kindsoft/kindeditor/issues/81
-			str = _unescape(str);
-			// Bugfix: [IE] 上传图片后，进度条一直处于加载状态。
-			iframe[0].src = 'javascript:false';
-			try {
-				data = K.json(str);
-			} catch (e) {
-				self.options.afterError.call(self, '<!doctype html><html>' + doc.body.parentNode.innerHTML + '</html>');
-			}
-			if (data) {
-				self.options.afterUpload.call(self, data);
-			}
-		});
-		self.form[0].submit();
+		var self = this;
+		var files = self.uploader.getFiles();
+		if(files.length <= 0){
+			alert('请选择文件');
+			self.uploader.reset();
+			return;
+		}
+		setTimeout(function(){
+			self.uploader.upload();
+		}, 100);
 		return self;
 	},
 	remove : function() {
@@ -89,7 +115,7 @@ _extend(KUploadButton, {
 		}
 		// Bugfix: [IE] 上传图片后，进度条一直处于加载状态。
 		//self.iframe[0].src = 'javascript:false';
-		self.iframe.remove();
+		// self.iframe.remove();
 		self.div.remove();
 		self.button.show();
 		return self;

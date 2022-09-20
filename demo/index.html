@@ -5,7 +5,7 @@
 		<title>KindEditor Unittest</title>
 		<!-- <script src="../lib/firebug-lite/build/firebug-lite.js#startOpened"></script> -->
         <script>window.rnd = function(){ return Math.random() }</script>
-		<script src="../dist/kindeditor-all.js"></script>
+		<script src="../publish/dist/kindeditor-all.js"></script>
 	</head>
 	<body>
 		<h1 id="qunit-header">KindEditor</h1>
@@ -15,13 +15,19 @@
         // 初始化编辑器
         KindEditor.ready(function (K) {
                 var options = {
+                    themesPath: '../publish/themes/',
+                    basePath:'../publish/',
+                    pluginsPath: '../publish/plugins/',
                     resizeType: 1,
                     pasteType: 2,//0:禁止粘贴, 1:纯文本粘贴, 2:HTML粘贴
                     allowPreviewEmoticons: false,
                     allowImageUpload: true,
                     allowFlashUpload: false,
                     formatUploadUrl: false,
-                    uploadJson: '@Url.Action("Upload", "Handler")',
+                    uploadJson: '/handler/upload-test?dir=image',
+                    uploadHeader:{
+                        corefx: 'mhalo'
+                    },
                     imageSizeLimit: '2MB',
                     items: K.Tools.All,
                     cssData: 'body{font-size: 16px;line-height: 28px;}',
