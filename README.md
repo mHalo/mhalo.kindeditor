@@ -58,7 +58,9 @@ KindEditor.ready(function (K) {
 
 3. Image-Uploader更新（包含多图上传、单图上传）
 ```
-单图上传弃用了form提交的方式，多图上传弃用了flash的方式，两种上传都是用webuploader进行上传（由于webuploader中使用了jquery，但jquery体量较大，又考虑到在vue中使用的情况，所以将zepto取必须模块封装在了对应模块中，后期会考虑使用现代浏览器支持的方式自行构建uploader，毕竟zepto+webuploader的体积也不小）
+单图上传弃用了form提交的方式，多图上传弃用了flash的方式，两种上传都是用webuploader进行上传
+由于webuploader中使用了jquery，但jquery体量较大，又考虑到在vue中使用的情况，所以将zepto取必须模块封装在了对应模块中，
+后期会考虑使用现代浏览器支持的方式自行构建uploader，毕竟zepto+webuploader的体积也不小
 
 上传时支持携带formData和Headers：
 > options 
