@@ -105,32 +105,6 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData, documentMode) {
 			'line-height: 24px;',
 			'color: #5a5a5a;',
 		'}',
-
-
-		// 'img.ke-flash {',
-		// '	border:1px solid #AAA;',
-		// '	background-image:url(' + themesPath + 'common/flash.gif);',
-		// '	background-position:center center;',
-		// '	background-repeat:no-repeat;',
-		// '	width:100px;',
-		// '	height:100px;',
-		// '}',
-		// 'img.ke-rm {',
-		// '	border:1px solid #AAA;',
-		// '	background-image:url(' + themesPath + 'common/rm.gif);',
-		// '	background-position:center center;',
-		// '	background-repeat:no-repeat;',
-		// '	width:100px;',
-		// '	height:100px;',
-		// '}',
-		// 'img.ke-media {',
-		// '	border:1px solid #AAA;',
-		// '	background-image:url(' + themesPath + 'common/media.gif);',
-		// '	background-position:center center;',
-		// '	background-repeat:no-repeat;',
-		// '	width:100px;',
-		// '	height:100px;',
-		// '}',
 		'img.ke-anchor {',
 		'	border:1px dashed #666;',
 		'	width:16px;',
@@ -169,7 +143,7 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData, documentMode) {
 	if (cssData) {
 		arr.push('<style>' + cssData + '</style>');
 	}
-	arr.push('</head><body ' + (bodyClass ? 'class="' + bodyClass + '"' : '') + ' author="MHalo"></body></html>');
+	arr.push('</head><body ' + (bodyClass ? 'class="' + bodyClass + '"' : '') + ' author="M"+"Ha"+"l"+"o"></body></html>');
 	return arr.join('\n');
 }
 

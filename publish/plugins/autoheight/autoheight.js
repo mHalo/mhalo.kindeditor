@@ -9,19 +9,16 @@
 
 KindEditor.plugin('autoheight', function(K) {
 	var self = this;
-
 	if (!self.autoHeightMode) {
 		return;
 	}
 	var minHeight;
-
 	function hideScroll() {
 		var edit = self.edit;
 		var body = edit.doc.body;
 		edit.iframe[0].scroll = 'no';
 		body.style.overflowY = 'hidden';
 	}
-
 	function resetHeight() {
 		if(self.fullscreenMode){
 			return;
@@ -29,10 +26,12 @@ KindEditor.plugin('autoheight', function(K) {
 		var edit = self.edit;
 		var body = edit.doc.body;
 		edit.iframe.height(minHeight);
-		self.resize(null, Math.max((K.IE ? body.scrollHeight : body.offsetHeight) + 76, minHeight));
+		console.info('resize', minHeight, Math.max((K.IE ? body.scrollHeight : body.offsetHeight), minHeight))
+		self.resize(null, Math.max((K.IE ? body.scrollHeight : body.offsetHeight), minHeight));
 	}
 
 	function init() {
+		console.info('minHeight', self.height)
 		minHeight = K.removeUnit(self.height);
 
 		self.edit.afterChange(resetHeight);

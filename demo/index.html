@@ -20,6 +20,8 @@
                     pluginsPath: '../publish/plugins/',
                     resizeType: 1,
                     pasteType: 2,//0:禁止粘贴, 1:纯文本粘贴, 2:HTML粘贴
+                    height: 300,
+                    autoHeightMode: true,
                     allowPreviewEmoticons: false,
                     allowImageUpload: true,
                     allowFlashUpload: false,
@@ -32,7 +34,7 @@
                     items: K.Tools.All,
                     cssData: 'body{font-size: 16px;line-height: 28px;}',
                     afterBlur: function () {
-                        this.sync();//设置实际控件的值
+                        this.sync();
                     }
                 };
                 var contentEditor = K.create('#editor', options);
