@@ -77,7 +77,8 @@ filePostName: 'imgFile'
 
 👉. Media类型上传，使用audio和video标签呈现
 > 可设定controls、autoplay、preload、loop参数
-<img width="978" alt="image" src="https://user-images.githubusercontent.com/19524115/198891102-6ffe2d03-8ce3-4f13-a0ea-18b5b1712bc2.png">
+
+<img width="1032" alt="image" src="https://user-images.githubusercontent.com/19524115/198891198-440e7715-cc8c-46cc-98a7-382b23bf41f7.png">
 
 
 👉. 可引入vite使用
