@@ -139,9 +139,9 @@ KindEditor.plugin('media', function(K) {
 			viewServerBtn = K('[name="viewServer"]', div),
 			widthBox = K('[name="width"]', div),
 			heightBox = K('[name="height"]', div),
-			autostartBox = K('[name="autoplay"]', div);
-			preloadBox = K('[name="preload"]', div);
-			controlsBox = K('[name="controls"]', div);
+			autostartBox = K('[name="autoplay"]', div),
+			preloadBox = K('[name="preload"]', div),
+			controlsBox = K('[name="controls"]', div),
 			loopBox = K('[name="loop"]', div);
 
 			urlBox.val('http://');
