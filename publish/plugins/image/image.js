@@ -11,15 +11,20 @@ KindEditor.plugin('image', function(K) {
 	var self = this, name = 'image',
 		allowImageUpload = K.undef(self.allowImageUpload, true),
 		allowImageRemote = K.undef(self.allowImageRemote, true),
-		formatUploadUrl = K.undef(self.formatUploadUrl, true),
 		allowFileManager = K.undef(self.allowFileManager, false),
-		uploadJson = K.undef(self.uploadJson, '_404.html'),
+
+
 		uploadHeader = K.undef(self.uploadHeader,{}),
-		uploadData = K.undef(self.uploadData,{}),
-		imageTabIndex = K.undef(self.imageTabIndex, 1),
-		imgPath = self.pluginsPath + 'image/images/',
+		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '2MB'),
+		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.jpg;*.gif;*.png;*.jpeg,*.bmp'),
 		extraParams = K.undef(self.extraFileUploadParams, {}),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
+		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
+		formatUploadUrl = K.undef(self.formatUploadUrl, true),
+
+
+		imageTabIndex = K.undef(self.imageTabIndex, 1), /**为0时默认显示网络图片，为1时默认显示本地上传 */
+		imgPath = self.pluginsPath + 'image/images/',
 		fillDescAfterUploadImage = K.undef(self.fillDescAfterUploadImage, false),
 		lang = self.lang(name + '.');
 
@@ -35,6 +40,10 @@ KindEditor.plugin('image', function(K) {
 			clickFn = options.clickFn;
 		var target = 'kindeditor_upload_iframe_' + new Date().getTime();
 		var hiddenElements = [];
+		for(var k in extraParams){
+			hiddenElements.push('<input type="hidden" name="' + k + '" value="' + extraParams[k] + '" />');
+		}
+		console.info('extraParams',extraParams)
 		var html = [
 			'<div style="padding:20px;">',
 			//tabs
@@ -43,51 +52,51 @@ KindEditor.plugin('image', function(K) {
 			'<div class="tab1" style="display:none;">',
 			//url
 			'<div class="ke-dialog-row">',
-			'<label for="remoteUrl" style="width:60px;height:23px;line-height: 25px;">' + lang.remoteUrl + '</label>',
-			'<input type="text" id="remoteUrl" class="ke-input-text" name="url" value="" style="width:' + (allowFileManager ? 220 : 300) + 'px;height:23px;" /> &nbsp;',
-			'<span class="ke-button-common ke-button-outer">',
+			'<label for="remoteUrl" style="width:60px;">' + lang.remoteUrl + '</label>',
+			'<input type="text" id="remoteUrl" class="ke-input-text" name="url" value="" style="width:'+ (allowFileManager ? 220 : 330) +'px;" />',
+			'<span class="ke-button-common ke-button-outer"  style="margin-left:'+ (allowFileManager ? 12 : 0) +'px">',
 			'<input type="button" class="ke-button-common ke-button" name="viewServer" value="' + lang.viewServer + '" />',
 			'</span>',
 			'</div>',
 			//size
 			'<div class="ke-dialog-row">',
-			'<label for="remoteWidth" style="width:60px;height:23px;line-height: 25px;">' + lang.size + '</label>',
-			lang.width + ' <input type="text" id="remoteWidth" class="ke-input-text ke-input-number" name="width" style="width: 100px;height:23px;" value="" maxlength="4" /> ',
-			lang.height + ' <input type="text" class="ke-input-text ke-input-number" name="height" value="" style="width: 100px;height:23px;" maxlength="4" /> ',
+			'<label for="remoteWidth" style="width:60px;">' + lang.size + '</label>',
+			lang.width + '：<input type="text" id="remoteWidth" class="ke-input-text ke-input-number" name="width" value="" maxlength="4" style="width:120px;margin-right:10px" /> ',
+			lang.height + '：<input type="text" class="ke-input-text ke-input-number" name="height" value="" maxlength="4" style="width:120px;margin-right:10px" /> ',
 			'<img class="ke-refresh-btn" src="' + imgPath + 'refresh.png" width="16" height="16" alt="" style="cursor:pointer;" title="' + lang.resetSize + '" />',
 			'</div>',
 			//align
 			'<div class="ke-dialog-row">',
 			'<label style="width:60px;">' + lang.align + '</label>',
-			'<input type="radio" name="align" class="ke-inline-block" value="" checked="checked" /> <img name="defaultImg" src="' + imgPath + 'align_top.gif" width="23" height="25" alt="" />',
-			' <input type="radio" name="align" class="ke-inline-block" value="left" /> <img name="leftImg" src="' + imgPath + 'align_left.gif" width="23" height="25" alt="" />',
-			' <input type="radio" name="align" class="ke-inline-block" value="right" /> <img name="rightImg" src="' + imgPath + 'align_right.gif" width="23" height="25" alt="" />',
+			'<input type="radio" name="align" class="ke-inline-block" value="" checked="checked" /> <img name="defaultImg" src="' + imgPath + 'align_top.gif" width="18" height="auto" alt="" /><text style="margin-right:20px;">&nbsp;顶部对齐</text>',
+			' <input type="radio" name="align" class="ke-inline-block" value="left" /> <img name="leftImg" src="' + imgPath + 'align_left.gif" width="18" height="auto" alt="" /><text style="margin-right:20px;">&nbsp;左对齐</text>',
+			' <input type="radio" name="align" class="ke-inline-block" value="right" /> <img name="rightImg" src="' + imgPath + 'align_right.gif" width="18" height="auto" alt=""/><text style="margin-right:20px;" >&nbsp;右对齐</text>',
 			'</div>',
 			//title
 			'<div class="ke-dialog-row">',
-			'<label for="remoteTitle" style="width:60px;height:23px;line-height: 25px;">' + lang.imgTitle + '</label>',
-			'<input type="text" id="remoteTitle" class="ke-input-text" name="title" value="" style="width:300px;height:23px;" />',
+			'<label for="remoteTitle" style="width:60px;">' + lang.imgTitle + '</label>',
+			'<input type="text" id="remoteTitle" class="ke-input-text" name="title" value="" style="width:200px;" />',
 			'</div>',
 			'</div>',
 			//remote image - end
 			//local upload - start
 			'<div class="tab2" style="display:none;">',
-			'<iframe name="' + target + '" style="display:none;"></iframe>',
-			'<form class="ke-upload-area ke-form" method="post" enctype="multipart/form-data" target="' + target + '" action="' + K.addParam(uploadJson, 'dir=image') + '">',
+			// '<iframe name="' + target + '" style="display:none;"></iframe>',
+			// '<form class="ke-upload-area ke-form" method="post" enctype="multipart/form-data" target="' + target + '" action="' + K.addParam(uploadJson, 'dir=image') + '">',
 			//file
 			'<div class="ke-dialog-row">',
-			hiddenElements.join(''),
-			'<label style="width:60px;">' + lang.localUrl + '</label>',
-			'<input type="text" name="localUrl" class="ke-input-text" tabindex="-1" style="width:220px;height:23px;" readonly="true" /> &nbsp;',
+			// hiddenElements.join(''),
+			'<label style="width:100px;">' + lang.localUrl + '</label>',
+			'<input type="text" name="localUrl" class="ke-input-text" tabindex="-1" style="width:200px;" readonly="true" /> &nbsp;',
 			'<input type="button" class="ke-upload-button" value="' + lang.upload + '" />',
 			'</div>',
-			'</form>',
+			// '</form>',
 			'</div>',
 			//local upload - end
 			'</div>'
 		].join('');
-		var dialogWidth = showLocal || allowFileManager ? 450 : 420,
-			dialogHeight = showLocal && showRemote ? 330 : 280;
+		var dialogWidth = showLocal || allowFileManager ? 450 : 400,
+			dialogHeight = showLocal && showRemote ? 300 : 250;
 		var dialog = self.createDialog({
 			name : name,
 			width : dialogWidth,
@@ -183,14 +192,17 @@ KindEditor.plugin('image', function(K) {
 
 		var uploadbutton = K.uploadbutton({
 			button : K('.ke-upload-button', div)[0],
+			// form : K('.ke-form', div),
+			// target : target,
+			width: 'auto',
+
 			fieldName : filePostName,
-			form : K('.ke-form', div),
-			target : target,
-			width: 72,
-			extraParams: extraParams,
-			uploadUrl : uploadJson,
+			fileSizeLimit: uploadFileSizeLimit,
+			fileTypeLimit: uploadFileTypeLimit,
 			uploadHeader: uploadHeader,
-			uploadData: uploadData,
+			uploadData: extraParams,
+			uploadUrl : K.addParam(uploadJson, 'dir=image'),
+
 			afterUpload : function(data) {
 				dialog.hideLoading();
 				if (data.error === 0) {
@@ -209,7 +221,7 @@ KindEditor.plugin('image', function(K) {
 						K(".ke-refresh-btn", div).click();
 					}
 				} else {
-					alert(data.message);
+					alert(data.message);					
 					setTimeout(function(){
 						localUrlBox.val('');
 					}, 100);
@@ -311,7 +323,10 @@ KindEditor.plugin('image', function(K) {
 						img.attr('align', align);
 						img.attr('alt', title);
 					} else {
-						self.exec('insertimage', url, title, width, height, border, align, 'ke-upload');
+						self.exec('insertimage', url, title, width, height, border, align, 'ke-image');
+						setTimeout(function() {
+							self.edit.afterChange.call(self.edit);
+						}, 300);
 					}
 					// Bugfix: [Firefox] 上传图片后，总是出现正在加载的样式，需要延迟执行hideDialog
 					setTimeout(function() {

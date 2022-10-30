@@ -23,7 +23,6 @@ gulp.task('serve', function (cb) {
                         '^/handler/': ''
                     }
                 }),
-
                 proxy.createProxyMiddleware('/uploadfiles/', {
                     target: proxyUrlPrefix + '/uploadfiles/',//代理的目标地址
                     changeOrigin: true,//

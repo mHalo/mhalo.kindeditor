@@ -15,20 +15,25 @@
         // 初始化编辑器
         KindEditor.ready(function (K) {
                 var options = {
-                    themesPath: '../publish/themes/',
-                    basePath:'../publish/',
-                    pluginsPath: '../publish/plugins/',
+                    themesPath: '../themes/',
+                    basePath:'../',
+                    pluginsPath: '../plugins/',
                     resizeType: 1,
                     pasteType: 2,//0:禁止粘贴, 1:纯文本粘贴, 2:HTML粘贴
-                    height: 300,
+                    height: 200,
                     autoHeightMode: true,
                     allowPreviewEmoticons: false,
                     allowImageUpload: true,
                     allowFlashUpload: false,
                     formatUploadUrl: false,
-                    uploadJson: '/handler/upload-test?dir=image',
+                    allowFileManager: false,
+                    uploadJson: '/handler/upload-test/',
                     uploadHeader:{
-                        corefx: 'mhalo'
+                        corefx: 'mhalo',
+                        time: new Date() * 1
+                    },
+                    extraFileUploadParams:{
+                        'paramA': 'A'
                     },
                     imageSizeLimit: '2MB',
                     items: K.Tools.All,

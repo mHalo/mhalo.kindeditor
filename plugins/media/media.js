@@ -11,10 +11,28 @@ KindEditor.plugin('media', function(K) {
 	var self = this, name = 'media', lang = self.lang(name + '.'),
 		allowMediaUpload = K.undef(self.allowMediaUpload, true),
 		allowFileManager = K.undef(self.allowFileManager, false),
-		formatUploadUrl = K.undef(self.formatUploadUrl, true),
+
+		uploadHeader = K.undef(self.uploadHeader,{}),
+		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '20MB'),
+		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.mp3;*.wav;*.mp4;*.wmv;*.rmvb;*.avi'),
 		extraParams = K.undef(self.extraFileUploadParams, {}),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
-		uploadJson = K.undef(self.uploadJson, self.basePath + 'php/upload_json.php');
+		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
+		formatUploadUrl = K.undef(self.formatUploadUrl, true);
+
+
+	var getAncestorTag = function (range) {
+		var ancestor = K(range.commonAncestor());
+		while (ancestor) {
+			if (ancestor.type == 1 && !ancestor.isStyle()) {
+				break;
+			}
+			ancestor = ancestor.parent();
+		}
+		return ancestor;
+	}
+
+
 	self.plugin.media = {
 		edit : function() {
 			var html = [
@@ -22,10 +40,10 @@ KindEditor.plugin('media', function(K) {
 				//url
 				'<div class="ke-dialog-row">',
 				'<label for="keUrl" style="width:60px;">' + lang.url + '</label>',
-				'<input class="ke-input-text" type="text" id="keUrl" name="url" value="" style="width:200px;" /> &nbsp;',
-				'<input type="button" class="ke-upload-button" value="' + lang.upload + '" /> &nbsp;',
-				'<span class="ke-button-common ke-button-outer">',
-				'<input type="button" class="ke-button-common ke-button" name="viewServer" value="' + lang.viewServer + '" />',
+				'<input class="ke-input-text" type="text" id="keUrl" name="url" value="" style="width:'+ (allowFileManager ? 160 : 260) +'px;" />',
+				'<input type="button" class="ke-upload-button" value="' + lang.upload + '" />',
+				'<span class="ke-button-common ke-button-outer"  style="margin-left:'+ (allowFileManager ? 5 : 0) +'px" >',
+				'<input type="button" class="ke-button-common ke-button " name="viewServer" value="' + lang.viewServer + '" />',
 				'</span>',
 				'</div>',
 				//width
@@ -35,20 +53,29 @@ KindEditor.plugin('media', function(K) {
 				// '</div>',
 				// //height
 				// '<div class="ke-dialog-row">',
-				'<label for="keHeight" style="width:60px;text-align:center;margin-left:50px">' + lang.height + '</label>',
+				'<label for="keHeight" style="width:60px;text-align:left;margin-left:30px">' + lang.height + '</label>',
 				'<input type="text" id="keHeight" class="ke-input-text ke-input-number" name="height" value="auto" maxlength="4" />',
 				'</div>',
-				//autostart
+				//autostart & preload
 				'<div class="ke-dialog-row">',
-				'<label for="keAutostart">' + lang.autostart + '</label>',
-				'<input type="checkbox" id="keAutostart" name="autostart" value="" /> ',
+				'<label for="kePreload" style="width:60px;">preload</label>',
+				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="kePreload" name="preload" value="" /></div>',
+				'<label for="keAutostart" style="width:60px;text-align:left;margin-left:30px">autoplay</label>',
+				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="keAutostart" name="autoplay" value="" /></div>',
+				'</div>',
+				//controls & loop
+				'<div class="ke-dialog-row">',
+				'<label for="keControls" style="width:60px;">controls</label>',
+				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="keControls" name="controls" checked value="" /></div>',
+				'<label for="keLoop" style="width:60px;text-align:left;margin-left:30px">loop</label>',
+				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="keLoop" name="loop" checked value="" /></div>',
 				'</div>',
 				'</div>'
 			].join('');
 			var dialog = self.createDialog({
 				name : name,
 				width : 450,
-				height : 230,
+				height : 360,
 				title : self.lang(name),
 				body : html,
 				yesBtn : {
@@ -56,40 +83,54 @@ KindEditor.plugin('media', function(K) {
 					click : function(e) {
 						var url = K.trim(urlBox.val()),
 							width = widthBox.val(),
-							height = heightBox.val();
+							height = heightBox.val(),
+							preload = preloadBox[0].checked,
+							autoplay = autostartBox[0].checked,
+							controls = controlsBox[0].checked,
+							loop = loopBox[0].checked
+							;
 						if (url == 'http://' || K.invalidUrl(url)) {
 							alert(self.lang('invalidUrl'));
 							urlBox[0].focus();
 							return;
 						}
-						if (!/^\d*$/.test(width)) {
+						if (width != 'auto' && !/^\d*$/.test(width)) {
 							alert(self.lang('invalidWidth'));
 							widthBox[0].focus();
 							return;
 						}
-						// if (!/^\d*$/.test(height)) {
-						// 	alert(self.lang('invalidHeight'));
-						// 	heightBox[0].focus();
-						// 	return;
-						// }
-						var mediaType = K.mediaType(url);
-						var posterImage = 'common/blank.gif';
-						if(mediaType === 'video'){
-							posterImage = 'common/video.png';
+						if (height != 'auto' &&!/^\d*$/.test(height)) {
+							alert(self.lang('invalidHeight'));
+							heightBox[0].focus();
+							return;
 						}
-						if(mediaType === 'audio'){
-							posterImage = 'common/audio.png';
+						var mediaType = "video";
+						if (/\.(mp3|wav|ogg|acc)(\?|$)/i.test(url)){
+							mediaType = "audio";
 						}
-						var html = K.mediaImg(self.themesPath + posterImage, {
-							controls: true,
-							src : url,
-							type : K.mediaType(url),
-							width : width,
-							height : height,
-							autostart : autostartBox[0].checked ? 'true' : 'false',
-							loop : 'true'
-						});
-						self.insertHtml(html).hideDialog().focus();
+
+						var html = [
+							'<p><' + mediaType,
+							'data-ke-class="ke-audio"',
+							'class="ke-media"',
+							'style="display:inline;"',
+							'src="'+ url +'"',
+							'width="'+ width +'"',
+							'height="'+ height +'"',
+							preload ? 'preload' : '',
+							autoplay ? 'autoplay' : '',
+							controls ? 'controls' : '',
+							loop ? 'loop' : '',
+							'></' + mediaType + '><span>\u200B　</span></p>'
+						].join(' ');
+						
+						var tag = getAncestorTag(self.cmd.range);
+						if(tag && tag.name!= 'p'){
+							self.insertHtml(html).hideDialog().focus();
+						}else{
+							K(tag).after(html)
+							self.hideDialog().focus();
+						}
 					}
 				}
 			}),
@@ -98,15 +139,25 @@ KindEditor.plugin('media', function(K) {
 			viewServerBtn = K('[name="viewServer"]', div),
 			widthBox = K('[name="width"]', div),
 			heightBox = K('[name="height"]', div),
-			autostartBox = K('[name="autostart"]', div);
+			autostartBox = K('[name="autoplay"]', div);
+			preloadBox = K('[name="preload"]', div);
+			controlsBox = K('[name="controls"]', div);
+			loopBox = K('[name="loop"]', div);
+
 			urlBox.val('http://');
 
 			if (allowMediaUpload) {
 				var uploadbutton = K.uploadbutton({
 					button : K('.ke-upload-button', div)[0],
+					width: 'auto',
+
 					fieldName : filePostName,
-					extraParams : extraParams,
-					url : K.addParam(uploadJson, 'dir=media'),
+					fileSizeLimit: uploadFileSizeLimit,
+					fileTypeLimit: uploadFileTypeLimit,
+					uploadHeader: uploadHeader,
+					uploadData: extraParams,
+					uploadUrl : K.addParam(uploadJson, 'dir=media'),
+
 					afterUpload : function(data) {
 						dialog.hideLoading();
 						if (data.error === 0) {
@@ -118,9 +169,12 @@ KindEditor.plugin('media', function(K) {
 							if (self.afterUpload) {
 								self.afterUpload.call(self, url, data, name);
 							}
-							alert(self.lang('uploadSuccess'));
+							// alert(self.lang('uploadSuccess'));
 						} else {
-							alert(data.message);
+							alert(data.message);			
+							setTimeout(function(){
+								urlBox.val('http://');
+							}, 100);
 						}
 					},
 					afterError : function(html) {
@@ -129,8 +183,11 @@ KindEditor.plugin('media', function(K) {
 					}
 				});
 				uploadbutton.fileBox.change(function(e) {
-					dialog.showLoading(self.lang('uploadLoading'));
-					uploadbutton.submit();
+					var uploadFile = K("input[type='file']", uploadbutton.form[0]).val()
+					if(uploadFile){
+						dialog.showLoading(self.lang('uploadLoading'));
+						uploadbutton.submit();
+					}
 				});
 			} else {
 				K('.ke-upload-button', div).hide();
@@ -158,16 +215,16 @@ KindEditor.plugin('media', function(K) {
 				viewServerBtn.hide();
 			}
 
-			var img = self.plugin.getSelectedMedia();
-			if (img) {
-				var attrs = K.mediaAttrs(img.attr('data-ke-tag'));
-				urlBox.val(attrs.src);
-				widthBox.val(K.removeUnit(img.css('width')) || attrs.width || 0);
-				heightBox.val(K.removeUnit(img.css('height')) || attrs.height || 0);
-				autostartBox[0].checked = (attrs.autostart === 'true');
-			}
-			urlBox[0].focus();
-			urlBox[0].select();
+			// var img = self.plugin.getSelectedMedia();
+			// if (img) {
+			// 	var attrs = K.mediaAttrs(img.attr('data-ke-tag'));
+			// 	urlBox.val(attrs.src);
+			// 	widthBox.val(K.removeUnit(img.css('width')) || attrs.width || 0);
+			// 	heightBox.val(K.removeUnit(img.css('height')) || attrs.height || 0);
+			// 	autostartBox[0].checked = (attrs.autostart === 'true');
+			// }
+			// urlBox[0].focus();
+			// urlBox[0].select();
 		},
 		'delete' : function() {
 			self.plugin.getSelectedMedia().remove();

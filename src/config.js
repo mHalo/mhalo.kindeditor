@@ -19,7 +19,7 @@ K.Tools = {
 	'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|', 
 	'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','lineheight', '/',
 	'quote', 'subscript','superscript','|', 'image', 'multiimage',	'media', 'insertfile','baidumap','link', 'unlink', '|',
-	'table','emoticons', 'anchor', 'hr',  'pagebreak','|', 'about'],
+	'table','emoticons', 'anchor', 'hr',  'pagebreak'],
 
 	Normal: ['source', '|', 'undo', 'redo','removeformat','clearhtml', '|',  'code', 
 	 '|', 'preview','selectall', 'fullscreen', 'print', '|', 'quickformat', '/', 
@@ -69,7 +69,6 @@ K.options = {
 	indentChar : '\t', // \t, "  "
 	cssPath : '', //String or Array
 	cssData : '',
-	documentMode: false,
 	minWidth : 650,
 	minHeight : 100,
 	minChangeSize : 50,
@@ -116,8 +115,6 @@ K.options = {
 			'id', 'class', 'align', '.text-align', '.color', '.background-color', '.font-size', '.font-family', '.background',
 			'.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.text-indent', '.margin-left'
 		],
-		blockquote: ['id', 'class' ],
-		ol: ['id', 'class', 'title' ],
 		pre : ['id', 'class'],
 		hr : ['id', 'class', '.page-break-after'],
 		'br,tbody,tr,strong,b,sub,sup,em,i,u,strike,s,del' : ['id', 'class'],

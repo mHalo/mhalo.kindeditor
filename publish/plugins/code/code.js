@@ -52,11 +52,7 @@ KindEditor.plugin('code', function(K) {
 							textarea[0].focus();
 							return;
 						}
-						var result = '<ol class="ke-code" title="code ['+ type +']">' + K.escape(code).split('\n').map(function(o,i){
-							var line = o.trim();
-							return '<li class="ke-code-line">'+ line +'</li>';
-						}).join('') + "</ol>";
-						self.insertHtml(result).hideDialog().focus();
+						self.insertHtml(html).hideDialog().focus();
 					}
 				}
 			}),

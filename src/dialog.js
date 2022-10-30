@@ -68,7 +68,7 @@ _extend(KDialog, KWidget, {
 			}
 		});
 		if (self.height) {
-			bodyDiv.height(_removeUnit(self.height) - headerDiv.height() - footerDiv.height());
+			bodyDiv.height(_removeUnit(self.height) - headerDiv.height() - footerDiv.height() - 2);
 		}
 		self.div.width(self.div.width());
 		self.div.height(self.div.height());

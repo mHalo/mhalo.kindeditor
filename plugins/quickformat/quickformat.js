@@ -30,7 +30,7 @@ KindEditor.plugin('quickformat', function(K) {
 			if (!firstChild || firstChild.name != 'img') {
 				if (blockMap[child.name]) {
 					child.html(child.html().replace(/^(\s|&nbsp;|　)+/ig, ''));
-					//child.css('text-indent', '2em');
+					child.css('text-indent', '2em');
 				} else {
 					subList.push(child);
 				}
@@ -44,7 +44,7 @@ KindEditor.plugin('quickformat', function(K) {
 			child = next;
 		}
 		K.each(nodeList, function(i, subList) {
-			var wrapper = K('<p></p>', doc);
+			var wrapper = K('<p style="text-indent:2em;"></p>', doc);
 			subList[0].before(wrapper);
 			K.each(subList, function(i, knode) {
 				wrapper.append(knode);

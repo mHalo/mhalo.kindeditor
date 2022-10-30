@@ -622,5 +622,7 @@ K = function(expr, root) {
 _each(_K, function(key, val) {
 	K[key] = val;
 });
+
 K.NodeClass = KNode;
+
 window.KindEditor = K;

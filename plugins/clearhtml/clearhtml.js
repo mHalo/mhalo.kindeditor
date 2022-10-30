@@ -16,8 +16,7 @@ KindEditor.plugin('clearhtml', function(K) {
 		html = html.replace(/(<style[^>]*>)([\s\S]*?)(<\/style>)/ig, '');
 		html = K.formatHtml(html, {
 			a : ['href', 'target'],
-			audio : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', '.width', '.height', 'controls', 'muted'],
-			video : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', '.width', '.height', 'controls', 'muted', 'poster', 'preload'],
+			embed : ['src', 'width', 'height', 'type', 'loop', 'autostart', 'quality', '.width', '.height', 'align', 'allowscriptaccess'],
 			img : ['src', 'width', 'height', 'border', 'alt', 'title', '.width', '.height'],
 			table : ['border'],
 			'td,th' : ['rowspan', 'colspan'],

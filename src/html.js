@@ -340,26 +340,23 @@ function _clearMsWord(html, htmlTags) {
 }
 // 根据URL判断 media type
 function _mediaType(src) {
-	if (/\.(mp3|wav)(\?|$)/i.test(src)) {
-		return 'audio';
+	if (/\.(rm|rmvb)(\?|$)/i.test(src)) {
+		return 'audio/x-pn-realaudio-plugin';
 	}
-	if (/\.(mp4|webm)(\?|$)/i.test(src)) {
-		return 'video';
+	if (/\.(swf|flv)(\?|$)/i.test(src)) {
+		return 'application/x-shockwave-flash';
 	}
-	return 'unknown';
+	return 'video/x-ms-asf-plugin';
 }
 // 根据 media type取得className
 function _mediaClass(type) {
+	if (/realaudio/i.test(type)) {
+		return 'ke-rm';
+	}
 	if (/flash/i.test(type)) {
 		return 'ke-flash';
 	}
-	if (/audio/i.test(type)) {
-		return 'ke-audio';
-	}
-	if (/video/i.test(type)) {
-		return 'ke-video';
-	}
-	return 'ke-unknown-media';
+	return 'ke-media';
 }
 
 function _mediaAttrs(srcTag) {
@@ -367,24 +364,15 @@ function _mediaAttrs(srcTag) {
 }
 
 function _mediaEmbed(attrs) {
-	if(!attrs.type) return '';
-	var cls = _mediaClass(attrs.type);
-	var html = '<'+ attrs.type +' class="'+ cls +'" ';
+	var html = '<embed ';
 	_each(attrs, function(key, val) {
 		html += key + '="' + val + '" ';
 	});
-	html += ' controlslist="nodownload" ></';
-	html += attrs.type;
-	html += '>';
+	html += '/>';
 	return html;
 }
 
-
 function _mediaImg(blankPath, attrs) {
-	if(attrs.autostart === 'true'){
-		attrs.autoplay = "autoplay";
-	}
-	//不再使用封面元素的形式，直接使用目标元素
 	var width = attrs.width,
 		height = attrs.height,
 		type = attrs.type || _mediaType(attrs.src),
@@ -400,7 +388,6 @@ function _mediaImg(blankPath, attrs) {
 	} else if (height > 0) {
 		style += 'height:' + height + 'px;';
 	}
-
 	var html = '<img class="' + _mediaClass(type) + '" src="' + blankPath + '" ';
 	if (style !== '') {
 		html += 'style="' + style + '" ';

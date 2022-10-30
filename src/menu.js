@@ -58,11 +58,10 @@ _extend(KMenu, KWidget, {
 		}
 		itemDiv.append(rightDiv);
 		if (item.checked) {
-			itemDiv.addClass('ke-menu-item-selected');
-			iconClass = 'ke-icon-checked';
+			iconClass = 'ke-icon-checked icon-ke-font';
 		}
 		if (iconClass !== '') {
-			leftDiv.html('<span class="ke-inline-block ke-toolbar-icon ke-toolbar-icon-url ' + iconClass + '"></span>');
+			leftDiv.html('<span class="ke-inline-block ke-toolbar-icon icon-ke-font ke-toolbar-icon-url ' + iconClass + '"></span>');
 		}
 		rightDiv.html(item.title);
 		return self;

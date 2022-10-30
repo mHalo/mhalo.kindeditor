@@ -14,7 +14,7 @@ KindEditor.plugin('anchor', function(K) {
 			var html = ['<div style="padding:20px;">',
 					'<div class="ke-dialog-row">',
 					'<label for="keName">' + lang.name + '</label>',
-					'<input class="ke-input-text" type="text" id="keName" name="name" value="" style="width:100px;" />',
+					'<input class="ke-input-text" type="text" id="keName" name="name" value="" style="width:200px;" />',
 					'</div>',
 					'</div>'].join('');
 			var dialog = self.createDialog({

@@ -15,8 +15,7 @@ http://kindeditor.net/
 ___
 
 MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https://github.com/kindsoft/kindeditor) ）的基础上，对界面进行了美化，并对部分插件进行了修改优化。
-具体使用方式并无二致，可参考（[http://kindeditor.net/doc.php](http://kindeditor.net/doc.php)）。
-
+具体使用方式无较大差异（差异主要集中在文件上传部分），其它可参考（[http://kindeditor.net/doc.php](http://kindeditor.net/doc.php)）。
 
 <img width="1066" alt="image" src="https://user-images.githubusercontent.com/19524115/190976990-6089d387-8886-4fda-b6ed-41a541d4ee5a.png">
 
@@ -24,8 +23,6 @@ MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https:/
 ---
 
 ## 修改的模块： 
-
-> 相关修改都基于现代浏览器运行的基础设定，但由于代码量大，所以修改基本都是本着现代浏览器可用的原则，针对功能点进行修改，并未过多考虑兼容性方面的问题。
 
 1. 基于theme/default的样式更新，更新图标样式
 2. KindEditor工具栏配置更新，可使用**K.Tools.All**、**K.Tools.Normal**、**K.Tools.Small**、**K.Tools.Mini**进行配置
@@ -62,16 +59,19 @@ KindEditor.ready(function (K) {
 由于webuploader中使用了jquery，但jquery体量较大，又考虑到在vue中使用的情况，所以将zepto取必须模块封装在了对应模块中，
 后期会考虑使用现代浏览器支持的方式自行构建uploader，毕竟zepto+webuploader的体积也不小
 
-上传时支持携带formData和Headers：
+上传时支持携带formData和Headers，支持限制上传文件大小及文件类型（客户端）：
 > options 
 
 uploadJson: '/handler/upload-test?dir=image',
 uploadHeader:{
     corefx: 'mhalo'
 },
-uploadData:{
+extraFileUploadParams:{
     data: 'demo'
-}
+},
+uploadFileSizeLimit: '5MB',
+uploadFileTypeLimit: '*.jpg;*.gif;*.png;*.jpeg,*.bmp',
+filePostName: 'imgFile'
 ```
 <img width="1081" alt="image" src="https://user-images.githubusercontent.com/19524115/191661051-c23222db-ca4c-4015-9614-3cfebc54f274.png">
 

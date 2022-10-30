@@ -751,7 +751,8 @@ _extend(KCmd, {
 	insertimage : function(url, title, width, height, border, align, cls, wrapper) {
 		title = _undef(title, '');
 		border = _undef(border, 0);
-		var html = '<img data-cls="'+ cls +'" src="' + _escape(url) + '" data-ke-src="' + _escape(url) + '" ';
+		cls =  _undef(cls, '');
+		var html = '<img data-ke-class="'+ cls +'" src="' + _escape(url) + '" data-ke-src="' + _escape(url) + '" ';
 		if (width) {
 			html += 'width="' + _escape(width) + '" ';
 		}
@@ -765,7 +766,7 @@ _extend(KCmd, {
 			html += 'align="' + _escape(align) + '" ';
 		}
 		html += 'alt="' + _escape(title) + '" ';
-		html += '/>\u200B';
+		html += '/>';
 		if(!!wrapper){
 			html = "<"+ wrapper +">"+ html +"</"+ wrapper +">";
 		}

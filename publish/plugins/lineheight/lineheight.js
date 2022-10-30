@@ -16,14 +16,13 @@ KindEditor.plugin('lineheight', function(K) {
 		}
 		var menu = self.createMenu({
 			name : name,
-			width : 120
+			width : 150
 		});
 		K.each(lang.lineHeight, function(i, row) {
 			K.each(row, function(key, val) {
 				menu.addItem({
 					title : val,
 					checked : curVal === key,
-					height: 30,
 					click : function() {
 						self.cmd.toggle('<span style="line-height:' + key + ';"></span>', {
 							span : '.line-height=' + key

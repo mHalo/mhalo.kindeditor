@@ -32,6 +32,7 @@ _extend(KUploadButton, {
 			'<input type="file" class="ke-upload-file" name="' + fieldName + '" tabindex="-1" />',
 			(options.form ? '</div>' : '</form>'),
 			'</div>'].join('');
+
 		var div = K(html, button.doc);
 		button.hide();
 		button.before(div);
@@ -42,8 +43,8 @@ _extend(KUploadButton, {
 		self.fileBox = K('.ke-upload-file', div);
 		self.form = options.form ? K(options.form) : K('form', div);
 
-		var imageSizeLimit = K.undef(self.imageSizeLimit, '1MB'),
-			imageFileTypes = K.undef(self.imageFileTypes, '*.jpg;*.gif;*.png');
+		var fileSizeLimit = K.undef(options.fileSizeLimit, '1MB'),
+			fileTypeLimit = K.undef(options.fileTypeLimit, '*.jpg;*.gif;*.png');
 		self.uploader = WebUploader.create({
 			// 文件接收服务端。
 			server: options.uploadUrl,
@@ -51,14 +52,14 @@ _extend(KUploadButton, {
 			resize: false,
 			fileVal: 'file',
 			accept: {
-				title: 'Images',
-				extensions: imageFileTypes.replace(/\*\./g,'').replace(/;/g,','),
+				title: 'upload',
+				extensions: fileTypeLimit.replace(/\*\./g,'').replace(/;/g,','),
 				mimeTypes: 'image/*'
 			},
 			headers: options.uploadHeader,
 			formData: options.uploadData,
 			fileNumLimit: 1,
-			fileSingleSizeLimit: imageSizeLimit.replace(/MB/g,'') * 1 * 1024 *1024
+			fileSingleSizeLimit: fileSizeLimit.replace(/MB/g,'') * 1 * 1024 *1024
 		});
 		
 		self.uploader.on('uploadStart', function(file){
@@ -80,11 +81,11 @@ _extend(KUploadButton, {
 				error = ('['+arguments[1].name +']文件已存在于待上传列表中！')
 			}
 			console.error('文件上传出现错误，请检查后重试！', arguments);
-			self.uploader.reset();
 			self.options.afterUpload.call(self, {
 				error: 1,
 				message: error
 			});
+			self.uploader.reset();
 			self.form && self.form[0] && self.form[0].reset && self.form[0].reset();
 		});
 		self.fileBox.bind('change', function(){

@@ -166,7 +166,7 @@ function _bindNewlineEvent() {
 		}
 		return ancestor.name;
 	}
-	function getAncestorTag(range){
+	function getAncestorTag(range) {
 		var ancestor = K(range.commonAncestor());
 		while (ancestor) {
 			if (ancestor.type == 1 && !ancestor.isStyle()) {
@@ -181,30 +181,26 @@ function _bindNewlineEvent() {
 			return;
 		}
 		self.cmd.selection();
-		var theTag = getAncestorTag(self.cmd.range);
-		var tagName = theTag.name;
+		var tag = getAncestorTag(self.cmd.range);
+		var prev = K(tag).prev(), parent = K(tag).parent(); 
+		var tagName = tag.name;//, parentTagName = parent && parent.name ? parent.name : '';
+		// var prevHtml = prev && prev.html ? prev.html() : '';
+		
+		// if(parentTagName =='blockquote' && prevHtml == "<br />"){
+		// 	e.preventDefault();
+		// 	K(tag).blur()
+		// 	K(parent).after("<p>new-line</p>").focus();
+		// 	return;
+		// }
+
 		if (tagName == 'marquee' || tagName == 'select') {
 			return;
 		}
-		
 		// br
-		if ((newlineTag === 'br' && !brSkipTagMap[tagName])) {
+		if (newlineTag === 'br' && !brSkipTagMap[tagName]) {
 			e.preventDefault();
 			self.insertHtml('<br />' + (_IE && _V < 9 ? '' : '\u200B'));
 			return;
-		}
-		if(tagName === 'p' && theTag.parent() && theTag.parent().hasClass('ke-quote')){
-			if(theTag.html() === '<br />'){
-				var newNode = K("<p></p>", self.doc);
-				e.preventDefault();
-				K(newNode).html('\u200B');
-				theTag.parent().after(newNode);
-				self.cmd.range.selectNodeContents(newNode).collapse(true);
-				self.cmd.select();
-				self.addBookmark();
-				theTag.remove();
-				return;
-			}
 		}
 		// p
 		if (!pSkipTagMap[tagName]) {
@@ -229,7 +225,22 @@ function _bindNewlineEvent() {
 			return;
 		}
 		self.cmd.selection();
-		var tagName = getAncestorTagName(self.cmd.range);
+		var tag = getAncestorTag(self.cmd.range);
+		var prev = K(tag).prev(), parent = K(tag).parent(); 
+		var tagName = tag.name, parentTagName = parent && parent.name ? parent.name : '';
+		var prevHtml = prev && prev.html ? prev.html() : '';
+		if(parentTagName =='blockquote' && prevHtml == "<br />"){
+			e.preventDefault();
+			K(prev).remove();
+			K(tag).remove();
+			K(parent).after("<p>\u200B</p>");
+			var newRow = K(parent).next();
+			self.cmd.range.selectNodeContents(newRow).collapse(true);
+			self.cmd.select();
+			newRow.focus();
+			return;
+		}
+		
 		if (tagName == 'marquee' || tagName == 'select') {
 			return;
 		}
@@ -573,7 +584,6 @@ KEditor.prototype = {
 			designMode : self.designMode,
 			themesPath : self.themesPath,
 			bodyClass : self.bodyClass,
-			documentMode: self.documentMode,
 			cssPath : self.cssPath,
 			cssData : self.cssData,
 			beforeGetHtml : function(html) {
@@ -783,7 +793,7 @@ KEditor.prototype = {
 	text : function(val) {
 		var self = this;
 		if (val === undefined) {
-			return _trim(self.html().replace(/<(?!img|embed|audio|video).*?>/ig, '').replace(/&nbsp;/ig, ' '));
+			return _trim(self.html().replace(/<(?!img|embed).*?>/ig, '').replace(/&nbsp;/ig, ' '));
 		} else {
 			return self.html(_escape(val));
 		}
@@ -806,7 +816,7 @@ KEditor.prototype = {
 			return self.html().length;
 		}
 		if (mode === 'text') {
-			return self.text().replace(/<(?:img|embed|audio|video).*?>/ig, 'K').replace(/\r\n|\n|\r/g, '').length;
+			return self.text().replace(/<(?:img|embed).*?>/ig, 'K').replace(/\r\n|\n|\r/g, '').length;
 		}
 		return 0;
 	},
@@ -1357,7 +1367,7 @@ _plugin('core', function(K) {
 	};
 	self.plugin.getSelectedMedia = function() {
 		return _getImageFromRange(self.edit.cmd.range, function(img) {
-			return img[0].className == 'ke-video' || img[0].className == 'ke-audio';
+			return img[0].className == 'ke-media' || img[0].className == 'ke-rm';
 		});
 	};
 	self.plugin.getSelectedAnchor = function() {
@@ -1365,7 +1375,7 @@ _plugin('core', function(K) {
 			return img[0].className == 'ke-anchor';
 		});
 	};
-	_each('link,image,flash,video,audio,media,anchor'.split(','), function(i, name) {
+	_each('link,image,flash,media,anchor'.split(','), function(i, name) {
 		var uName = name.charAt(0).toUpperCase() + name.substr(1);
 		_each('edit,delete'.split(','), function(j, val) {
 			self.addContextmenu({
@@ -1545,7 +1555,7 @@ _plugin('core', function(K) {
 		return html.replace(/(<(?:noscript|noscript\s[^>]*)>)([\s\S]*?)(<\/noscript>)/ig, function($0, $1, $2, $3) {
 			return $1 + _unescape($2).replace(/\s+/g, ' ') + $3;
 		})
-		.replace(/<img[^>]*class="?ke-(flash|rm|media|audio|video)"?[^>]*>/ig, function(full) {
+		.replace(/<img[^>]*class="?ke-(flash|rm|media)"?[^>]*>/ig, function(full) {
 			var imgAttrs = _getAttrList(full);
 			var styles = _getCssList(imgAttrs.style || '');
 			var attrs = _mediaAttrs(imgAttrs['data-ke-tag']);
@@ -1595,21 +1605,12 @@ _plugin('core', function(K) {
 				return full;
 			});
 		}
-		return html
-		.replace(/<(audio|video)[^>]*type="([^"]+)"[^>]*>(?:<\/(audio|video)>)?/ig, function(full) {
+		return html.replace(/<embed[^>]*type="([^"]+)"[^>]*>(?:<\/embed>)?/ig, function(full) {
 			var attrs = _getAttrList(full);
 			attrs.src = _undef(attrs.src, '');
 			attrs.width = _undef(attrs.width, 0);
 			attrs.height = _undef(attrs.height, 0);
-			var mediaType = _mediaType(attrs.src);
-			var posterImage = 'common/blank.gif';
-			if(mediaType === 'video'){
-				posterImage = 'common/video.png';
-			}
-			if(mediaType === 'audio'){
-				posterImage = 'common/audio.png';
-			}
-			return _mediaImg(self.themesPath + posterImage, attrs);
+			return _mediaImg(self.themesPath + 'common/blank.gif', attrs);
 		})
 		.replace(/<a[^>]*name="([^"]+)"[^>]*>(?:<\/a>)?/ig, function(full) {
 			var attrs = _getAttrList(full);

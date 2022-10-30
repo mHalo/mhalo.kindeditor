@@ -9,101 +9,46 @@ if ((html = document.getElementsByTagName('html'))) {
 	_direction = html[0].dir;
 }
 
-function _getInitHtml(themesPath, bodyClass, cssPath, cssData, documentMode) {
-	var dmcls = !!documentMode ? 'class="ke-document-mode"' : '';
+function _getInitHtml(themesPath, bodyClass, cssPath, cssData) {
 	var arr = [
-		(_direction === '' ? '<html '+ dmcls +'>' : '<html '+ dmcls +' dir="' + _direction + '">'),
-		'<head><meta charset="utf-8"/><title></title>',
+		(_direction === '' ? '<html>' : '<html dir="' + _direction + '">'),
+		'<head><meta charset="utf-8" /><title></title>',
 		'<style>',
 		'html,body {margin:0;padding:0;}',
-		'body, td {font:12px/1.5 "微软雅黑", "Microsoft Yahei", "sans serif",tahoma,verdana,helvetica;}',
-		'body, p, div {word-wrap: break-word;line-height:28px;margin-block-start:0;margin-block-end:0}',
+		'body, td {font:12px/1.5 "PingFang","Microsoft Yahei","苹方","微软雅黑", "sans serif",tahoma,verdana,helvetica;}',
+		'body, p, div {word-wrap: break-word;line-height:28px;}',
 		'table {border-collapse:collapse;}',
 		'noscript {display:none;}',
 		'table.ke-zeroborder td {border:1px dotted #AAA;}',
-		'img {border: 2px solid transparent;max-width:100%}',
-		'img:hover {border: 2px solid #32c787;}',
+		'.ke-content {padding: 15px 20px;}',
+		'img[data-ke-class="ke-image"] { max-width: 100%;border: 2px solid transparent; }',
+		'img[data-ke-class="ke-image"]:hover { border-color: #4696ec; }',
+		'audio,video{ border:3px solid transparent; }',
+		'audio:hover, video:hover{ border:3px solid #2196f3; }',
 
-		'.ke-document-mode {background-color: #eeeeee;}',
-		'.ke-content {margin: 15px 20px;}',
-		'.ke-document-mode .ke-content {',
-		'	margin:30px;',
-		'   min-height: 21cm;',
-		'   padding: 1cm 2cm 2cm;',
-		'   border: 1px #D3D3D3 solid;',
-		'   background: white;',
-		'   box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);',
+		'img.ke-flash {',
+		'	border:1px solid #AAA;',
+		'	background-image:url(' + themesPath + 'common/flash.gif);',
+		'	background-position:center center;',
+		'	background-repeat:no-repeat;',
+		'	width:100px;',
+		'	height:100px;',
 		'}',
-		'img.ke-upload {',
-		'	max-width: 100%;',
-		'	display: block;',
+		'img.ke-rm {',
+		'	border:1px solid #AAA;',
+		'	background-image:url(' + themesPath + 'common/rm.gif);',
+		'	background-position:center center;',
+		'	background-repeat:no-repeat;',
+		'	width:100px;',
+		'	height:100px;',
 		'}',
-		'video.ke-video, audio.ke-audio {',
-		'	max-width: 100%;',
-		'	background: #f1f3f4;',
-		'	padding: 2px;',
-		'	position:relative;',
-		'}',
-		'video.ke-video:focus, audio.ke-audio:focus,video.ke-video:active, audio.ke-audio:active{',
-		'	outline-color: #32c787;',
-		'	border-color: #32c787;',
-		'}',
-		'video.ke-video:active::before{',
-		'	content:"";',
-		'	position: absolute;',
-		'	top: 0;',
-		'	left: 0;',
-		'	width: 100%;',
-		'	height: 100%;',
-		'	background: #32c787;',
-		'	z-index: 1;',
-		'}',
-		'blockquote.ke-quote {',
-		'	background: #eaeaea;',
-		'	margin:8px 0;',
-		'	padding: 10px 16px;',
-		'	border-left: 5px solid #ddd;',
-		'	box-sizing: border-box;',
-		'}',
-		'blockquote.ke-quote p {',
-		'	min-height: 24px;',
-		'}',
-
-		'.ke-code{',
-			'background: #e6e6e6;',
-			'border: 1px solid #dae2e6;',
-			'border-top: 30px solid #dae2e6;',
-			'position: relative;',
-			'display: block;',
-			'list-style-type: decimal;',
-			'margin-block-start: 0;',
-			'margin-block-end: 1em;',
-			'margin-inline-start: 0px;',
-			'margin-inline-end: 0px;',
-			'padding-inline-start: 40px;',
-		'}',
-		'.ke-code::before{',
-			'content: attr(title);',
-			'position: absolute;',
-			'top: -30px;',
-			'left: 0;',
-			'width: 100%;',
-			'height: 30px;',
-			'line-height: 30px;',
-			'text-indent: 8px;',
-			'font-size: 12px;',
-			'color: #1c85b9;',
-			'text-transform: uppercase;',
-		'}',
-		'.ke-code-line{',
-			'list-style-type: decimal-leading-zero;',
-			'*list-style-type: decimal;',
-			'background: #fbfbfb;',
-			'padding-left: 8px;',
-			'font-family: Microsoft YaiHei;',
-			'font-size: 14px;',
-			'line-height: 24px;',
-			'color: #5a5a5a;',
+		'img.ke-media {',
+		'	border:1px solid #AAA;',
+		'	background-image:url(' + themesPath + 'common/media.gif);',
+		'	background-position:center center;',
+		'	background-repeat:no-repeat;',
+		'	width:100px;',
+		'	height:100px;',
 		'}',
 		'img.ke-anchor {',
 		'	border:1px dashed #666;',
@@ -121,15 +66,6 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData, documentMode) {
 		'	font-size:0;',
 		'	height:2px;',
 		'}',
-		'pre{',
-		'	white-space: pre-wrap;',
-		'	white-space: -moz-pre-wrap;',
-		'	white-space: -pre-wrap;',
-		'	white-space: -o-pre-wrap;',
-		'	overflow: auto;',
-		'	word-break: break-all;',
-		'	word-wrap: break-word;',
-		'}',
 		'</style>'
 	];
 	if (!_isArray(cssPath)) {
@@ -143,7 +79,7 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData, documentMode) {
 	if (cssData) {
 		arr.push('<style>' + cssData + '</style>');
 	}
-	arr.push('</head><body ' + (bodyClass ? 'class="' + bodyClass + '"' : '') + ' author="M"+"Ha"+"l"+"o"></body></html>');
+	arr.push('</head><body ' + (bodyClass ? 'class="' + bodyClass + '"' : '') + ' author="MHalo"></body></html>');
 	return arr.join('\n');
 }
 
@@ -181,13 +117,11 @@ _extend(KEdit, KWidget, {
 			bodyClass = options.bodyClass,
 			cssPath = options.cssPath,
 			cssData = options.cssData,
-			documentMode = _undef(options.documentMode, false);
-		var isDocumentDomain = location.protocol != 'res:' && location.host.replace(/:\d+/, '') !== document.domain;
-
-		var srcScript = ('document.open();' +
+			isDocumentDomain = location.protocol != 'res:' && location.host.replace(/:\d+/, '') !== document.domain,
+			srcScript = ('document.open();' +
 				(isDocumentDomain ? 'document.domain="' + document.domain + '";' : '') +
-				'document.close();');
-		var	iframeSrc = _IE ? ' src="javascript:void(function(){' + encodeURIComponent(srcScript) + '}())"' : '';
+				'document.close();'),
+			iframeSrc = _IE ? ' src="javascript:void(function(){' + encodeURIComponent(srcScript) + '}())"' : '';
 		self.iframe = K('<iframe class="ke-edit-iframe" hidefocus="true" frameborder="0"' + iframeSrc + '></iframe>').css('width', '100%');
 		self.textarea = K('<textarea class="ke-edit-textarea" hidefocus="true"></textarea>').css('width', '100%');
 		self.tabIndex = isNaN(parseInt(options.tabIndex, 10)) ? self.srcElement.attr('tabindex') : parseInt(options.tabIndex, 10);
@@ -211,7 +145,7 @@ _extend(KEdit, KWidget, {
 			if (isDocumentDomain) {
 				doc.domain = document.domain;
 			}
-			doc.write(_getInitHtml(themesPath, bodyClass, cssPath, cssData, documentMode));
+			doc.write(_getInitHtml(themesPath, bodyClass, cssPath, cssData));
 			doc.close();
 			self.win = self.iframe[0].contentWindow;
 			self.doc = doc;
@@ -223,7 +157,7 @@ _extend(KEdit, KWidget, {
 			// [WEBKIT] select an image after click the image
 			if (_WEBKIT) {
 				K(doc).click(function(e) {
-					if (K(e.target).name === 'img') {
+					if (K(e.target).name === 'img' || K(e.target).name === 'audio' || K(e.target).name === 'video') {
 						cmd.selection(true);
 						cmd.range.selectNode(e.target);
 						cmd.select();
@@ -254,7 +188,6 @@ _extend(KEdit, KWidget, {
 				});
 			}
 			self.cmd = cmd;
-			var src_element = _elementVal(self.srcElement);
 			self.html(_elementVal(self.srcElement));
 			if (_IE) {
 				doc.body.disabled = true;
@@ -266,17 +199,6 @@ _extend(KEdit, KWidget, {
 			if (options.afterCreate) {
 				options.afterCreate.call(self);
 			}
-			// MHalo
-			// K(self.win).scroll(function(){
-			// 	if(self.win.scrollY <= 0){
-			// 		console.info('i`m scroll at top');
-			// 		self.win.parent.window.focus();
-			// 	}
-			// 	if(self.win.scrollY + self.win.document.body.clientHeight >= self.win.document.body.scrollHeight){
-			// 		console.info('i`m scroll at bottom');
-			// 		self.win.parent.window.focus();
-			// 	}
-			// });
 		}
 		if (isDocumentDomain) {
 			self.iframe.bind('load', function(e) {
@@ -425,6 +347,7 @@ _extend(KEdit, KWidget, {
 	},
 	afterChange : function(fn) {
 		var self = this, doc = self.doc, body = doc.body;
+		if(!fn) return;
 		K(doc).keyup(function(e) {
 			if (!e.ctrlKey && !e.altKey && _CHANGE_KEY_MAP[e.which]) {
 				fn(e);

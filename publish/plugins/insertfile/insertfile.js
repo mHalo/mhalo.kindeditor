@@ -10,55 +10,51 @@
 KindEditor.plugin('insertfile', function(K) {
 	var self = this, name = 'insertfile',
 		allowFileUpload = K.undef(self.allowFileUpload, true),
-		ndir = K.undef(self.ndir, "file"),
-		withTitle = K.undef(self.withTitle, true),
 		allowFileManager = K.undef(self.allowFileManager, false),
-		formatUploadUrl = K.undef(self.formatUploadUrl, true),
-		uploadJson = K.undef(self.uploadJson, self.basePath + 'php/upload_json.php'),
+
+		uploadHeader = K.undef(self.uploadHeader,{}),
+		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '20MB'),
+		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.mp3;*.wav;*.mp4;*.wmv;*.rmvb;*.avi,*.jpg;*.gif;*.png;*.jpeg,*.bmp'),
 		extraParams = K.undef(self.extraFileUploadParams, {}),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
+		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
+		formatUploadUrl = K.undef(self.formatUploadUrl, true),
+
 		lang = self.lang(name + '.');
-	//console.info('insert-file', self)
 	self.plugin.fileDialog = function(options) {
 		var fileUrl = K.undef(options.fileUrl, 'http://'),
 			fileTitle = K.undef(options.fileTitle, ''),
 			clickFn = options.clickFn;
 		var html = [
-			'<div style="padding:30px 20px;">',
+			'<div style="padding:20px;">',
 			'<div class="ke-dialog-row">',
 			'<label for="keUrl" style="width:60px;">' + lang.url + '</label>',
-			'<input type="text" id="keUrl" name="url" class="ke-input-text" style="width:250px;" /> &nbsp;',
-			'<input type="hidden" id="keSize" name="size" />',
-			'<input type="button" class="ke-upload-button" value="' + lang.upload + '" /> &nbsp;',
-			'<span class="ke-button-common ke-button-outer">',
+			'<input type="text" id="keUrl" name="url" class="ke-input-text" style="width:' + (allowFileManager ? 160 : 260) + 'px;" />',
+			'<input type="button" class="ke-upload-button" value="' + lang.upload + '" />',
+			'<span class="ke-button-common ke-button-outer" style="margin-left:'+ (allowFileManager ? 5 : 0) +'px" >',
 			'<input type="button" class="ke-button-common ke-button" name="viewServer" value="' + lang.viewServer + '" />',
 			'</span>',
 			'</div>',
 			//title
-			withTitle
-				? '<div class="ke-dialog-row">'
-				+ '<label for="keTitle" style="width:60px;">' + lang.title + '</label>'
-				+ '<input type="text" id="keTitle" class="ke-input-text" name="title" value="" style="width:250px;" /></div>'
-				: '',
+			'<div class="ke-dialog-row">',
+			'<label for="keTitle" style="width:60px;">' + lang.title + '</label>',
+			'<input type="text" id="keTitle" class="ke-input-text" name="title" value="" style="width:160px;" /></div>',
 			'</div>',
 			//form end
 			'</form>',
 			'</div>'
-		].join('');
-		//console.info('insert-file', ndir, withTitle, html);
+			].join('');
 		var dialog = self.createDialog({
 			name : name,
-			width : allowFileManager ? 550 : 472,
-			height: 200,
+			width : 450,
+			height : 220,
 			title : self.lang(name),
 			body : html,
 			yesBtn : {
 				name : self.lang('yes'),
 				click : function(e) {
 					var url = K.trim(urlBox.val()),
-						size = sizeBox.val(),
 						title = titleBox.val();
-
 					if (url == 'http://' || K.invalidUrl(url)) {
 						alert(self.lang('invalidUrl'));
 						urlBox[0].focus();
@@ -67,23 +63,28 @@ KindEditor.plugin('insertfile', function(K) {
 					if (K.trim(title) === '') {
 						title = url;
 					}
-					clickFn.call(self, url, title,size);
+					clickFn.call(self, url, title);
 				}
 			}
 		}),
 		div = dialog.div;
 
 		var urlBox = K('[name="url"]', div),
-			sizeBox = K('[name="size"]', div),
 			viewServerBtn = K('[name="viewServer"]', div),
 			titleBox = K('[name="title"]', div);
 
 		if (allowFileUpload) {
 			var uploadbutton = K.uploadbutton({
 				button : K('.ke-upload-button', div)[0],
+				width: 'auto',
+				
 				fieldName : filePostName,
-				url: K.addParam(uploadJson, 'dir=' + ndir),
-				extraParams : extraParams,
+				fileSizeLimit: uploadFileSizeLimit,
+				fileTypeLimit: uploadFileTypeLimit,
+				uploadHeader: uploadHeader,
+				uploadData: extraParams,
+				uploadUrl : K.addParam(uploadJson, 'dir=file'),
+
 				afterUpload : function(data) {
 					dialog.hideLoading();
 					if (data.error === 0) {
@@ -92,11 +93,10 @@ KindEditor.plugin('insertfile', function(K) {
 							url = K.formatUrl(url, 'absolute');
 						}
 						urlBox.val(url);
-						sizeBox.val(data.size || -1);
 						if (self.afterUpload) {
 							self.afterUpload.call(self, url, data, name);
 						}
-						//alert(self.lang('uploadSuccess'));
+						// alert(self.lang('uploadSuccess'));
 					} else {
 						alert(data.message);
 					}
@@ -107,8 +107,11 @@ KindEditor.plugin('insertfile', function(K) {
 				}
 			});
 			uploadbutton.fileBox.change(function(e) {
-				dialog.showLoading(self.lang('uploadLoading'));
-				uploadbutton.submit();
+				var uploadFile = K("input[type='file']", uploadbutton.form[0]).val()
+				if(uploadFile){
+					dialog.showLoading(self.lang('uploadLoading'));
+					uploadbutton.submit();
+				}
 			});
 		} else {
 			K('.ke-upload-button', div).hide();
