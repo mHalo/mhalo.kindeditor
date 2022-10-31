@@ -432,6 +432,7 @@
 	text-align: left;
 	overflow: hidden;
 	zoom: 1;
+	box-sizing: border-box;
 }
 .ke-toolbar-icon {
 	width: 30px;

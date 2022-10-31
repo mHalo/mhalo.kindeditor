@@ -14,6 +14,21 @@ http://kindeditor.net/
 
 ___
 
+## 更新日志
+
+v4.3.0 (2022-11-01)  
+1. 修复fixToolBar功能，增加[fixToolBarWatchRef]参数，可以指定滚动时监听的对象  
+示例 options ->：
+```
+fixToolBar: true,
+fixToolBarWatchRef: '#wrapper',
+```
+
+2. 移除flash相关模块
+3. 移除部分无用的文件
+
+___
+
 MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https://github.com/kindsoft/kindeditor) ）的基础上，对界面进行了美化，并对部分插件进行了修改优化。
 具体使用方式无较大差异（差异主要集中在文件上传部分），其它可参考（[http://kindeditor.net/doc.php](http://kindeditor.net/doc.php)）。
 
@@ -77,7 +92,8 @@ filePostName: 'imgFile'
 
 👉. Media类型上传，使用audio和video标签呈现
 > 可设定controls、autoplay、preload、loop参数
-<img width="978" alt="image" src="https://user-images.githubusercontent.com/19524115/198891102-6ffe2d03-8ce3-4f13-a0ea-18b5b1712bc2.png">
+
+<img width="1032" alt="image" src="https://user-images.githubusercontent.com/19524115/198891198-440e7715-cc8c-46cc-98a7-382b23bf41f7.png">
 
 
 👉. 可引入vite使用

@@ -41,7 +41,6 @@ var PLUGIN_FILES = [
 	'plugins/code/code.js',
 	'plugins/emoticons/emoticons.js',
 	'plugins/filemanager/filemanager.js',
-	'plugins/flash/flash.js',
 	'plugins/image/image.js',
 	'plugins/insertfile/insertfile.js',
 	'plugins/lineheight/lineheight.js',
