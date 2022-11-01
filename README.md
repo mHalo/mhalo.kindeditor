@@ -16,6 +16,9 @@ ___
 
 ## 更新日志
 
+v4.3.5 (2022-11-02)  
+1. 修复WebUploader引用bug
+
 v4.3.0 (2022-11-01)  
 1. 修复fixToolBar功能，增加[fixToolBarWatchRef]参数，可以指定滚动时监听的对象  
 示例 options ->：
