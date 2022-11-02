@@ -13,11 +13,11 @@ KindEditor.plugin('plainpaste', function(K) {
 		var lang = self.lang(name + '.'),
 			html = '<div style="padding:10px 20px;">' +
 				'<div style="margin-bottom:10px;">' + lang.comment + '</div>' +
-				'<textarea class="ke-textarea" style="width:408px;height:260px;"></textarea>' +
+				'<textarea class="ke-textarea" style="width:518px;height:260px;"></textarea>' +
 				'</div>',
 			dialog = self.createDialog({
 				name : name,
-				width : 450,
+				width : 560,
 				title : self.lang(name),
 				body : html,
 				yesBtn : {

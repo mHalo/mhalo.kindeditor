@@ -1,5 +1,7 @@
-@import url(//at.alicdn.com/t/c/font_1491367_csg1ehafbqv.css);
-
+@import url(//at.alicdn.com/t/c/font_1491367_njeebnzeclh.css);
+.ke-container *{
+	box-sizing: border-box;
+}
 /* common */
 .ke-inline-block {
 	display: -moz-inline-stack;
@@ -21,9 +23,9 @@
 	visibility: hidden;
 }
 .ke-shadow {
-	box-shadow: 1px 1px 3px #A0A0A0;
-	-moz-box-shadow: 1px 1px 3px #A0A0A0;
-	-webkit-box-shadow: 1px 1px 3px #A0A0A0;
+	box-shadow: 0px 0px 30px -6px #999;;
+	-moz-box-shadow: 0px 0px 30px -6px #999;;
+	-webkit-box-shadow: 0px 0px 30px -6px #999;;
 	filter: progid:DXImageTransform.Microsoft.Shadow(color='#A0A0A0', Direction=135, Strength=3);
 	background-color: #F0F0EE;
 }
@@ -220,11 +222,6 @@
 	width: 16px;
 	height: 16px;
 }
-.ke-icon-emoticons {
-	background-position: 0px -608px;
-	width: 16px;
-	height: 16px;
-}
 .ke-icon-link {
 	background-position: 0px -624px;
 	width: 16px;
@@ -415,6 +412,7 @@
 	width: 16px;
 	height: 16px;
 }
+
 /* container */
 .ke-container {
 	display: block;
@@ -428,7 +426,7 @@
 .ke-toolbar {
 	border-bottom: 1px solid #CCC;
 	background-color: #F0F0EE;
-	padding: 2px 5px;
+	padding: 3px 5px;
 	text-align: left;
 	overflow: hidden;
 	zoom: 1;
@@ -467,9 +465,9 @@
 	cursor: default;
 }
 .ke-toolbar .ke-separator {
-	height: 30px;
-	margin: 2px 3px;
-	border-left: 1px solid #A0A0A0;
+	height: 24px;
+    margin: 5px 3px;
+	border-left: 1px solid #b2c9cd;
 	border-right: 1px solid #FFFFFF;
 	border-top:0;
 	border-bottom:0;
@@ -508,21 +506,30 @@
 /* statusbar */
 .ke-statusbar {
 	position: relative;
-	background-color: #F0F0EE;
-	border-top: 1px solid #CCCCCC;
+	background-color: rgba(148,175,180,0.1);
+	border-top: 1px solid #c9d8da;
 	font-size: 0;
 	line-height: 0;
-	*height: 12px;
 	overflow: hidden;
 	text-align: center;
 	cursor: s-resize;
 }
 .ke-statusbar-center-icon {
-	background-position: -0px -754px;
-	width: 15px;
-	height: 11px;
-	background-image: url(default.png);
+	width: 25px;
+    height: 11px;
+	position: relative;
 }
+
+.ke-statusbar-center-icon i{
+	width: 100%;
+    height: 1px;
+    background: #94afb4;
+    display: block;
+    transform: scaleY(0.5);
+    border: none;
+    margin-top: 2px;
+}
+
 .ke-statusbar-right-icon {
 	position: absolute;
 	right: 0;
@@ -531,35 +538,39 @@
 	background-position: -5px -741px;
 	width: 11px;
 	height: 11px;
-	background-image: url(default.png);
 }
 /* menu */
 .ke-menu {
-	border: 1px solid #A0A0A0;
-	background-color: #F1F1F1;
+	background-color: #FFF;
 	color: #222222;
-	padding: 2px;
 	font-family: 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;;
 	font-size: 12px;
 	text-align: left;
 	overflow: hidden;
+	padding: 3px 0;
 }
 .ke-menu-item {
-	border: 1px solid #F1F1F1;
-	background-color: #F1F1F1;
+	border: 1px solid transparent;
+	background-color: #FFF;
 	color: #222222;
-	height: 24px;
+	height: 30px;
 	overflow: hidden;
 	cursor: pointer;
+	font-size: 13px;
+    margin: 3px 0;
 }
 .ke-menu-item-on {
-	border: 1px solid #5690D2;
+	border: 1px solid transparent;
 	background-color: #E9EFF6;
 }
 .ke-menu-item-left {
 	width: 27px;
 	text-align: center;
 	overflow: hidden;
+}
+.ke-menu-item-left .icon-ke-font{
+	height: auto;
+    line-height: 1;
 }
 .ke-menu-item-center {
 	width: 0;
@@ -591,10 +602,9 @@
 }
 /* colorpicker */
 .ke-colorpicker {
-	border: 1px solid #A0A0A0;
-	background-color: #F1F1F1;
+	background-color: #FFF;
 	color: #222222;
-	padding: 2px;
+	padding: 4px;
 }
 .ke-colorpicker-table {
 	border:0;
@@ -605,16 +615,16 @@
 .ke-colorpicker-cell {
 	font-size: 0;
 	line-height: 0;
-	border: 1px solid #F0F0EE;
+	border: 1px solid transparent;
 	cursor: pointer;
 	margin:3px;
 	padding:0;
 }
 .ke-colorpicker-cell-top {
 	font-family: 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;;
-	font-size: 12px;
-	line-height: 24px;
-	border: 1px solid #F0F0EE;
+	font-size: 14px;
+	line-height: 30px;
+	border: 1px solid transparent;
 	cursor: pointer;
 	margin:0;
 	padding:0;
@@ -627,9 +637,9 @@
 	border: 1px solid #2446AB;
 }
 .ke-colorpicker-cell-color {
-	width: 14px;
-	height: 14px;
-	margin: 3px;
+	width: 24px;
+	height: 24px;
+	margin: 4px;
 	padding: 0;
 	border: 0;
 }
@@ -664,7 +674,7 @@
 	width: 100%;
 	height: 100%;
 	color: #333;
-	border: 1px solid #A0A0A0;
+	border: 1px solid #c9d8da;
 }
 .ke-dialog-shadow {
 	position: absolute;
@@ -684,9 +694,9 @@
 	margin:0;
 	padding: 0 10px;
 	background: #f8f8f8;
-	border-bottom: 1px solid #CFCFCF;
+	border-bottom: 1px solid #c9d8da;
 	height: 48px;
-	font: 14px/48px 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;;
+	font: 14px/48px 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;
 	text-align: left;
 	color: #222;
 	cursor: move;
@@ -694,18 +704,21 @@
 
 .ke-dialog-icon-close {
 	display: block;
-	width: 1pc;
-	height: 1pc;
-	line-height: 1pc;
-	position: absolute;
-	right: 12px;
-	top: 12px;
-	cursor: pointer
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    text-align: center;
+    font-size: 22px;
+    color: #5c6e71;
 }
 
 .ke-dialog-icon-close:before {
 	font-family: icon-ke-font!important;
-	font-size: 1pc;
+	font-size: inherit;
 	font-style: normal;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
@@ -736,38 +749,40 @@
 	display: inline-block;
 	vertical-align: middle;
 	zoom: 1;
-	*display: inline;
 }
 .ke-dialog-body img {
 	display: -moz-inline-stack;
 	display: inline-block;
 	vertical-align: middle;
 	zoom: 1;
-	*display: inline;
 }
 .ke-dialog-body select {
 	display: -moz-inline-stack;
 	display: inline-block;
 	vertical-align: middle;
 	zoom: 1;
-	*display: inline;
 	width: auto;
 	height: 30px;
-	padding: 0 6px;
+	padding: #c9d8da;
+	border-color: #c9d8da;
+	color: #636363;
 }
 .ke-dialog-body .ke-textarea {
 	display: block;
 	width: 408px;
 	height: 260px;
-	font-family: 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;;
+	font-family: 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;
 	font-size: 12px;
-	border-color: #848484 #E0E0E0 #E0E0E0 #848484;
+	border-color: #c9d8da;
 	border-style: solid;
 	border-width: 1px;
 }
 .ke-dialog-body .ke-form {
 	margin: 0;
 	padding: 0;
+}
+.ke-dialog-body .ke-multi-image{
+	width: 106px;
 }
 .ke-dialog-loading {
 	position: absolute;
@@ -776,14 +791,47 @@
 	z-index: 1;
 	text-align: center;
 }
+@keyframes spinner-loader {
+	0% {
+	  -moz-transform: rotate(0deg);
+	  -ms-transform: rotate(0deg);
+	  -webkit-transform: rotate(0deg);
+	  transform: rotate(0deg);
+	}
+	100% {
+	  -moz-transform: rotate(360deg);
+	  -ms-transform: rotate(360deg);
+	  -webkit-transform: rotate(360deg);
+	  transform: rotate(360deg);
+	}
+  }
 .ke-dialog-loading-content {
-	background: url("../common/loading.gif") no-repeat;
     color: #666;
     font-size: 14px;
     font-weight: bold;
-    height: 31px;
+    height: 30px;
     line-height: 31px;
     padding-left: 36px;
+	position: relative;
+}
+.ke-dialog-loading-content:after{
+	content:'';
+	-moz-animation: spinner-loader 1500ms infinite linear;
+	-webkit-animation: spinner-loader 1500ms infinite linear;
+	animation: spinner-loader 1500ms infinite linear;
+	-moz-border-radius: 0.5em;
+	border-radius: 20px;
+	-moz-box-shadow: rgba(0, 0, 51, 0.3) 1.5em 0 0 0, rgba(0, 0, 51, 0.3) 1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) 0 1.5em 0 0, rgba(0, 0, 51, 0.3) -1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) -1.5em 0 0 0, rgba(0, 0, 51, 0.3) -1.1em -1.1em 0 0, rgba(0, 0, 51, 0.3) 0 -1.5em 0 0, rgba(0, 0, 51, 0.3) 1.1em -1.1em 0 0;
+	-webkit-box-shadow: rgba(0, 0, 51, 0.3) 1.5em 0 0 0, rgba(0, 0, 51, 0.3) 1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) 0 1.5em 0 0, rgba(0, 0, 51, 0.3) -1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) -1.5em 0 0 0, rgba(0, 0, 51, 0.3) -1.1em -1.1em 0 0, rgba(0, 0, 51, 0.3) 0 -1.5em 0 0, rgba(0, 0, 51, 0.3) 1.1em -1.1em 0 0;
+	box-shadow: rgba(0, 0, 51, 0.3) 1.5em 0 0 0, rgba(0, 0, 51, 0.3) 1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) 0 1.5em 0 0, rgba(0, 0, 51, 0.3) -1.1em 1.1em 0 0, rgba(0, 0, 51, 0.3) -1.5em 0 0 0, rgba(0, 0, 51, 0.3) -1.1em -1.1em 0 0, rgba(0, 0, 51, 0.3) 0 -1.5em 0 0, rgba(0, 0, 51, 0.3) 1.1em -1.1em 0 0;
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	overflow: hidden;
+	position: absolute;
+	left: 12px;
+	top: 12px;
+	font-size: 6px;
 }
 .ke-dialog-row {
 	margin-bottom: 10px;
@@ -834,26 +882,25 @@
 	color: #fff;
 	text-decoration: none;
 }
-.ke-startup-upload-button{
+/* .ke-startup-upload-button{
 	background-color: #2196f3;
     border-color: #2565c4;
-}
+} */
 /* inputbox */
 .ke-input-text {
 	background-color:#FFFFFF;
-	font-family: 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;;
+	font-family: 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;
 	font-size: 12px;
 	line-height: 17px;
 	height: 17px;
 	padding: 2px 4px;
-	border-color: #848484 #E0E0E0 #E0E0E0 #848484;
+	border-color: #c9d8da;
 	border-style: solid;
 	border-width: 1px;
 	display: -moz-inline-stack;
 	display: inline-block;
 	vertical-align: middle;
 	zoom: 1;
-	*display: inline;
 }
 .ke-input-number {
 	width: 50px;
@@ -873,7 +920,6 @@
 	display: inline-block;
 	vertical-align: middle;
 	zoom: 1;
-	*display: inline;
 }
 .ke-upload-button {
 	position: relative;
@@ -883,7 +929,6 @@
 	overflow: hidden;
 	margin: 0;
 	padding: 0;
-	*height: 25px;
 }
 .ke-upload-area .ke-upload-file {
 	position: absolute;
@@ -900,8 +945,8 @@
 }
 /* tabs */
 .ke-tabs {
-	font: 12px/1 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;;
-	border-bottom:1px solid #A0A0A0;
+	font: 12px/1 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;
+	border-bottom: 1px solid #c9d8da;
 	padding-left:5px;
 	margin-bottom:20px;
 }
@@ -914,9 +959,9 @@
 }
 .ke-tabs-li {
 	position: relative;
-	border: 1px solid #A0A0A0;
-	background-color: #F0F0EE;
-	margin: 0 2px -1px 0;
+	border: 1px solid #c9d8da;
+	background-color: #f6f6f6;
+	margin: 0 6px -1px 0;
 	padding: 0 20px;
 	float: left;
 	line-height: 32px;
@@ -985,7 +1030,11 @@
 	position: relative;
 	z-index: 3
 }
-
+.webuploader-container{
+	background-color: #2196f3;
+    border-color: #2565c4;
+    box-shadow: 0 1px 9pt 1px rgb(0 0 0 / 12%);
+}
 .webuploader-pick {
 	position: relative;
 	display: inline-block;
@@ -993,7 +1042,6 @@
 	width: 100%;
 	height: 100%;
 	box-sizing: border-box;
-	box-shadow: 0 1px 9pt 1px rgba(0,0,0,.12);
 	border-radius: 1px;
 	overflow: visible;
 	zoom: 1
@@ -1019,6 +1067,7 @@
 	padding: 0 10px;
 	height: 23px;
 	line-height: 23px;
+	font-size: 14px;
 }
 .ke-swfupload-startupload {
 	position: absolute;
@@ -1032,45 +1081,59 @@
 	border-style: solid;
 	border-width: 1px;
 	width: auto;
-	height: 320px;
+	height: 330px;
 	padding: 5px;
 }
 .ke-swfupload-body .ke-item {
-	width: 100px;
-	margin: 5px;
+	width: 110px;
+	margin: 4px;
 }
 .ke-swfupload-body .ke-photo {
 	position: relative;
-	border: 1px solid #DDDDDD;
-	background-color:#FFFFFF;
-	padding: 10px;
+	background-color: #2196f3;
+	padding: 2px;
 }
 .ke-swfupload-body .ke-delete {
 	display: block;
-	background: url(default.png) no-repeat scroll 0px -688px;
-	width: 16px;
-	height: 16px;
-	position: absolute;
-	right: 0;
-	top: 0;
-	cursor: pointer;
-	z-index:1;
+    width: 20px;
+    height: 20px;
+    line-height: 20px;
+    text-align: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    z-index: 1;
+    background: rgba(255,255,255,.42);
+    font-size: 14px;
+    font-weight: bold;
 }
+
+.ke-swfupload-body .ke-delete::after{
+	font-family: icon-ke-font!important;
+    font-size: inherit;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    content: "\e69b";
+}
+
+
 .ke-swfupload-body .ke-status  {
 	position: absolute;
 	left: 0;
 	bottom: 0;
-	width: 100px;
+	width: 110px;
 	height: 22px;
-    line-height: 18px;
+	line-height: 18px;
 }
 .ke-swfupload-body .ke-message  {
-	width: 100px;
+	width: 100%;
 	text-align: center;
 	overflow: hidden;
 	height: 22px;
-    background: rgba(0,0,0,0.5);
-    color: #fff;
+	background: rgba(0,0,0,0.5);
+	color: #fff;
 }
 .ke-swfupload-body .ke-error  {
 	color: red;
@@ -1080,10 +1143,11 @@
 	text-align: center;
 	overflow: hidden;
 	height:16px;
+	line-height: 16px;
 }
 .ke-swfupload-body .ke-on {
-	border: 1px solid #5690D2;
-	background-color: #E9EFF6;
+	/* border: 1px solid #5690D2; */
+	background-color: #e3eefa;
 }
 .ke-swfupload .ke-progressbar{
 	position: absolute;
@@ -1205,61 +1269,7 @@
     padding: 0 5px;
     text-shadow: 1px 1px #b50000;
 }
-/* emoticons */
-.ke-plugin-emoticons {
-	position: relative;
-}
-.ke-plugin-emoticons .ke-preview {
-	position: absolute;
-	text-align: center;
-	margin: 2px;
-	padding: 10px;
-	top: 0;
-	border: 1px solid #A0A0A0;
-	background-color: #FFFFFF;
-	display: none;
-}
-.ke-plugin-emoticons .ke-preview-img {
-	border:0;
-	margin:0;
-	padding:0;
-}
-.ke-plugin-emoticons .ke-table {
-	border:0;
-	margin:0;
-	padding:0;
-	border-collapse:separate;
-}
-.ke-plugin-emoticons .ke-cell {
-	margin:0;
-	padding:1px;
-	border:1px solid #F0F0EE;
-	cursor:pointer;
-}
-.ke-plugin-emoticons .ke-on {
-	border: 1px solid #5690D2;
-	background-color: #E9EFF6;
-}
-.ke-plugin-emoticons .ke-img {
-	display:block;
-	background-repeat:no-repeat;
-	overflow:hidden;
-	margin:2px;
-	width:24px;
-	height:24px;
-	margin: 0;
-	padding: 0;
-	border: 0;
-}
-.ke-plugin-emoticons .ke-page {
-	text-align: right;
-	margin: 5px;
-	padding: 0;
-	border: 0;
-	font: 12px/1 'PingFang',"苹方",'Microsoft Yahei', "sans serif",tahoma,verdana,helvetica;;
-	color: #333;
-	text-decoration: none;
-}
+
 .ke-plugin-plainpaste-textarea,
 .ke-plugin-wordpaste-iframe {
 	display: block;
@@ -1358,20 +1368,34 @@
 	margin-left: 5px;
 }
 
-
-
-.ke-toolbar,
-.ke-container,
-.ke-statusbar
-{
-	/* border-color: #c9d8db; */
-}
 .ke-container{
-	/* box-shadow: 0 8px 40px rgba(0, 0, 0, 0.15); */
+	border: 1px solid #c9d8db;
 }
-.ke-toolbar span.ke-outline{
+.ke-toolbar{
+	border-bottom: 1px solid #c9d8da;
+	background-color: #FFF;
+}
+.ke-toolbar .ke-outline{
+	border-color: transparent;
+	padding: 0;
+}
+.ke-toolbar .ke-outline.ke-on{
+	background-color: #eaeff5;
+}
+.ke-toolbar .ke-toolbar-icon {
+	width: 38px;;
+}
 
+/* 
+.ke-dialog-content{
+	border-color: transparent;
 }
+.ke-dialog-header{
+	border-color: transparent;
+	background-color: transparent;
+} */
+
+
 /*界面美化部分代码结束*/
 
 

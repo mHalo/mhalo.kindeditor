@@ -657,7 +657,7 @@ KEditor.prototype = {
 		});
 		// create statusbar
 		statusbar.removeClass('statusbar').addClass('ke-statusbar')
-			.append('<span class="ke-inline-block ke-statusbar-center-icon"></span>')
+			.append('<span class="ke-inline-block ke-statusbar-center-icon"><i></i><i></i><i></i></span>')
 			.append('<span class="ke-inline-block ke-statusbar-right-icon"></span>');
 
 		// remove resize event
@@ -1617,7 +1617,7 @@ _plugin('core', function(K) {
 			if (attrs.href !== undefined) {
 				return full;
 			}
-			return '<img class="ke-anchor" src="' + self.themesPath + 'common/anchor.gif" data-ke-name="' + escape(attrs.name) + '" />';
+			return '<img class="ke-anchor" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+PHN2ZyB0PSIxNjY3NDAwOTEzOTg0IiBjbGFzcz0iaWNvbiIgdmlld0JveD0iMCAwIDEwMjQgMTAyNCIgdmVyc2lvbj0iMS4xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHAtaWQ9Ijg3NDQiIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMjQiIGhlaWdodD0iMjQiPjxwYXRoIGQ9Ik03NTYuMTM1IDUxMmE4IDggMCAwIDEtNi4zNjctMTIuODQzbDkxLjg2NC0xMjAuNzg1YTggOCAwIDAgMSAxMi43MzYgMGw5MS44NjQgMTIwLjc4NUE4IDggMCAwIDEgOTM5Ljg2NSA1MTJIODg4YzAgMjA3LjY2LTE2OC4zNCAzNzYtMzc2IDM3Ni0yMDUuNTgyIDAtMzcyLjYzLTE2NC45OS0zNzUuOTUtMzY5Ljc4MkwxMzYgNTEySDgyLjEzNWE4IDggMCAwIDEtNi4zNjctMTIuODQzbDkxLjg2NC0xMjAuNzg1YTggOCAwIDAgMSAxMi43MzYgMGw5MS44NjQgMTIwLjc4NUE4IDggMCAwIDEgMjY1Ljg2NSA1MTJIMjEyYzAgMTUzLjUwMSAxMTUuMjg3IDI4MC4wNzYgMjYzLjk5OCAyOTcuODYybDAuMDAxLTM5MC4zOTlDNDEzLjg5MSA0MDMuNDc3IDM2OCAzNDcuMDk4IDM2OCAyODBjMC03OS41MjkgNjQuNDcxLTE0NCAxNDQtMTQ0czE0NCA2NC40NzEgMTQ0IDE0NGMwIDY3LjA5OC00NS44OSAxMjMuNDc3LTEwNy45OTggMTM5LjQ2M2wwLjAwMSAzOTAuMzk5QzY5NS4xMSA3OTIuMjY3IDgwOS41MDcgNjY4LjIyIDgxMS45NiA1MTYuOTZMODEyIDUxMmgtNTUuODY1ek01MTIgMjEyYy0zNy41NTUgMC02OCAzMC40NDUtNjggNjhzMzAuNDQ1IDY4IDY4IDY4IDY4LTMwLjQ0NSA2OC02OC0zMC40NDUtNjgtNjgtNjh6IiBwLWlkPSI4NzQ1IiBmaWxsPSIjZDgxZTA2Ij48L3BhdGg+PC9zdmc+" data-ke-name="' + escape(attrs.name) + '" style="vertical-align:text-bottom" />';
 		})
 		.replace(/<script([^>]*)>([\s\S]*?)<\/script>/ig, function(full, attr, code) {
 			return '<div class="ke-script" data-ke-script-attr="' + escape(attr) + '">' + escape(code) + '</div>';

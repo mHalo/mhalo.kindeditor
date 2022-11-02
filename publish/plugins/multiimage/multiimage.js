@@ -123,6 +123,7 @@
             self.uploader.on('uploadError', function(file, reson){
                 if (file) {
                     var itemDiv = K('div[data-id="' + file.id + '"]', self.bodyDiv).eq(0);
+                    console.info ('reason',reson);
                     showError(itemDiv, 'ERROR:' + reson);
                 }
             });
@@ -178,7 +179,7 @@
                 });
             itemDiv.append(photoDiv);
 
-            var img = K('<img src="' + file.url + '" class="ke-img" draggable="false" data-status="0" width="80" height="80" alt="' + file.name + '" />');
+            var img = K('<img class="ke-multi-image" src="' + file.url + '" class="ke-img" draggable="false" data-status="0" alt="' + file.name + '" />');
             photoDiv.append(img);
             K('<span class="ke-delete"></span>').appendTo(photoDiv).click(function() {
                 self.removeFile(file.id);
@@ -241,7 +242,7 @@ KindEditor.plugin('multiimage', function(K) {
 		var clickFn = options.clickFn,
 			uploadDesc = K.tmpl(lang.uploadDesc, {uploadLimit : imageUploadLimit, sizeLimit : imageSizeLimit});
 		var html = [
-			'<div style="padding:20px 20px 10px;">',
+			'<div style="padding:10px 20px;">',
 			'<div class="swfupload">',
 			'</div>',
 			'</div>'

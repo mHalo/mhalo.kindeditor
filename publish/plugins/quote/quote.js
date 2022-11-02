@@ -8,8 +8,7 @@
 *******************************************************************************/
 
 KindEditor.plugin('quote', function(K) {
-	var self = this, name = 'quote',
-		doc = self.edit.doc;
+	var self = this, name = 'quote';
     function getAncestorTag(range) {
         var ancestor = K(range.commonAncestor());
         while (ancestor) {

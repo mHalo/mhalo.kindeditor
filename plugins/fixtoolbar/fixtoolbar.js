@@ -20,12 +20,13 @@ KindEditor.plugin('fixtoolbar', function (K) {
         var toolbar = K('.ke-toolbar'),
             container = K(toolbar).parent();
         var toolbarWidth = K('.ke-toolbar').width();
-        toolbar.css('width', (K(container).width() - 2)+ 'px');
 
         K(window).bind('resize', function(){
             toolbar.css('width', (K(container).width() - 2) + 'px');
         })
 
+        toolbar.css('width', (K(container).width())+ 'px');
+        
         K(watcher).bind('scroll', function () {
             var originY = container.pos().y;
             var watcherY =  watcher.pos().y;

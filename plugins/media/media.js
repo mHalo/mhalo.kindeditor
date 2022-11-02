@@ -75,7 +75,7 @@ KindEditor.plugin('media', function(K) {
 			var dialog = self.createDialog({
 				name : name,
 				width : 450,
-				height : 360,
+				height : 300,
 				title : self.lang(name),
 				body : html,
 				yesBtn : {

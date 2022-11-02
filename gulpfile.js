@@ -29,6 +29,13 @@ gulp.task('serve', function (cb) {
                     pathRewrite: {//路径重写规则 
                         '^/uploadfiles/': ''
                     }
+                }),
+                proxy.createProxyMiddleware('/uploadfx/', {
+                    target: proxyUrlPrefix + '/uploadfx/',//代理的目标地址
+                    changeOrigin: true,//
+                    pathRewrite: {//路径重写规则 
+                        '^/uploadfx/': ''
+                    }
                 })
             ]
         }

@@ -8,11 +8,16 @@
 		<script src="../publish/dist/kindeditor-all.js"></script>
 	</head>
 	<body>
-        <div id="wrapper" style="width: 90%;height: 500px;overflow-y:scroll;box-shadow: 0 0 30px #ccc;margin-top: 30vh;margin-left: 5vw;">
+        <div id="wrapper" style="width: 100%;height: 60vh;overflow-y:scroll;box-shadow: 0 0 30px #ccc;margin-top: 10vh;margin-left: 5vw;">
             <h1 id="qunit-header">KindEditor</h1>
             <div style="margin-left: 4vw;">
                 <textarea  id="editor" cols="30" rows="10" style="width:90%;height:420px;;margin-left:15px;"></textarea>
             </div>
+            <h1 id="qunit-header">KindEditor</h1>
+            <h1 id="qunit-header">KindEditor</h1>
+            <h1 id="qunit-header">KindEditor</h1>
+            <h1 id="qunit-header">KindEditor</h1>
+            
         </div>
 		
 	</body>
@@ -22,18 +27,18 @@
                 var options = {
                     themesPath: '../themes/',
                     basePath:'../',
-                    pluginsPath: '../plugins/',
                     resizeType: 1,
                     pasteType: 2,//0:禁止粘贴, 1:纯文本粘贴, 2:HTML粘贴
-                    height: 200,
+                    height: 420,
                     autoHeightMode: true,
                     fixToolBar: true,
                     fixToolBarWatchRef: '#wrapper',
-                    allowPreviewEmoticons: false,
+                    // allowPreviewEmoticons: false,
                     allowImageUpload: true,
                     allowFlashUpload: false,
                     formatUploadUrl: false,
                     allowFileManager: false,
+                    allowImageRemote: true,
                     uploadJson: '/handler/upload-test/',
                     uploadHeader:{
                         corefx: 'mhalo',
@@ -43,7 +48,7 @@
                         'paramA': 'A'
                     },
                     imageSizeLimit: '2MB',
-                    items: K.Tools.All,
+                    items: K.Tools.Mini,
                     cssData: 'body{font-size: 16px;line-height: 28px;}',
                     afterBlur: function () {
                         this.sync();
@@ -51,8 +56,7 @@
                 };
                 var contentEditor = K.create('#editor', options);
 
-
-                var html = Array.from({length: 50}).map(function(o,i){ return  '<p>'+ i +'</p>' }).join("")
+                var html = Array.from({length: 10}).map(function(o,i){ return  '<p>'+ i +'</p>' }).join("")
                 contentEditor.html(html);
 
 

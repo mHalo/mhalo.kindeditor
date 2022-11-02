@@ -33,20 +33,25 @@ KindEditor.plugin('code', function(K) {
 				'<option value="">Other</option>',
 				'</select>',
 				'</div>',
-				'<textarea class="ke-textarea" style="width:408px;height:260px;"></textarea>',
+				'<textarea class="ke-textarea" style="width:518px;height:260px;"></textarea>',
 				'</div>'].join(''),
 			dialog = self.createDialog({
 				name : name,
-				width : 450,
+				width : 560,
 				title : self.lang(name),
 				body : html,
 				yesBtn : {
 					name : self.lang('yes'),
 					click : function(e) {
 						var type = K('.ke-code-type', dialog.div).val(),
-							code = textarea.val(),
+							code = 
+							textarea.val()    
+								.replace(/^\s+/g, '')
+								.replace(/\s+$/g, '\n')
+								.replace(/(\s*<!--)/g, '\n$1')
+								.replace(/>(\s*)(?=<!--\s*\/)/g, '> '),
 							cls = type === '' ? '' :  ' lang-' + type,
-							html = '<pre class="prettyprint' + cls + '">\n' + K.escape(code) + '</pre> ';
+							html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
 						if (K.trim(code) === '') {
 							alert(lang.pleaseInput);
 							textarea[0].focus();

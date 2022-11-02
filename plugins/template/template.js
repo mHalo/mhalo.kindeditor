@@ -10,9 +10,9 @@
 KindEditor.plugin('template', function(K) {
 	var self = this, name = 'template', lang = self.lang(name + '.'),
 		htmlPath = self.pluginsPath + name + '/html/';
-	function getFilePath(fileName) {
-		return htmlPath + fileName + '?ver=' + encodeURIComponent(K.DEBUG ? K.TIME : K.VERSION);
-	}
+
+	var templates = K.undef(self.templates, K.Templates);
+
 	self.clickToolbar(name, function() {
 		var lang = self.lang(name + '.'),
 			arr = ['<div style="padding:10px 20px;">',
@@ -20,8 +20,8 @@ KindEditor.plugin('template', function(K) {
 				// left start
 				'<div class="ke-left">',
 				lang. selectTemplate + ' <select>'];
-			K.each(lang.fileList, function(key, val) {
-				arr.push('<option value="' + key + '">' + val + '</option>');
+			K.each(templates, function(i, o) {
+				arr.push("<option value='" + o.content + "'>" + o.name + "</option>");
 			});
 			html = [arr.join(''),
 				'</select></div>',
@@ -31,28 +31,29 @@ KindEditor.plugin('template', function(K) {
 				'</div>',
 				'<div class="ke-clearfix"></div>',
 				'</div>',
-				'<iframe class="ke-textarea" frameborder="0" style="width:458px;height:260px;background-color:#FFF;"></iframe>',
+				'<div class="ke-temp-preview" style="width:518px;height:260px;background-color:#FFF;padding: 12px;overflow:auto;border-color: #848484 #E0E0E0 #E0E0E0 #848484;border-style: solid;border-width: 1px;"></div>',
 				'</div>'].join('');
 		var dialog = self.createDialog({
 			name : name,
-			width : 500,
+			width : 560,
 			title : self.lang(name),
 			body : html,
 			yesBtn : {
 				name : self.lang('yes'),
 				click : function(e) {
-					var doc = K.iframeDoc(iframe);
-					self[checkbox[0].checked ? 'html' : 'insertHtml'](doc.body.innerHTML).hideDialog().focus();
+					self[checkbox[0].checked ? 'html' : 'insertHtml'](selectBox.val()).hideDialog().focus();
 				}
 			}
 		});
 		var selectBox = K('select', dialog.div),
 			checkbox = K('[name="replaceFlag"]', dialog.div),
-			iframe = K('iframe', dialog.div);
-		checkbox[0].checked = true;
-		iframe.attr('src', getFilePath(selectBox.val()));
+			templateBox = K('.ke-temp-preview', dialog.div)
+			;
+		checkbox[0].checked = false;
+		templateBox.html(selectBox.val())
 		selectBox.change(function() {
-			iframe.attr('src', getFilePath(this.value));
+			console.info(templateBox)
+			templateBox.html(this.value)
 		});
 	});
 });

@@ -13,21 +13,20 @@ function _getBasePath() {
 K.basePath = _getBasePath();
 
 K.Tools = {
-	All: ['source', '|', 'undo', 'redo','removeformat','clearhtml', '|',  'template', 'code', 'cut', 'copy', 'paste',
+	All: ['source', '|', 'undo', 'redo','removeformat','clearhtml', '|',  'template', 'code', 'cut', 'copy',
 	'plainpaste', 'wordpaste', '|', 'preview','selectall', 'fullscreen', 'print', '|', 'quickformat', '/', 
 	'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'strikethrough', '|', 
 	'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|', 
 	'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','lineheight', '/',
 	'quote', 'subscript','superscript','|', 'image', 'multiimage',	'media', 'insertfile','baidumap','link', 'unlink', '|',
-	'table','emoticons', 'anchor', 'hr',  'pagebreak'],
+	'table', 'anchor', 'hr',  'pagebreak'],
 
-	Normal: ['source', '|', 'undo', 'redo','removeformat','clearhtml', '|',  'code', 
-	 '|', 'preview','selectall', 'fullscreen', 'print', '|', 'quickformat', '/', 
+	Normal: ['source', '|', 
 	'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'strikethrough', '|', 
 	'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|', 
 	'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','lineheight', '/',
 	'image', 'multiimage',	'media', 'insertfile','baidumap','link', 'unlink', '|',
-	'table','emoticons', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript',],
+	'table', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript', '|', 'preview', 'fullscreen', 'quickformat',],
 
 	Small: ['source', '|','formatblock', 'fontname', 'fontsize', '|',
 	'bold', 'italic', 'underline', 'strikethrough', '|',
@@ -36,13 +35,17 @@ K.Tools = {
 	'quote', 'image', 'multiimage', 'media', 'insertfile', '|','table', 'hr','pagebreak', '|', 'link', 'unlink', '|','preview', 'fullscreen'],
 
 	Mini: [
-		'source', '|','formatblock',  'bold', 'italic', 'underline', 'strikethrough', '|',
+		'formatblock',  'bold', 'italic', 'underline', 'strikethrough', '|',
 		'justifyleft', 'justifycenter', 'justifyright',	'justifyfull', '|',
-		'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','|',
-		'multiimage','table', '|',
-		'quote', 'link', 'unlink' 
+		'insertorderedlist', 'insertunorderedlist','|',
+		'image', 'insertfile','table', 'link'
 	]
 };
+K.Templates = [
+	{ name: '图片和文字', content: '<h3><img align="left" height="100" style="margin-right: 10px" width="100" />在此处输入标题</h3><p>在此处输入内容</p>'},
+	{ name: '表格', content: '<h3>标题</h3><table style="width:100%;" cellpadding="2" cellspacing="0" border="1"><tbody><tr><td><h3>标题1</h3></td><td><h3>标题1</h3></td></tr><tr><td>内容1</td><td>内容2</td></tr><tr><td>内容3</td><td>内容4</td></tr></tbody></table><p>表格说明</p>' },
+	{ name: '项目编号', content: '<p>在此处输入内容</p><ol><li>描述1</li><li>描述2</li><li>描述3</li></ol><p>在此处输入内容</p><ul><li>描述1</li><li>描述2</li><li>描述3</li></ul>' },
+];
 
 K.options = {
 	designMode : true,

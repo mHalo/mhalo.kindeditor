@@ -53,7 +53,7 @@ KindEditor.plugin('image', function(K) {
 			//url
 			'<div class="ke-dialog-row">',
 			'<label for="remoteUrl" style="width:60px;">' + lang.remoteUrl + '</label>',
-			'<input type="text" id="remoteUrl" class="ke-input-text" name="url" value="" style="width:'+ (allowFileManager ? 220 : 330) +'px;" />',
+			'<input type="text" id="remoteUrl" class="ke-input-text" name="url" value="" style="width:'+ (allowFileManager ? 250 : 360) +'px;" />',
 			'<span class="ke-button-common ke-button-outer"  style="margin-left:'+ (allowFileManager ? 12 : 0) +'px">',
 			'<input type="button" class="ke-button-common ke-button" name="viewServer" value="' + lang.viewServer + '" />',
 			'</span>',
@@ -61,21 +61,21 @@ KindEditor.plugin('image', function(K) {
 			//size
 			'<div class="ke-dialog-row">',
 			'<label for="remoteWidth" style="width:60px;">' + lang.size + '</label>',
-			lang.width + '：<input type="text" id="remoteWidth" class="ke-input-text ke-input-number" name="width" value="" maxlength="4" style="width:120px;margin-right:10px" /> ',
-			lang.height + '：<input type="text" class="ke-input-text ke-input-number" name="height" value="" maxlength="4" style="width:120px;margin-right:10px" /> ',
-			'<img class="ke-refresh-btn" src="' + imgPath + 'refresh.png" width="16" height="16" alt="" style="cursor:pointer;" title="' + lang.resetSize + '" />',
+			lang.width + '：<input type="text" id="remoteWidth" class="ke-input-text ke-input-number" name="width" value="" maxlength="4" style="width:130px;margin-right:10px" />',
+			lang.height + '：<input type="text" class="ke-input-text ke-input-number" name="height" value="" maxlength="4" style="width:130px;margin-right:10px" />',
+			'<span class="ke-inline-block ke-toolbar-icon icon-ke-font ke-icon-refresh-bold"></span>',
 			'</div>',
 			//align
 			'<div class="ke-dialog-row">',
 			'<label style="width:60px;">' + lang.align + '</label>',
-			'<input type="radio" name="align" class="ke-inline-block" value="" checked="checked" /> <img name="defaultImg" src="' + imgPath + 'align_top.gif" width="18" height="auto" alt="" /><text style="margin-right:20px;">&nbsp;顶部对齐</text>',
-			' <input type="radio" name="align" class="ke-inline-block" value="left" /> <img name="leftImg" src="' + imgPath + 'align_left.gif" width="18" height="auto" alt="" /><text style="margin-right:20px;">&nbsp;左对齐</text>',
-			' <input type="radio" name="align" class="ke-inline-block" value="right" /> <img name="rightImg" src="' + imgPath + 'align_right.gif" width="18" height="auto" alt=""/><text style="margin-right:20px;" >&nbsp;右对齐</text>',
+			'<input type="radio" name="align" class="ke-inline-block" value="" checked="checked" /><span class="ke-inline-block ke-toolbar-icon icon-ke-font ke-icon-float-default"></span><text style="margin-right:30px;">&nbsp;默认</text>',
+			' <input type="radio" name="align" class="ke-inline-block" value="left" /><span class="ke-inline-block ke-toolbar-icon icon-ke-font ke-icon-float-left"></span><text style="margin-right:30px;">&nbsp;左对齐</text>',
+			' <input type="radio" name="align" class="ke-inline-block" value="right" /><span class="ke-inline-block ke-toolbar-icon icon-ke-font ke-icon-float-right"></span><text style="margin-right:30px;" >&nbsp;右对齐</text>',
 			'</div>',
 			//title
 			'<div class="ke-dialog-row">',
 			'<label for="remoteTitle" style="width:60px;">' + lang.imgTitle + '</label>',
-			'<input type="text" id="remoteTitle" class="ke-input-text" name="title" value="" style="width:200px;" />',
+			'<input type="text" id="remoteTitle" class="ke-input-text" name="title" value="" style="width:360px;" />',
 			'</div>',
 			'</div>',
 			//remote image - end
@@ -86,8 +86,8 @@ KindEditor.plugin('image', function(K) {
 			//file
 			'<div class="ke-dialog-row">',
 			// hiddenElements.join(''),
-			'<label style="width:100px;">' + lang.localUrl + '</label>',
-			'<input type="text" name="localUrl" class="ke-input-text" tabindex="-1" style="width:200px;" readonly="true" /> &nbsp;',
+			'<label style="width:60px;">' + lang.localUrl + '</label>',
+			'<input type="text" name="localUrl" class="ke-input-text" tabindex="-1" style="width:270px;" readonly="true" /> &nbsp;',
 			'<input type="button" class="ke-upload-button" value="' + lang.upload + '" />',
 			'</div>',
 			// '</form>',
@@ -95,8 +95,8 @@ KindEditor.plugin('image', function(K) {
 			//local upload - end
 			'</div>'
 		].join('');
-		var dialogWidth = showLocal || allowFileManager ? 450 : 400,
-			dialogHeight = showLocal && showRemote ? 300 : 250;
+		var dialogWidth = 480,
+			dialogHeight = showRemote ? 340 : 220;
 		var dialog = self.createDialog({
 			name : name,
 			width : dialogWidth,
