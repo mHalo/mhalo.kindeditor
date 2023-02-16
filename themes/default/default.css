@@ -8,7 +8,6 @@
 	display: inline-block;
 	vertical-align: middle;
 	zoom: 1;
-	*display: inline;
 }
 .ke-clearfix {
 	zoom: 1;
