@@ -18,7 +18,12 @@ ___
 v4.4.1 (2023-02-22)  
 1. 修复quote插件工具栏中hover提示undefined
 2. 源码增加dist文件夹（/publish/dist），可直接下载使用
-3. 移除[kindsoft/kindeditor#54](https://github.com/kindsoft/kindeditor/issues/54)中bugfix的处理方法，设置样式或上传编辑图片时，编辑器不再自动滚动至将编辑内容所在的位置
+3. 将[kindsoft/kindeditor#54](https://github.com/kindsoft/kindeditor/issues/54)中bugfix的处理方式扩展为可配置，默认情况下，设置样式或上传编辑图片时，编辑器不再自动滚动至将编辑内容所在的位置。如需保持原逻辑，可通过一下方式开启：
+```
+K.create('#editor', {
+    scrollToEditingTarget: true,
+});
+```
 4. 增加emoji插件，**K.Tools.Normal** 配置中已默认包含此插件。emoji信息可按照以下方案进行配置：
 ```
 K.create('#editor', {
@@ -27,7 +32,7 @@ K.create('#editor', {
     },
 });
 ```
-
+5. 更新部分样式
 
 
 ## 更新日志
