@@ -39,6 +39,7 @@ var PLUGIN_FILES = [
 	'plugins/clearhtml/clearhtml.js',
 	'plugins/code/code.js',
 	// 'plugins/emoticons/emoticons.js',
+	'plugins/emoticons/emoticons.js',
 	'plugins/filemanager/filemanager.js',
 	'plugins/image/image.js',
 	'plugins/insertfile/insertfile.js',

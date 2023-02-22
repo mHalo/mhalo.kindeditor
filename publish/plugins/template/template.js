@@ -52,7 +52,6 @@ KindEditor.plugin('template', function(K) {
 		checkbox[0].checked = false;
 		templateBox.html(selectBox.val())
 		selectBox.change(function() {
-			console.info(templateBox)
 			templateBox.html(this.value)
 		});
 	});

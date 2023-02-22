@@ -149,7 +149,7 @@ _extend(KEdit, KWidget, {
 			doc.close();
 			self.win = self.iframe[0].contentWindow;
 			self.doc = doc;
-			var cmd = _cmd(doc);
+			var cmd = _cmd(doc, options.editorOptions);
 			// add events
 			self.afterChange(function(e) {
 				cmd.selection();

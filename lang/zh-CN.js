@@ -27,6 +27,7 @@ KindEditor.lang({
 	indent : '增加缩进',
 	outdent : '减少缩进',
 	subscript : '下标',
+	quote : '引用',
 	superscript : '上标',
 	formatblock : '段落',
 	fontname : '字体',

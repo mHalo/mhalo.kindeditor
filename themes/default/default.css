@@ -1,4 +1,4 @@
-@import url(//at.alicdn.com/t/c/font_1491367_njeebnzeclh.css);
+@import url(//at.alicdn.com/t/c/font_1491367_srl4rc2lhnp.css);
 .ke-container *{
 	box-sizing: border-box;
 }
@@ -557,6 +557,9 @@
 	cursor: pointer;
 	font-size: 13px;
     margin: 3px 0;
+	display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
 }
 .ke-menu-item-on {
 	border: 1px solid transparent;
@@ -912,7 +915,7 @@
 	height: 30px;
 	text-align: center;
 	line-height: 30px;
-	padding-left: 5px;
+	/* padding-left: 5px; */
 	overflow: hidden;
 	cursor: pointer;
 	display: -moz-inline-stack;
@@ -1344,8 +1347,37 @@
 	width: 30%;
 	text-align: center;
 }
-
-
+.ke-plugin-emoji{
+	padding: 0 3px;
+}
+.ke-plugin-emoji .ke-table{
+	width: 100%;
+}
+.ke-plugin-emoji .ke-table .ke-emoji{
+	font-size: 24px;
+    padding: 3px;
+    cursor: pointer;
+    border: 1px solid transparent;
+    width: 24px;
+    height: 24px;
+    display: inline-flex;
+    flex-flow: row;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+}
+.ke-plugin-emoji .ke-table .ke-emoji:hover{
+	background-color: #e7edf3;
+	cursor: pointer;
+	border:1px solid #bed6ed;
+}
+.ke-plugin-emoji .ke-page{
+	padding: 7px 5px 5px;
+    text-align: center;
+}
+.ke-plugin-emoji .ke-page .ke-page-item{
+	margin: 0 5px;
+}
 
 /*界面美化部分代码开始*/
 .ke-dialog-body .ke-input-text {

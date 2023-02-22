@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.4.0 (2022-11-03)',
+var _VERSION = '4.4.1 (2023-02-22)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -244,7 +244,7 @@ K.Tools = {
 	'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
 	'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','lineheight', '/',
 	'image', 'multiimage',	'media', 'insertfile','baidumap','link', 'unlink', '|',
-	'table', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript', '|', 'preview', 'fullscreen', 'quickformat',],
+	'table', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript', '|', 'preview', 'fullscreen', 'quickformat', 'emoticons' ],
 	Small: ['source', '|','formatblock', 'fontname', 'fontsize', '|',
 	'bold', 'italic', 'underline', 'strikethrough', '|',
 	'justifyleft', 'justifycenter', 'justifyright',	'justifyfull', '|',
@@ -2743,16 +2743,17 @@ function _inPreElement(knode) {
 	}
 	return false;
 }
-function KCmd(range) {
-	this.init(range);
+function KCmd(range,options) {
+	this.init(range,options);
 }
 _extend(KCmd, {
-	init : function(range) {
+	init : function(range,options) {
 		var self = this, doc = range.doc;
 		self.doc = doc;
 		self.win = _getWin(doc);
 		self.sel = _getSel(doc);
 		self.range = range;
+		self.editorOptions = options;
 	},
 	selection : function(forceReset) {
 		var self = this, doc = self.doc, rng = _getRng(doc);
@@ -2809,9 +2810,21 @@ _extend(KCmd, {
 			rng = range.get(true);
 			sel.removeAllRanges();
 			sel.addRange(rng);
-			if (doc !== document) {
-				var pos = K(rng.endContainer).pos();
-				win.scrollTo(pos.x, pos.y);
+			if(self.editorOptions && self.editorOptions.scrollToEditingTarget){
+				if (doc !== document) {
+					try {
+						var imgLength = [].filter.call(rng.endContainer.children, function(el){
+							return el.nodeName == 'IMG';
+						}).length;
+						if(imgLength > 1){
+							return;
+						}
+					} catch(e) {
+						console.info('error', e);
+					};
+					var pos = K(rng.endContainer).pos();
+					win.scrollTo(pos.x, pos.y);
+				}
 			}
 		}
 		win.focus();
@@ -3353,12 +3366,12 @@ _each('cut,copy,paste'.split(','), function(i, name) {
 		return self;
 	};
 });
-function _cmd(mixed) {
+function _cmd(mixed, options) {
 	if (mixed.nodeName) {
 		var doc = _getDoc(mixed);
 		mixed = _range(doc).selectNodeContents(doc.body).collapse(false);
 	}
-	return new KCmd(mixed);
+	return new KCmd(mixed, options);
 }
 K.CmdClass = KCmd;
 K.cmd = _cmd;
@@ -3694,7 +3707,7 @@ _extend(KEdit, KWidget, {
 			doc.close();
 			self.win = self.iframe[0].contentWindow;
 			self.doc = doc;
-			var cmd = _cmd(doc);
+			var cmd = _cmd(doc, options.editorOptions);
 			self.afterChange(function(e) {
 				cmd.selection();
 			});
@@ -5097,6 +5110,7 @@ KEditor.prototype = {
 			bodyClass : self.bodyClass,
 			cssPath : self.cssPath,
 			cssData : self.cssData,
+			editorOptions: self.options,
 			beforeGetHtml : function(html) {
 				html = self.beforeGetHtml(html);
 				html = _removeBookmarkTag(_removeTempTag(html));
@@ -5218,6 +5232,9 @@ KEditor.prototype = {
 				statusbar.last().css('visibility', 'hidden');
 			}
 		}
+		setTimeout(function(){
+			self.focus && self.focus();
+		}, 100);
 		return self;
 	},
 	remove : function() {
@@ -6594,6 +6611,123 @@ KindEditor.plugin('code', function(K) {
 	});
 });
 
+KindEditor.plugin('emoticons', function (K) {
+    var self = this, name = 'emoticons',
+        emojis = {
+            faces: ['😀', '😁', '😂', '🤣', '😃', '😄', '😅', '😆', '😉', '😊', '😋', '😎', '😍', '😘', '🥰', '😗', '😙', '😚', '🙂', '🤗', '🤩', '🤔', '🤨', '😐', '😑', '😶', '🙄', '😏', '😣', '😥', '😮', '🤐', '😯', '😪', '😫', '😴', '😌', '😛', '😜', '😝', '🤤', '😒', '😓', '😔', '😕', '🙃', '🤑', '😲', '☹️', '🙁', '😖', '😞', '😟', '😤', '😢', '😭', '😦', '😧', '😨', '😩', '🤯', '😬', '😰', '😱', '🥵', '🥶', '😳', '🤪', '😵', '😡', '😠', '🤬', '😷', '🤒', '🤕', '🤢', '🤮', '🤧', '😇', '🤠', '🤡', '🥳', '🥴', '🥺', '🤥', '🤫', '🤭', '🧐', '🤓'],
+            hands: ['🤲', '👐', '🙌', '👏', '🤝', '👍', '👎', '👊', '✊', '🤛', '🤜', '🤞', '✌️', '🤟', '🤘', '👌', '👈', '👉', '👆', '👇', '☝️', '✋', '🤚', '🖐', '🖖', '👋', '🤙', '💪', '🦵', '🦶', '🖕', '✍️', '🙏', '👐🏻', '🙌🏻', '👏🏻', '🙏🏻', '👍🏻', '👎🏻', '👊🏻', '✊🏻', '🤛🏻', '🤜🏻', '🤞🏻', '✌🏻', '🤟🏻', '🤘🏻', '👌🏻', '👈🏻', '👉🏻', '👆🏻', '👇🏻', '☝🏻', '✋🏻', '🤚🏻', '🖐🏻', '🖖🏻', '👋🏻', '🤙🏻', '💪🏻', '🖕🏻', '✍🏻', '🤲🏾', '👐🏾', '🙌🏾', '👏🏾', '🙏🏾', '👍🏾', '👎🏾', '👊🏾', '✊🏾', '🤛🏾', '🤜🏾', '🤞🏾', '✌🏾', '🤟🏾', '🤘🏾', '👌🏾', '👈🏾', '👉🏾', '👆🏾', '👇🏾', '☝🏾', '✋🏾', '🤚🏾', '🖐🏾', '🖖🏾', '👋🏾', '🤙🏾', '💪🏾', '🖕🏾', '✍🏾'],
+            avatar: ['👶🏻', '👦🏻', '👧🏻', '👨🏻', '👩🏻', '👱🏻‍♀️', '👱🏻', '👴🏻', '👵🏻', '👲🏻', '👳🏻‍♀️', '👳🏻', '👮🏻‍♀️', '👮🏻', '👷🏻‍♀️', '👷🏻', '💂🏻‍♀️', '💂🏻', '🕵🏻‍♀️', '🕵🏻', '👩🏻‍⚕️', '👨🏻‍⚕️', '👩🏻‍🌾', '👨🏻‍🌾', '👩🏻‍🍳', '👨🏻‍🍳', '👩🏻‍🎓', '👨🏻‍🎓', '👩🏻‍🎤', '👨🏻‍🎤', '👩🏻‍🏫', '👨🏻‍🏫', '👩🏻‍🏭', '👨🏻‍🏭', '👩🏻‍💻', '👨🏻‍💻', '👩🏻‍💼', '👨🏻‍💼', '👩🏻‍🔧', '👨🏻‍🔧', '👩🏻‍🔬', '👨🏻‍🔬', '👩🏻‍🎨', '👨🏻‍🎨', '👩🏻‍🚒', '👨🏻‍🚒', '👩🏻‍✈️', '👨🏻‍✈️', '👩🏻‍🚀', '👨🏻‍🚀', '👩🏻‍⚖️', '👨🏻‍⚖️', '🤶🏻', '🎅🏻', '👸🏻', '🤴🏻', '👰🏻', '🤵🏻', '👼🏻', '🤰🏻', '🙇🏻‍♀️', '🙇🏻', '💁🏻', '💁🏻‍♂️', '🙅🏻', '🙅🏻‍♂️', '🙆🏻', '🙆🏻‍♂️', '🙋🏻', '🙋🏻‍♂️', '🤦🏻‍♀️', '🤦🏻‍♂️', '🤷🏻‍♀️', '🤷🏻‍♂️', '🙎🏻', '🙎🏻‍♂️', '🙍🏻', '🙍🏻‍♂️', '💇🏻', '💇🏻‍♂️', '💆🏻', '💆🏻‍♂️', '🕴🏻', '💃🏻', '🕺🏻', '🚶🏻‍♀️', '🚶🏻', '🏃🏻‍♀️', '🏃🏻'],
+            foods: ['🍏', '🍎', '🍐', '🍊', '🍋', '🍌', '🍉', '🍇', '🍓', '🍈', '🍒', '🍑', '🍍', '🥭', '🥥', '🥝', '🍅', '🍆', '🥑', '🥦', '🥒', '🥬', '🌶', '🌽', '🥕', '🥔', '🍠', '🥐', '🍞', '🥖', '🥨', '🥯', '🧀', '🥚', '🍳', '🥞', '🥓', '🥩', '🍗', '🍖', '🌭', '🍔', '🍟', '🍕', '🥪', '🥙', '🌮', '🌯', '🥗', '🥘', '🥫', '🍝', '🍜', '🍲', '🍛', '🍣', '🍱', '🥟', '🍤', '🍙', '🍚', '🍘', '🍥', '🥮', '🥠', '🍢', '🍡', '🍧', '🍨', '🍦', '🥧', '🍰', '🎂', '🍮', '🍭', '🍬', '🍫', '🍿', '🧂', '🍩', '🍪', '🌰', '🥜', '🍯', '🥛', '🍼', '☕️', '🍵', '🥤', '🍶', '🍺', '🍻', '🥂', '🍷', '🥃', '🍸', '🍹', '🍾', '🥄', '🍴', '🍽', '🥣', '🥡', '🥢'],
+            animals: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🦝', '🐻', '🐼', '🦘', '🦡', '🐨', '🐯', '🦁', '🐮', '🐷', '🐽', '🐸', '🐵', '🙈', '🙉', '🙊', '🐒', '🐔', '🐧', '🐦', '🐤', '🐣', '🐥', '🦆', '🦢', '🦅', '🦉', '🦚', '🦜', '🦇', '🐺', '🐗', '🐴', '🦄', '🐝', '🐛', '🦋', '🐌', '🐚', '🐞', '🐜', '🦗', '🕷', '🕸', '🦂', '🦟', '🦠', '🐢', '🐍', '🦎', '🦖', '🦕', '🐙', '🦑', '🦐', '🦀', '🐡', '🐠', '🐟', '🐬', '🐳', '🐋', '🦈', '🐊', '🐅', '🐆', '🦓', '🦍', '🐘', '🦏', '🦛', '🐪', '🐫', '🦙', '🦒', '🐃', '🐂', '🐄', '🐎', '🐖', '🐏', '🐑', '🐐', '🦌', '🐕', '🐩', '🐈', '🐓', '🦃', '🕊', '🐇', '🐁', '🐀', '🐿', '🦔', '🐾', '🐉', '🐲'],
+            nature: ['🌵', '🎄', '🌲', '🌳', '🌴', '🌱', '🌿', '☘️', '🍀', '🎍', '🎋', '🍃', '🍂', '🍁', '🍄', '🌾', '💐', '🌷', '🌹', '🥀', '🌺', '🌸', '🌼', '🌻', '🌞', '🌝', '🌛', '🌜', '🌚', '🌕', '🌖', '🌗', '🌘', '🌑', '🌒', '🌓', '🌔', '🌙', '🌎', '🌍', '🌏', '💫', '⭐️', '🌟', '✨', '⚡️', '☄️', '💥', '🔥', '🌪', '🌈', '☀️', '🌤', '⛅️', '🌥', '☁️', '🌦', '🌧', '⛈', '🌩', '🌨', '❄️', '☃️', '⛄️', '🌬', '💨', '💧', '💦', '☔️', '☂️'],
+            tags: ['❤️', '🧡', '💛', '💚', '💙', '💜', '🖤', '💔', '❣️', '💕', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '☮️', '✝️', '☪️', '🕉', '☸️', '✡️', '🔯', '🕎', '☯️', '☦️', '🛐', '⛎', '♈️', '♉️', '♊️', '♋️', '♌️', '♍️', '♎️', '♏️', '♐️', '♑️', '♒️', '♓️', '🆔', '🚻', '🚮', '🎦', '📶', '🈁', '🔣', 'ℹ️', '🔤', '🔡', '🔠', '🆖', '🆗', '🆙', '🆒', '🆕', '🆓', '0️⃣', '1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣', '9️⃣', '🔟', '🔢', '#️⃣', '*️⃣', '⏏️', '▶️', '⏸', '⏯', '⏹', '⏺', '⏭', '⏮', '⏩', '⏪', '⏫', '⏬', '◀️', '🔼', '🔽', '➡️', '⬅️', '⬆️', '⬇️', '↗️', '↘️', '↙️', '↖️', '↕️', '↔️', '↪️', '↩️', '⤴️', '⤵️', '🔀', '🔁', '🔂', '🔄', '🔃'],
+        },
+        page = {
+            cols: 10,
+            total: Object.keys(emojis),
+            current: 'faces',
+            tags: {
+                faces: '表情',
+                hands: '手势',
+                avatar: '头像',
+                foods: '食物',
+                animals: '动物',
+                nature: '自然',
+                tags: '符号'
+            }
+        };
+	if(self.emojiConfig && self.emojiConfig instanceof Function){
+		self.emojiConfig.call(null, emojis, page);
+	}
+    self.clickToolbar(name, function () {
+        var elements = [];
+        var wrapperDiv = K('<div class="ke-plugin-emoji"></div>'),
+            menu = self.createMenu({
+                name: name,
+                beforeRemove: function () {
+                    removeEvent();
+                }
+            });
+		var iconLeft = K(".ke-toolbar .ke-icon-emoticons").pos().x;
+		var iconWidth = K(".ke-toolbar .ke-icon-emoticons").width();
+		var winWidth = K(document.body).width();
+        menu.div.append(wrapperDiv);
+        function bindCellEvent(cell, emoji) {
+            cell.mouseover(function () {
+                K(this).addClass('ke-on');
+            });
+            cell.mouseout(function () {
+                K(this).removeClass('ke-on');
+            });
+            cell.click(function (e) {
+                self.insertHtml(emoji).hideMenu().focus();
+                e.stop();
+            });
+        }
+        function emojiTable(key, parent) {
+            var tableDom = document.createElement('table');
+            parent.append(tableDom);
+            tableDom.className = 'ke-table';
+            var rows = Math.ceil(emojis[key].length / page.cols);
+            var emoji;
+            for (var i = 0; i < rows; i++) {
+                var row = tableDom.insertRow(i);
+                for (var j = 0; j < page.cols; j++) {
+                    var cell = K(row.insertCell(j));
+                    cell.addClass('ke-cell');
+                    emoji = emojis[key][(page.cols * i) + j];
+                    if (emoji === undefined) {
+                        continue;
+                    }
+                    bindCellEvent(cell, emoji);
+                    var span = K('<span class="ke-emoji">' + emoji + '</span>');
+                    cell.append(span);
+                    elements.push(cell);
+                }
+            }
+            return tableDom;
+        }
+        var table = emojiTable(page.current, wrapperDiv), pageDiv;
+		var tableWidth = K(wrapperDiv).width();
+		if((iconLeft + tableWidth) > winWidth){
+			K(menu.div).css({
+				left: iconLeft - (tableWidth - iconWidth) + 'px'
+			})
+		}
+        function removeEvent() {
+            K.each(elements, function () {
+                this.unbind();
+            });
+        }
+        function bindPageEvent(el, key) {
+            el.click(function (e) {
+                removeEvent();
+                table.parentNode.removeChild(table);
+                pageDiv.remove();
+                table = emojiTable(key, wrapperDiv);
+                createPageTable(key);
+                page.current = key;
+                e.stop();
+            });
+        }
+        function createPageTable(tagname) {
+            pageDiv = K('<div class="ke-page"></div>');
+            wrapperDiv.append(pageDiv);
+            for (var key in page.tags) {
+                var keyname = page.tags[key];
+                if (key !== tagname) {
+                    var tag = K('<span class="ke-page-item"><a href="javascript:;">[' + keyname + ']</a></span>');
+                    bindPageEvent(tag, key);
+                    pageDiv.append(tag);
+                    elements.push(tag);
+                } else {
+                    pageDiv.append(K('<span class="ke-page-item">[' + keyname + ']</span>'));
+                }
+            }
+        }
+        createPageTable(page.current);
+    });
+});
 KindEditor.plugin('filemanager', function(K) {
 	var self = this, name = 'filemanager',
 		fileManagerJson = K.undef(self.fileManagerJson, self.basePath + 'php/file_manager_json.php'),
@@ -6799,7 +6933,6 @@ KindEditor.plugin('image', function(K) {
 		for(var k in extraParams){
 			hiddenElements.push('<input type="hidden" name="' + k + '" value="' + extraParams[k] + '" />');
 		}
-		console.info('extraParams',extraParams)
 		var html = [
 			'<div style="padding:20px;">',
 			'<div class="tabs"></div>',
@@ -6842,7 +6975,7 @@ KindEditor.plugin('image', function(K) {
 		var dialog = self.createDialog({
 			name : name,
 			width : dialogWidth,
-			height : dialogHeight,
+			height : dialogHeight + 3,
 			title : self.lang(name),
 			body : html,
 			yesBtn : {
@@ -7722,7 +7855,6 @@ KindEditor.plugin('multiimage', function(K) {
 			previewBtn : {
 				name : lang.insertAll,
 				click : function(e) {
-                    console.info(123)
 					clickFn.call(self, swfupload.getUrlList());
 				}
 			},
@@ -8687,7 +8819,6 @@ KindEditor.plugin('template', function(K) {
 		checkbox[0].checked = false;
 		templateBox.html(selectBox.val())
 		selectBox.change(function() {
-			console.info(templateBox)
 			templateBox.html(this.value)
 		});
 	});
@@ -8799,6 +8930,7 @@ KindEditor.lang({
 	indent : '增加缩进',
 	outdent : '减少缩进',
 	subscript : '下标',
+	quote : '引用',
 	superscript : '上标',
 	formatblock : '段落',
 	fontname : '字体',

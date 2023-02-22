@@ -43,7 +43,6 @@ KindEditor.plugin('image', function(K) {
 		for(var k in extraParams){
 			hiddenElements.push('<input type="hidden" name="' + k + '" value="' + extraParams[k] + '" />');
 		}
-		console.info('extraParams',extraParams)
 		var html = [
 			'<div style="padding:20px;">',
 			//tabs
@@ -100,7 +99,7 @@ KindEditor.plugin('image', function(K) {
 		var dialog = self.createDialog({
 			name : name,
 			width : dialogWidth,
-			height : dialogHeight,
+			height : dialogHeight + 3,
 			title : self.lang(name),
 			body : html,
 			yesBtn : {

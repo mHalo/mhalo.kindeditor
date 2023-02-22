@@ -26,7 +26,7 @@ K.Tools = {
 	'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|', 
 	'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','lineheight', '/',
 	'image', 'multiimage',	'media', 'insertfile','baidumap','link', 'unlink', '|',
-	'table', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript', '|', 'preview', 'fullscreen', 'quickformat',],
+	'table', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript', '|', 'preview', 'fullscreen', 'quickformat', 'emoticons' ],
 
 	Small: ['source', '|','formatblock', 'fontname', 'fontsize', '|',
 	'bold', 'italic', 'underline', 'strikethrough', '|',

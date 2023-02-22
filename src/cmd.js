@@ -208,16 +208,17 @@ function _inPreElement(knode) {
 	return false;
 }
 // create KCmd class
-function KCmd(range) {
-	this.init(range);
+function KCmd(range,options) {
+	this.init(range,options);
 }
 _extend(KCmd, {
-	init : function(range) {
+	init : function(range,options) {
 		var self = this, doc = range.doc;
 		self.doc = doc;
 		self.win = _getWin(doc);
 		self.sel = _getSel(doc);
 		self.range = range;
+		self.editorOptions = options;
 	},
 	selection : function(forceReset) {
 		var self = this, doc = self.doc, rng = _getRng(doc);
@@ -276,10 +277,23 @@ _extend(KCmd, {
 			rng = range.get(true);
 			sel.removeAllRanges();
 			sel.addRange(rng);
-			// Bugfix: https://github.com/kindsoft/kindeditor/issues/54
-			if (doc !== document) {
-				var pos = K(rng.endContainer).pos();
-				win.scrollTo(pos.x, pos.y);
+
+			if(self.editorOptions && self.editorOptions.scrollToEditingTarget){
+				// Bugfix: https://github.com/kindsoft/kindeditor/issues/54
+				if (doc !== document) {
+					try {
+						var imgLength = [].filter.call(rng.endContainer.children, function(el){ 
+							return el.nodeName == 'IMG';
+						}).length;
+						if(imgLength > 1){ 
+							return; 
+						}
+					} catch(e) {
+						console.info('error', e);
+					};
+					var pos = K(rng.endContainer).pos();
+					win.scrollTo(pos.x, pos.y);
+				}
 			}
 		}
 		win.focus();
@@ -874,14 +888,14 @@ _each('cut,copy,paste'.split(','), function(i, name) {
 	};
 });
 
-function _cmd(mixed) {
+function _cmd(mixed, options) {
 	// mixed is a node
 	if (mixed.nodeName) {
 		var doc = _getDoc(mixed);
 		mixed = _range(doc).selectNodeContents(doc.body).collapse(false);
 	}
 	// mixed is a KRange
-	return new KCmd(mixed);
+	return new KCmd(mixed, options);
 }
 
 K.CmdClass = KCmd;

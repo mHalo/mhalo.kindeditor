@@ -15,6 +15,22 @@ http://kindeditor.net/
 ___
 
 ## 更新日志
+v4.4.1 (2023-02-22)  
+1. 修复quote插件工具栏中hover提示undefined
+2. 源码增加dist文件夹（/publish/dist），可直接下载使用
+3. 移除[kindsoft/kindeditor#54](https://github.com/kindsoft/kindeditor/issues/54)中bugfix的处理方法，设置样式或上传编辑图片时，编辑器不再自动滚动至将编辑内容所在的位置
+4. 增加emoji插件，**K.Tools.Normal** 配置中已默认包含此插件。emoji信息可按照以下方案进行配置：
+```
+K.create('#editor', {
+    emojiConfig:function(emojis, page){
+        page.cols = 12
+    },
+});
+```
+
+
+
+## 更新日志
 v4.4.0 (2022-11-03)  
 1. 修复批量上传图片bug
 

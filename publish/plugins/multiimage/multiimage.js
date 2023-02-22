@@ -256,7 +256,6 @@ KindEditor.plugin('multiimage', function(K) {
 			previewBtn : {
 				name : lang.insertAll,
 				click : function(e) {
-                    console.info(123)
 					clickFn.call(self, swfupload.getUrlList());
 				}
 			},

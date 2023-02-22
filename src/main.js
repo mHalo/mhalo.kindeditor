@@ -575,6 +575,7 @@ KEditor.prototype = {
 				self.clickToolbar(name);
 			}
 		});
+
 		// create edit
 		var editHeight = _removeUnit(height) - toolbar.div.height();
 		var edit = self.edit = _edit({
@@ -586,6 +587,7 @@ KEditor.prototype = {
 			bodyClass : self.bodyClass,
 			cssPath : self.cssPath,
 			cssData : self.cssData,
+			editorOptions: self.options,
 			beforeGetHtml : function(html) {
 				html = self.beforeGetHtml(html);
 				// Bugfix: 浏览器后退产生__kindeditor_bookmark_start_0__
@@ -719,6 +721,9 @@ KEditor.prototype = {
 				statusbar.last().css('visibility', 'hidden');
 			}
 		}
+		setTimeout(function(){
+			self.focus && self.focus();
+		}, 100);
 		return self;
 	},
 	remove : function() {
@@ -930,6 +935,7 @@ KEditor.prototype = {
 		options.x = pos.x;
 		options.y = pos.y + knode.height();
 		options.z = self.options.zIndex;
+
 		options.shadowMode = _undef(options.shadowMode, self.shadowMode);
 		if (options.selectedColor !== undefined) {
 			options.cls = 'ke-colorpicker-' + self.themeType;
