@@ -19,14 +19,15 @@ K.Tools = {
 	'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|', 
 	'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','lineheight', '/',
 	'quote', 'subscript','superscript','|', 'image', 'multiimage',	'media', 'insertfile','baidumap','link', 'unlink', '|',
-	'table', 'anchor', 'hr',  'pagebreak'],
+	'table', 'anchor', 'hr',  'pagebreak', '|', 'emoticons', 'symbols'],
 
 	Normal: ['source', '|', 
 	'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'strikethrough', '|', 
 	'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|', 
 	'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','lineheight', '/',
 	'image', 'multiimage',	'media', 'insertfile','baidumap','link', 'unlink', '|',
-	'table', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript', '|', 'preview', 'fullscreen', 'quickformat', 'emoticons' ],
+	'table', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript', '|', 
+	'preview', 'fullscreen', 'quickformat', 'emoticons', 'symbols' ],
 
 	Small: ['source', '|','formatblock', 'fontname', 'fontsize', '|',
 	'bold', 'italic', 'underline', 'strikethrough', '|',
@@ -38,7 +39,7 @@ K.Tools = {
 		'formatblock',  'bold', 'italic', 'underline', 'strikethrough', '|',
 		'justifyleft', 'justifycenter', 'justifyright',	'justifyfull', '|',
 		'insertorderedlist', 'insertunorderedlist','|',
-		'image', 'insertfile','table', 'link'
+		'image', 'insertfile','table', 'link', 'unlink'
 	]
 };
 K.Templates = [

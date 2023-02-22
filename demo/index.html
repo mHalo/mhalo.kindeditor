@@ -13,11 +13,6 @@
             <div style="margin-left: 4vw;">
                 <textarea  id="editor" cols="30" rows="10" style="width:90%;;margin-left:15px;"></textarea>
             </div>
-            
-            <div style="margin-left: 4vw;margin-top: 5vh">
-                <textarea  id="editor2" cols="30" rows="10" style="width:90%;;margin-left:15px;">afsdsf</textarea>
-            </div>
-            
         </div>
 		
 	</body>
@@ -33,9 +28,12 @@
                 autoHeightMode: false,
                 fixToolBar: true,
                 fixToolBarWatchRef: '#wrapper',
-                scrollToEditingTarget: true,
+                scrollToEditingTarget: false,
                 emojiConfig:function(emojis, page){
                     page.cols = 12
+                },
+                symbolConfig:function(symbols, page){
+                    page.cols = 9
                 },
                 // allowPreviewEmoticons: false,
                 allowImageUpload: true,
@@ -59,26 +57,6 @@
                 }
             };
             var contentEditor = K.create('#editor', options);
-            var contentEditor2 = K.create('#editor2', {
-                themesPath: '../themes/',
-                basePath:'../',
-                resizeType: 1,
-                pasteType: 2,//0:禁止粘贴, 1:纯文本粘贴, 2:HTML粘贴
-                height: 420,
-                autoHeightMode: false,
-                fixToolBar: true,
-                fixToolBarWatchRef: '#wrapper',
-                scrollToEditingTarget: false,
-                emojiConfig:function(emojis, page){
-                    page.cols = 12
-                },
-                imageSizeLimit: '2MB',
-                items: K.Tools.Normal,
-                cssData: 'body{font-size: 16px;line-height: 28px;}',
-                afterBlur: function () {
-                    this.sync();
-                }
-            });
 
             var html = Array.from({length: 3}).map(function(o,i){ return  '<p>'+ i +'</p>' }).join("")
             html += '<p><img class="ke-image" src="http://res.henandingdang.com/guanwang/Article/20170228/20170228155437.jpg"/></p><p>xxxxx</p>';

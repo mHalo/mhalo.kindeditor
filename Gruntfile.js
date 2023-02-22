@@ -40,6 +40,7 @@ var PLUGIN_FILES = [
 	'plugins/code/code.js',
 	// 'plugins/emoticons/emoticons.js',
 	'plugins/emoticons/emoticons.js',
+	'plugins/symbols/symbols.js',
 	'plugins/filemanager/filemanager.js',
 	'plugins/image/image.js',
 	'plugins/insertfile/insertfile.js',

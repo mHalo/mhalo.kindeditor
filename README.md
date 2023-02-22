@@ -15,6 +15,16 @@ http://kindeditor.net/
 ___
 
 ## 更新日志
+v4.4.3 (2023-02-22)  
+1. 增加symbols(特殊字符)插件，**K.Tools.Normal** 配置中已默认包含此插件。symbols信息可按照以下方案进行配置：
+```
+K.create('#editor', {
+    symbolConfig:function(symbols, page){
+        page.cols = 9
+    },
+});
+```
+
 v4.4.1 (2023-02-22)  
 1. 修复quote插件工具栏中hover提示undefined
 2. 源码增加dist文件夹（/publish/dist），可直接下载使用

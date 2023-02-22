@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.4.2 (2023-02-22)',
+var _VERSION = '4.4.3 (2023-02-22)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -238,13 +238,14 @@ K.Tools = {
 	'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
 	'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','lineheight', '/',
 	'quote', 'subscript','superscript','|', 'image', 'multiimage',	'media', 'insertfile','baidumap','link', 'unlink', '|',
-	'table', 'anchor', 'hr',  'pagebreak'],
+	'table', 'anchor', 'hr',  'pagebreak', '|', 'emoticons', 'symbols'],
 	Normal: ['source', '|',
 	'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold', 'italic', 'underline', 'strikethrough', '|',
 	'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
 	'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent','lineheight', '/',
 	'image', 'multiimage',	'media', 'insertfile','baidumap','link', 'unlink', '|',
-	'table', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript', '|', 'preview', 'fullscreen', 'quickformat', 'emoticons' ],
+	'table', 'anchor', 'hr',  'pagebreak','|', 'quote', 'subscript','superscript', '|',
+	'preview', 'fullscreen', 'quickformat', 'emoticons', 'symbols' ],
 	Small: ['source', '|','formatblock', 'fontname', 'fontsize', '|',
 	'bold', 'italic', 'underline', 'strikethrough', '|',
 	'justifyleft', 'justifycenter', 'justifyright',	'justifyfull', '|',
@@ -254,7 +255,7 @@ K.Tools = {
 		'formatblock',  'bold', 'italic', 'underline', 'strikethrough', '|',
 		'justifyleft', 'justifycenter', 'justifyright',	'justifyfull', '|',
 		'insertorderedlist', 'insertunorderedlist','|',
-		'image', 'insertfile','table', 'link'
+		'image', 'insertfile','table', 'link', 'unlink'
 	]
 };
 K.Templates = [
@@ -6728,6 +6729,130 @@ KindEditor.plugin('emoticons', function (K) {
         createPageTable(page.current);
     });
 });
+KindEditor.plugin('symbols', function (K) {
+    var self = this, name = 'symbols',
+        symbols = {
+            teshu: "、,。,·,ˉ,ˇ,¨,〃,—,～,‖,…,‘,’,“,”,〝,〞,〓,〔,〕,〈,〉,「,」,『,』,〖,〗,∶,∧,∨,∪,∩,∈,∷,⊥,∥,∠,⌒,⊙,∵,∴,♂,♀,°,′,″,℃,＄,¤,￠,￡,‰,§,№,☆,★,○,●,◎,◇,◆,□,■,△,▲,※,→,←,↑,↓,〡,〢,〣,〤,〥,〦,〧,〨,〩,㊣,㎎,㎏,㎜,㎝,㎞,㎡,㏄,㏎,㏑,㏒,㏕,︰,￢,￤,℡,ˊ,ˋ,˙,–,―,‥,‵,℅,℉,↖,↗,↘,↙,∕,∟,∣,≒,☉,⊕,〒",
+            shuxue:"＋,－,×,·,÷,／,±,㏒,㏑,∑,∏,×,√,﹢,﹣,±,∫,∮,∝,∞,∧,∨,＝,≈,≡,≠,＜,＞,≤,≥,≦,≧,≮,≯,º,¹,²,³,½,¾,¼,％,‰",
+            xuhao: "⒈,⒉,⒊,⒋,⒌,⒍,⒎,⒏,⒐,⒑,⒒,⒓,⒔,⒕,⒖,⒗,⒘,⒙,⒚,⒛,⑴,⑵,⑶,⑷,⑸,⑹,⑺,⑻,⑼,⑽,⑾,⑿,⒀,⒁,⒂,⒃,⒄,⒅,⒆,⒇,①,②,③,④,⑤,⑥,⑦,⑧,⑨,⑩,㈠,㈡,㈢,㈣,㈤,㈥,㈦,㈧,㈨,㈩,ⅰ,ⅱ,ⅲ,ⅳ,ⅴ,ⅵ,ⅶ,ⅷ,ⅸ,ⅹ,Ⅰ,Ⅱ,Ⅲ,Ⅳ,Ⅴ,Ⅵ,Ⅶ,Ⅷ,Ⅸ,Ⅹ,Ⅺ,Ⅻ,❶,❷,❸,❹,❺,❻,❼,❽,❾,❿,㈠,㈡,㈢,㈣,㈤,㈥,㈦,㈧,㈨,㈩",
+            lading: "Α,Β,Γ,Δ,Ε,Ζ,Η,Θ,Ι,Κ,Λ,Μ,Ν,Ξ,Ο,Π,Ρ,Σ,Τ,Υ,Φ,Χ,Ψ,Ω,α,β,γ,δ,ε,ζ,η,θ,ι,κ,λ,μ,ν,ξ,ο,π,ρ,σ,τ,υ,φ,χ,ψ,ω",
+            zhuyin: "ā,á,ǎ,à,ō,ó,ǒ,ò,ē,é,ě,è,ī,í,ǐ,ì,ū,ú,ǔ,ù,ǖ,ǘ,ǚ,ǜ,ü",
+            yinbiao: "i:,i,e,æ,ʌ,ə:,ə,u:,u,ɔ:,ɔ,a:,ei,ai,ɔi,əu,au,iə,εə,uə,p,t,k,b,d,g,f,s,ʃ,θ,h,v,z,ʒ,ð,tʃ,tr,ts,dʒ,dr,dz,m,n,ŋ,l,r,w,j,",
+            rwzf: "ぁ,あ,ぃ,い,ぅ,う,ぇ,え,ぉ,お,か,が,き,ぎ,く,ぐ,け,げ,こ,ご,さ,ざ,し,じ,す,ず,せ,ぜ,そ,ぞ,た,だ,ち,ぢ,っ,つ,づ,て,で,と,ど,な,に,ぬ,ね,の,は,ば,ぱ,ひ,び,ぴ,ふ,ぶ,ぷ,へ,べ,ぺ,ほ,ぼ,ぽ,ま,み,む,め,も,ゃ,や,ゅ,ゆ,ょ,よ,ら,り,る,れ,ろ,ゎ,わ,ゐ,ゑ,を,ん,ァ,ア,ィ,イ,ゥ,ウ,ェ,エ,ォ,オ,カ,ガ,キ,ギ,ク,グ,ケ,ゲ,コ,ゴ,サ,ザ,シ,ジ,ス,ズ,セ,ゼ,ソ,ゾ,タ,ダ,チ,ヂ,ッ,ツ,ヅ,テ,デ,ト,ド,ナ,ニ,ヌ,ネ,ノ,ハ,バ,パ,ヒ,ビ,ピ,フ,ブ,プ,ヘ,ベ,ペ,ホ,ボ,ポ,マ,ミ,ム,メ,モ,ャ,ヤ,ュ,ユ,ョ,ヨ,ラ,リ,ル,レ,ロ,ヮ,ワ,ヰ,ヱ,ヲ,ン,ヴ,ヵ,ヶ",
+            ewzf: "А,Б,В,Г,Д,Е,Ё,Ж,З,И,Й,К,Л,М,Н,О,П,Р,С,Т,У,Ф,Х,Ц,Ч,Ш,Щ,Ъ,Ы,Ь,Э,Ю,Я,а,б,в,г,д,е,ё,ж,з,и,й,к,л,м,н,о,п,р,с,т,у,ф,х,ц,ч,ш,щ,ъ,ы,ь,э,ю,я",
+            zhibiao: "┏,┳,┓,╔,╦,╗,╓,╥,╖,┣,╋,┫,╠,╬,╣,╟,╫,╢,┗,┻,┛,╚,╩,╝,╙,╨,╜,┌,┬,┐,╭,╮,╱,╲,┃,║,├,┼,┤,╰,╯,╲,╱,┆,┇,└,┴,┘,━,═,┅,┈,╳,⊿,▁,▂,▃,▄,▅,▆,▇,█,▉,▊,▋,▌,▍,▎,▏,▓,▔,▕,▼,▽,◢,◣,◤,◥",
+            qita: "✐,✎,✏,✑,✒,✁,✂,✃,✄,✆,✉,☎,☏,☑,☒,☯,☰,☲,☱,☴,☵,☶,☳,☷,❄,☃,♨,웃,유,❖,☽,☾,☪,✿,❀,⚘,♔,♕,♖,♗,♘,♙,♚,♛,♜,♝,♞,♟,▧,▨,❣,✚,✪,✣,✤,✥,✦,❉,❥,❦,❧,❃,❂,❁,❀,✄,☪,☣,☢,☠,☭,☇,☈,⊙,☊,☋,☌,☍,▣,▤,▥,▦,▩,◘,◙,◈,♫,♬,♪,♩,♭,♪,✄,☪,☣,☢,☠,♯,♩,♪,♫,♬,♭,♮,☎,☏,☪",
+        },
+        page = {
+            cols: 9,
+            total: Object.keys(symbols),
+            current: 'teshu',
+            tags: {
+                teshu: '特殊',
+                shuxue: '数学',
+                xuhao: '序号',
+                lading: '拉丁',
+                zhuyin: '注音',
+                yinbiao: '音标',
+                rwzf: '日文字符',
+                ewzf: '俄文字符',
+                zhibiao: '制表符',
+                qita: '其他'
+            }
+        };
+	if(self.symbolConfig && self.symbolConfig instanceof Function){
+		self.symbolConfig.call(null, symbols, page);
+	}
+    self.clickToolbar(name, function () {
+        var elements = [];
+        var wrapperDiv = K('<div class="ke-plugin-symbol"></div>'),
+            menu = self.createMenu({
+                name: name,
+                beforeRemove: function () {
+                    removeEvent();
+                }
+            });
+		var iconLeft = K(".ke-toolbar .ke-icon-symbols").pos().x;
+		var iconWidth = K(".ke-toolbar .ke-icon-symbols").width();
+		var winWidth = K(document.body).width();
+        menu.div.append(wrapperDiv);
+        function bindCellEvent(cell, symbol) {
+            cell.mouseover(function () {
+                K(this).addClass('ke-on');
+            });
+            cell.mouseout(function () {
+                K(this).removeClass('ke-on');
+            });
+            cell.click(function (e) {
+                self.insertHtml(symbol).hideMenu().focus();
+                e.stop();
+            });
+        }
+        function symbolTable(key, parent) {
+            var tableDom = document.createElement('ul');
+            parent.append(tableDom);
+            tableDom.className = 'ke-ul';
+            var thisSymbol = symbols[key].split(',');
+            var rows = Math.ceil(thisSymbol.length / page.cols);
+            var symbol;
+            for (var i = 0; i < rows; i++) {
+                var row = document.createElement('li');
+                K(row).addClass('ke-li');
+                K(tableDom).append(row)
+                for (var j = 0; j < page.cols; j++) {
+                    symbol = thisSymbol[(page.cols * i) + j];
+                    if (symbol === undefined) {
+                        continue;
+                    }
+                    var span = K('<span class="ke-symbol">' + symbol + '</span>');
+                    bindCellEvent(span, symbol);
+                    K(row).append(span);
+                    elements.push(span);
+                }
+            }
+            return tableDom;
+        }
+        var table = symbolTable(page.current, wrapperDiv), pageDiv;
+		var tableWidth = K(wrapperDiv).width();
+		if((iconLeft + tableWidth) > winWidth){
+			K(menu.div).css({
+				left: iconLeft - (tableWidth - iconWidth) + 'px'
+			})
+		}
+        function removeEvent() {
+            K.each(elements, function () {
+                this.unbind();
+            });
+        }
+        function bindPageEvent(el, key) {
+            el.click(function (e) {
+                removeEvent();
+                table.parentNode.removeChild(table);
+                pageDiv.remove();
+                table = symbolTable(key, wrapperDiv);
+                createPageTable(key);
+                page.current = key;
+                e.stop();
+            });
+        }
+        function createPageTable(tagname) {
+            pageDiv = K('<div class="ke-page"></div>');
+            wrapperDiv.append(pageDiv);
+            for (var key in page.tags) {
+                var keyname = page.tags[key];
+                if (key !== tagname) {
+                    var tag = K('<span class="ke-page-item"><a href="javascript:;">[' + keyname + ']</a></span>');
+                    bindPageEvent(tag, key);
+                    pageDiv.append(tag);
+                    elements.push(tag);
+                } else {
+                    pageDiv.append(K('<span class="ke-page-item ke-page-active">[' + keyname + ']</span>'));
+                }
+            }
+        }
+        createPageTable(page.current);
+    });
+});
 KindEditor.plugin('filemanager', function(K) {
 	var self = this, name = 'filemanager',
 		fileManagerJson = K.undef(self.fileManagerJson, self.basePath + 'php/file_manager_json.php'),
@@ -8950,6 +9075,7 @@ KindEditor.lang({
 	tablecell : '单元格',
 	hr : '插入横线',
 	emoticons : '插入表情',
+	symbols : '特殊字符',
 	link : '超级链接',
 	unlink : '取消超级链接',
 	fullscreen : '全屏显示',
