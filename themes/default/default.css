@@ -1567,11 +1567,18 @@
     position: relative;
 }
 
-.ke-plugin-emoji .ke-table {
-    width: 100%;
+.ke-plugin-emoji .ke-ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.ke-plugin-emoji .ke-ul .ke-li {
+    display: block;
+    white-space: nowrap;
 }
 
-.ke-plugin-emoji .ke-table .ke-emoji {
+
+.ke-plugin-emoji .ke-li .ke-emoji {
     font-size: 24px;
     padding: 3px;
     cursor: pointer;
@@ -1583,9 +1590,10 @@
     align-items: center;
     justify-content: center;
     line-height: 0;
+    box-sizing: content-box!important;
 }
 
-.ke-plugin-emoji .ke-table .ke-emoji:hover {
+.ke-plugin-emoji .ke-li .ke-emoji:hover {
     background-color: #e7edf3;
     cursor: pointer;
     border: 1px solid #bed6ed;
@@ -1610,6 +1618,7 @@
 
 .ke-plugin-symbol .ke-ul .ke-li {
     display: block;
+    white-space: nowrap;
 }
 
 .ke-plugin-symbol .ke-li .ke-symbol {
@@ -1624,6 +1633,7 @@
     align-items: center;
     justify-content: center;
     line-height: 0;
+    box-sizing: content-box!important;
 }
 
 .ke-plugin-symbol .ke-li .ke-symbol:hover {
