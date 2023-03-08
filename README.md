@@ -17,7 +17,8 @@ MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https:/
 
 ## 特点： 
 
-👉. 基于theme/default的样式更新，使用iconfont更新图标样式
+👉. 基于theme/default的样式更新，使用iconfont更新图标样式 
+
 👉. KindEditor工具栏便捷配置，可使用**K.Tools.All**、**K.Tools.Normal**、**K.Tools.Small**、**K.Tools.Mini**进行配置
 ```
 KindEditor.ready(function (K) {
