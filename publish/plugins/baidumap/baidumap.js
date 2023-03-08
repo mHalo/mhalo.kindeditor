@@ -7,8 +7,6 @@
 * @licence http://www.kindsoft.net/license.php
 *******************************************************************************/
 
-// Google Maps: http://code.google.com/apis/maps/index.html
-
 KindEditor.plugin('baidumap', function(K) {
 	var self = this, name = 'baidumap', lang = self.lang(name + '.'),
 		baiduMapAk = K.undef(self.baiduMapAk, '9yfaQtWDimlbXuo4TMLmIk7yDjl36eCy'),
@@ -41,15 +39,15 @@ KindEditor.plugin('baidumap', function(K) {
 						'http://api.map.baidu.com/staticimage/v2?ak=' + baiduMapAk,
 						'&center=' + encodeURIComponent(center),
 						'&zoom=' + encodeURIComponent(zoom),
-						'&width=' + mapWidth * 2,
-						'&height=' + mapHeight * 2,
+						'&width=' + mapWidth * 1.5,
+						'&height=' + mapHeight * 1.5,
 						'&markers=' + encodeURIComponent(center),
 						'&markerStyles=' + encodeURIComponent('l,A')].join('');
 					if (false) {
 						var src = 'https://map.baidu.com/@'+ (centerObj.lng * 100000).toFixed(3) + ',' + (centerObj.lat * 100000).toFixed(3) +','+ zoom +'z'
-						self.insertHtml('<iframe src="'+ src +'" frameborder="0" style="width:' + (mapWidth + 2) + 'px;height:' + (mapHeight + 2) + 'px;"></iframe>');
+						self.insertHtml('<iframe src="'+ src +'" frameborder="0" style="width:' + (mapWidth + 1.5) + 'px;height:' + (mapHeight + 1.5) + 'px;"></iframe>');
 					} else {
-						self.exec('insertimage', url, 'title', mapWidth + '' , mapHeight + '', 0);
+						self.exec('insertimage', url, 'title', mapWidth + '' , mapHeight + '', 0, '' ,'ke-map');
 					}
 					self.hideDialog().focus();
 				}

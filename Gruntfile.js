@@ -149,6 +149,10 @@ return KindEditor;
 		readme: {
 			src: 'README.md',
 		  	dest: 'publish/',
+		},
+		update: {
+			src: 'UPDATE.md',
+		  	dest: 'publish/',
 		}
 	},
 });

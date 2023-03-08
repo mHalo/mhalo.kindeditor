@@ -103,7 +103,7 @@
                     return;
                 }
                 var resultUrl = data.url;
-                console.info('self.options.formatUploadUrl', self.options.formatUploadUrl)
+                // console.info('self.options.formatUploadUrl', self.options.formatUploadUrl)
                 if (self.options.formatUploadUrl) {
                     resultUrl = file.url = K.formatUrl(data.url, 'absolute');
                 } else {

@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.4.6 (2023-02-24)',
+var _VERSION = '4.4.7 (2023-03-08)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -327,9 +327,9 @@ K.options = {
 		],
 		a : ['id', 'class', 'href', 'target', 'name'],
 		media : ['id', 'class'],
-		audio : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'autoplay', '.width', '.height', 'controls', 'muted', 'preload'],
-		video : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'autoplay', '.width', '.height', 'controls', 'muted', 'poster', 'preload'],
-		img : ['id', 'class', 'src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height', '.border'],
+		audio : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'autoplay', '.width', '.height', 'controls', 'muted', 'preload', 'data-ke-class'],
+		video : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'autoplay', '.width', '.height', 'controls', 'muted', 'poster', 'preload', 'data-ke-class'],
+		img : ['id', 'class', 'src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height', '.border', 'data-ke-class'],
 		'p,ol,ul,li,blockquote,h1,h2,h3,h4,h5,h6' : [
 			'id', 'class', 'align', '.text-align', '.color', '.background-color', '.font-size', '.font-family', '.background',
 			'.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.text-indent', '.margin-left'
@@ -6326,9 +6326,6 @@ KindEditor.lang({
 	}
 }, 'en');
 KindEditor.each(KindEditor.options.items, function(i, name) {
-	if (name == 'baidumap') {
-		KindEditor.options.items[i] = 'map';
-	}
 });
 KindEditor.options.langType = 'en';
 
@@ -6448,15 +6445,15 @@ KindEditor.plugin('baidumap', function(K) {
 						'http://api.map.baidu.com/staticimage/v2?ak=' + baiduMapAk,
 						'&center=' + encodeURIComponent(center),
 						'&zoom=' + encodeURIComponent(zoom),
-						'&width=' + mapWidth * 2,
-						'&height=' + mapHeight * 2,
+						'&width=' + mapWidth * 1.5,
+						'&height=' + mapHeight * 1.5,
 						'&markers=' + encodeURIComponent(center),
 						'&markerStyles=' + encodeURIComponent('l,A')].join('');
 					if (false) {
 						var src = 'https://map.baidu.com/@'+ (centerObj.lng * 100000).toFixed(3) + ',' + (centerObj.lat * 100000).toFixed(3) +','+ zoom +'z'
-						self.insertHtml('<iframe src="'+ src +'" frameborder="0" style="width:' + (mapWidth + 2) + 'px;height:' + (mapHeight + 2) + 'px;"></iframe>');
+						self.insertHtml('<iframe src="'+ src +'" frameborder="0" style="width:' + (mapWidth + 1.5) + 'px;height:' + (mapHeight + 1.5) + 'px;"></iframe>');
 					} else {
-						self.exec('insertimage', url, 'title', mapWidth + '' , mapHeight + '', 0);
+						self.exec('insertimage', url, 'title', mapWidth + '' , mapHeight + '', 0, '' ,'ke-map');
 					}
 					self.hideDialog().focus();
 				}
@@ -7044,11 +7041,7 @@ KindEditor.plugin('image', function(K) {
 		fillDescAfterUploadImage = K.undef(self.fillDescAfterUploadImage, false),
 		lang = self.lang(name + '.');
 	self.plugin.imageDialog = function(options) {
-		var imageUrl = options.imageUrl,
-			imageWidth = K.undef(options.imageWidth, ''),
-			imageHeight = K.undef(options.imageHeight, ''),
-			imageTitle = K.undef(options.imageTitle, ''),
-			imageAlign = K.undef(options.imageAlign, ''),
+		var
 			showRemote = K.undef(options.showRemote, true),
 			showLocal = K.undef(options.showLocal, true),
 			tabIndex = K.undef(options.tabIndex, 0),
@@ -7073,7 +7066,7 @@ KindEditor.plugin('image', function(K) {
 			'<label for="remoteWidth" style="width:60px;">' + lang.size + '</label>',
 			lang.width + '：<input type="text" id="remoteWidth" class="ke-input-text ke-input-number" name="width" value="" maxlength="4" style="width:130px;margin-right:10px" />',
 			lang.height + '：<input type="text" class="ke-input-text ke-input-number" name="height" value="" maxlength="4" style="width:130px;margin-right:10px" />',
-			'<span class="ke-inline-block ke-toolbar-icon icon-ke-font ke-icon-refresh-bold"></span>',
+			'<span class="ke-inline-block ke-toolbar-icon icon-ke-font ke-icon-refresh-bold ke-refresh-btn"></span>',
 			'</div>',
 			'<div class="ke-dialog-row">',
 			'<label style="width:60px;">' + lang.align + '</label>',
@@ -7246,34 +7239,48 @@ KindEditor.plugin('image', function(K) {
 		} else {
 			viewServerBtn.hide();
 		}
-		var originalWidth = 0, originalHeight = 0;
+		var originalWidth = 0, originalHeight = 0,
+			naturalWidth = 0, naturalHeight = 0;
+		var naturalImage = self.plugin.getSelectedImage();
+		if(naturalImage && naturalImage.get){
+			var _img = naturalImage.get();
+			if(_img){
+				naturalWidth = _img.naturalWidth;
+				naturalHeight = _img.naturalHeight;
+				originalWidth = _img.width;
+				originalHeight = _img.height;
+			}
+		}
 		function setSize(width, height) {
-			widthBox.val(width);
-			heightBox.val(height);
-			originalWidth = width;
-			originalHeight = height;
+			if(width) {
+				widthBox.val(width);
+				originalWidth = width;
+			}
+			if(height) {
+				heightBox.val(height);
+				originalHeight = height;
+			}
 		}
 		refreshBtn.click(function(e) {
-			var tempImg = K('<img src="' + urlBox.val() + '" />', document).css({
-				position : 'absolute',
-				visibility : 'hidden',
-				top : 0,
-				left : '-1000px'
-			});
-			tempImg.bind('load', function() {
-				setSize(tempImg.width(), tempImg.height());
-				tempImg.remove();
-			});
-			K(document.body).append(tempImg);
+			if(naturalWidth * naturalHeight > 0){
+				setSize(naturalWidth, naturalHeight);
+				return
+			}
+			var tempImg = new Image();
+			tempImg.onload = function() {
+				setSize(this.width, this.height);
+				tempImg = null;
+			}
+			tempImg.src = urlBox.val();
 		});
 		widthBox.change(function(e) {
-			if (originalWidth > 0) {
-				heightBox.val(Math.round(originalHeight / originalWidth * parseInt(this.value, 10)));
+			if (/^\d+$/.test(this.value) && this.value > 0) {
+				heightBox.val(Math.round(naturalHeight / naturalWidth * parseInt(this.value, 10)));
 			}
 		});
 		heightBox.change(function(e) {
-			if (originalHeight > 0) {
-				widthBox.val(Math.round(originalWidth / originalHeight * parseInt(this.value, 10)));
+			if (/^\d+$/.test(this.value) && this.value > 0) {
+				widthBox.val(Math.round(naturalWidth / naturalHeight * parseInt(this.value, 10)));
 			}
 		});
 		urlBox.val(options.imageUrl);
@@ -7296,8 +7303,8 @@ KindEditor.plugin('image', function(K) {
 			var img = self.plugin.getSelectedImage();
 			self.plugin.imageDialog({
 				imageUrl : img ? img.attr('data-ke-src') : 'http://',
-				imageWidth : img ? img.width() : '',
-				imageHeight : img ? img.height() : '',
+				imageWidth : img ? img.attr('width') : '',
+				imageHeight : img ? img.attr('height') : '',
 				imageTitle : img ? img.attr('title') : '',
 				imageAlign : img ? img.attr('align') : '',
 				showRemote : allowImageRemote,
@@ -7307,11 +7314,11 @@ KindEditor.plugin('image', function(K) {
 					if (img) {
 						img.attr('src', url);
 						img.attr('data-ke-src', url);
-						img.attr('width', width);
-						img.attr('height', height);
-						img.attr('title', title);
-						img.attr('align', align);
-						img.attr('alt', title);
+						!!width ? img.attr('width', width) : img.removeAttr('width');
+						!!height ? img.attr('height', height) : img.removeAttr('height');
+						!!title ? img.attr('title', title) : img.removeAttr('title');
+						!!align ? img.attr('align', align) : img.removeAttr('align');
+						!!title ? img.attr('alt', title) : img.removeAttr('alt');
 					} else {
 						self.exec('insertimage', url, title, width, height, border, align, 'ke-image');
 						setTimeout(function() {
@@ -7598,15 +7605,15 @@ KindEditor.plugin('media', function(K) {
 				'<input type="text" id="keHeight" class="ke-input-text ke-input-number" name="height" value="auto" maxlength="4" />',
 				'</div>',
 				'<div class="ke-dialog-row">',
-				'<label for="kePreload" style="width:60px;">preload</label>',
+				'<label for="kePreload" style="width:60px;">预加载</label>',
 				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="kePreload" name="preload" value="" /></div>',
-				'<label for="keAutostart" style="width:60px;text-align:left;margin-left:30px">autoplay</label>',
+				'<label for="keAutostart" style="width:60px;text-align:left;margin-left:30px">自动播放</label>',
 				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="keAutostart" name="autoplay" value="" /></div>',
 				'</div>',
 				'<div class="ke-dialog-row">',
-				'<label for="keControls" style="width:60px;">controls</label>',
+				'<label for="keControls" style="width:60px;">控制按钮</label>',
 				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="keControls" name="controls" checked value="" /></div>',
-				'<label for="keLoop" style="width:60px;text-align:left;margin-left:30px">loop</label>',
+				'<label for="keLoop" style="width:60px;text-align:left;margin-left:30px">循环播放</label>',
 				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="keLoop" name="loop" checked value="" /></div>',
 				'</div>',
 				'</div>'
@@ -7839,7 +7846,6 @@ KindEditor.plugin('media', function(K) {
                     return;
                 }
                 var resultUrl = data.url;
-                console.info('self.options.formatUploadUrl', self.options.formatUploadUrl)
                 if (self.options.formatUploadUrl) {
                     resultUrl = file.url = K.formatUrl(data.url, 'absolute');
                 } else {

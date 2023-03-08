@@ -58,16 +58,16 @@ KindEditor.plugin('media', function(K) {
 				'</div>',
 				//autostart & preload
 				'<div class="ke-dialog-row">',
-				'<label for="kePreload" style="width:60px;">preload</label>',
+				'<label for="kePreload" style="width:60px;">预加载</label>',
 				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="kePreload" name="preload" value="" /></div>',
-				'<label for="keAutostart" style="width:60px;text-align:left;margin-left:30px">autoplay</label>',
+				'<label for="keAutostart" style="width:60px;text-align:left;margin-left:30px">自动播放</label>',
 				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="keAutostart" name="autoplay" value="" /></div>',
 				'</div>',
 				//controls & loop
 				'<div class="ke-dialog-row">',
-				'<label for="keControls" style="width:60px;">controls</label>',
+				'<label for="keControls" style="width:60px;">控制按钮</label>',
 				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="keControls" name="controls" checked value="" /></div>',
-				'<label for="keLoop" style="width:60px;text-align:left;margin-left:30px">loop</label>',
+				'<label for="keLoop" style="width:60px;text-align:left;margin-left:30px">循环播放</label>',
 				'<div style="width:80px;display:inline-block;"><input type="checkbox" id="keLoop" name="loop" checked value="" /></div>',
 				'</div>',
 				'</div>'

@@ -29,11 +29,12 @@ KindEditor.plugin('image', function(K) {
 		lang = self.lang(name + '.');
 
 	self.plugin.imageDialog = function(options) {
-		var imageUrl = options.imageUrl,
-			imageWidth = K.undef(options.imageWidth, ''),
-			imageHeight = K.undef(options.imageHeight, ''),
-			imageTitle = K.undef(options.imageTitle, ''),
-			imageAlign = K.undef(options.imageAlign, ''),
+		var 
+			// imageUrl = options.imageUrl,
+			// imageWidth = K.undef(options.imageWidth, ''),
+			// imageHeight = K.undef(options.imageHeight, ''),
+			// imageTitle = K.undef(options.imageTitle, ''),
+			// imageAlign = K.undef(options.imageAlign, ''),
 			showRemote = K.undef(options.showRemote, true),
 			showLocal = K.undef(options.showLocal, true),
 			tabIndex = K.undef(options.tabIndex, 0),
@@ -62,7 +63,7 @@ KindEditor.plugin('image', function(K) {
 			'<label for="remoteWidth" style="width:60px;">' + lang.size + '</label>',
 			lang.width + '：<input type="text" id="remoteWidth" class="ke-input-text ke-input-number" name="width" value="" maxlength="4" style="width:130px;margin-right:10px" />',
 			lang.height + '：<input type="text" class="ke-input-text ke-input-number" name="height" value="" maxlength="4" style="width:130px;margin-right:10px" />',
-			'<span class="ke-inline-block ke-toolbar-icon icon-ke-font ke-icon-refresh-bold"></span>',
+			'<span class="ke-inline-block ke-toolbar-icon icon-ke-font ke-icon-refresh-bold ke-refresh-btn"></span>',
 			'</div>',
 			//align
 			'<div class="ke-dialog-row">',
@@ -255,34 +256,48 @@ KindEditor.plugin('image', function(K) {
 		} else {
 			viewServerBtn.hide();
 		}
-		var originalWidth = 0, originalHeight = 0;
+		var originalWidth = 0, originalHeight = 0,
+			naturalWidth = 0, naturalHeight = 0;
+		var naturalImage = self.plugin.getSelectedImage();
+		if(naturalImage && naturalImage.get){
+			var _img = naturalImage.get();
+			if(_img){
+				naturalWidth = _img.naturalWidth;
+				naturalHeight = _img.naturalHeight;
+				originalWidth = _img.width;
+				originalHeight = _img.height;
+			}
+		}
 		function setSize(width, height) {
-			widthBox.val(width);
-			heightBox.val(height);
-			originalWidth = width;
-			originalHeight = height;
+			if(width) {
+				widthBox.val(width);
+				originalWidth = width;
+			}
+			if(height) {
+				heightBox.val(height);
+				originalHeight = height;
+			}
 		}
 		refreshBtn.click(function(e) {
-			var tempImg = K('<img src="' + urlBox.val() + '" />', document).css({
-				position : 'absolute',
-				visibility : 'hidden',
-				top : 0,
-				left : '-1000px'
-			});
-			tempImg.bind('load', function() {
-				setSize(tempImg.width(), tempImg.height());
-				tempImg.remove();
-			});
-			K(document.body).append(tempImg);
+			if(naturalWidth * naturalHeight > 0){
+				setSize(naturalWidth, naturalHeight);
+				return
+			}
+			var tempImg = new Image();
+			tempImg.onload = function() {
+				setSize(this.width, this.height);
+				tempImg = null;
+			}
+			tempImg.src = urlBox.val();
 		});
 		widthBox.change(function(e) {
-			if (originalWidth > 0) {
-				heightBox.val(Math.round(originalHeight / originalWidth * parseInt(this.value, 10)));
+			if (/^\d+$/.test(this.value) && this.value > 0) {
+				heightBox.val(Math.round(naturalHeight / naturalWidth * parseInt(this.value, 10)));
 			}
 		});
 		heightBox.change(function(e) {
-			if (originalHeight > 0) {
-				widthBox.val(Math.round(originalWidth / originalHeight * parseInt(this.value, 10)));
+			if (/^\d+$/.test(this.value) && this.value > 0) {
+				widthBox.val(Math.round(naturalWidth / naturalHeight * parseInt(this.value, 10)));
 			}
 		});
 		urlBox.val(options.imageUrl);
@@ -305,8 +320,8 @@ KindEditor.plugin('image', function(K) {
 			var img = self.plugin.getSelectedImage();
 			self.plugin.imageDialog({
 				imageUrl : img ? img.attr('data-ke-src') : 'http://',
-				imageWidth : img ? img.width() : '',
-				imageHeight : img ? img.height() : '',
+				imageWidth : img ? img.attr('width') : '',
+				imageHeight : img ? img.attr('height') : '',
 				imageTitle : img ? img.attr('title') : '',
 				imageAlign : img ? img.attr('align') : '',
 				showRemote : allowImageRemote,
@@ -316,11 +331,11 @@ KindEditor.plugin('image', function(K) {
 					if (img) {
 						img.attr('src', url);
 						img.attr('data-ke-src', url);
-						img.attr('width', width);
-						img.attr('height', height);
-						img.attr('title', title);
-						img.attr('align', align);
-						img.attr('alt', title);
+						!!width ? img.attr('width', width) : img.removeAttr('width');
+						!!height ? img.attr('height', height) : img.removeAttr('height');
+						!!title ? img.attr('title', title) : img.removeAttr('title');
+						!!align ? img.attr('align', align) : img.removeAttr('align');
+						!!title ? img.attr('alt', title) : img.removeAttr('alt');
 					} else {
 						self.exec('insertimage', url, title, width, height, border, align, 'ke-image');
 						setTimeout(function() {

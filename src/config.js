@@ -112,9 +112,9 @@ K.options = {
 		],
 		a : ['id', 'class', 'href', 'target', 'name'],
 		media : ['id', 'class'],
-		audio : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'autoplay', '.width', '.height', 'controls', 'muted', 'preload'],
-		video : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'autoplay', '.width', '.height', 'controls', 'muted', 'poster', 'preload'],
-		img : ['id', 'class', 'src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height', '.border'],
+		audio : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'autoplay', '.width', '.height', 'controls', 'muted', 'preload', 'data-ke-class'],
+		video : ['id', 'class', 'src', 'width', 'height', 'type', 'loop', 'autostart', 'autoplay', '.width', '.height', 'controls', 'muted', 'poster', 'preload', 'data-ke-class'],
+		img : ['id', 'class', 'src', 'width', 'height', 'border', 'alt', 'title', 'align', '.width', '.height', '.border', 'data-ke-class'],
 		'p,ol,ul,li,blockquote,h1,h2,h3,h4,h5,h6' : [
 			'id', 'class', 'align', '.text-align', '.color', '.background-color', '.font-size', '.font-family', '.background',
 			'.font-weight', '.font-style', '.text-decoration', '.vertical-align', '.text-indent', '.margin-left'

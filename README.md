@@ -5,86 +5,20 @@ KindEditor is a lightweight, Open Source(LGPL), cross browser, web based WYSIWYG
 ## Official site
 http://kindeditor.net/
 
-## Contributors
 
-* Timon Lin
-* daif alotaibi (http://daif.net/) : Arabic Translation
-* fisker (https://github.com/fisker) : QQ style theme
-* composite (https://github.com/composite) : Korean Translation
+MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https://github.com/kindsoft/kindeditor) ）的基础上，进行了界面的美化，以及部分插件的优化修改。
+具体使用方式与kindeditor无较大差异，可参考[http://kindeditor.net/doc.php](http://kindeditor.net/doc.php)。
 
-___
-
-## 更新日志
-v4.4.6 (2023-02-24)
-1. 调整emoji/symbol插件样式结构
-
-v4.4.3 (2023-02-22)  
-1. 增加symbols(特殊字符)插件，**K.Tools.Normal** 配置中已默认包含此插件。symbols信息可按照以下方案进行配置：
-```
-K.create('#editor', {
-    symbolConfig:function(symbols, page){
-        page.cols = 9
-    },
-});
-```
-
-v4.4.1 (2023-02-22)  
-1. 修复quote插件工具栏中hover提示undefined
-2. 源码增加dist文件夹（/publish/dist），可直接下载使用
-3. 将[kindsoft/kindeditor#54](https://github.com/kindsoft/kindeditor/issues/54)中bugfix的处理方式扩展为可配置，默认情况下，设置样式或上传编辑图片时，编辑器不再自动滚动至将编辑内容所在的位置。如需保持原逻辑，可通过一下方式开启：
-```
-K.create('#editor', {
-    scrollToEditingTarget: true,
-});
-```
-4. 增加emoji插件，**K.Tools.Normal** 配置中已默认包含此插件。emoji信息可按照以下方案进行配置：
-```
-K.create('#editor', {
-    emojiConfig:function(emojis, page){
-        page.cols = 12
-    },
-});
-```
-5. 更新部分样式
-
-v4.4.0 (2022-11-03)  
-1. 修复批量上传图片bug
-
-v4.3.8 (2022-11-03)  
-1. 优化包静态资源引用（emoji表情插件已弃用，filemanager静态资源未进行优化），无用资源文件删除，减小包体积
-2. 地图插件优化
-3. 编辑器界面美化、弹窗样式美化
-4. 默认工具栏配置更新
-
-
-v4.3.5 (2022-11-02)  
-1. 修复WebUploader引用bug
-
-v4.3.0 (2022-11-01)  
-1. 修复fixToolBar功能，增加[fixToolBarWatchRef]参数，可以指定滚动时监听的对象  
-示例 options ->：
-```
-fixToolBar: true,
-fixToolBarWatchRef: '#wrapper',
-```
-
-2. 移除flash相关模块
-3. 移除部分无用的文件
-
-___
-
-MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https://github.com/kindsoft/kindeditor) ）的基础上，对界面进行了美化，并对部分插件进行了修改优化。
-具体使用方式无较大差异（差异主要集中在文件上传部分），其它可参考（[http://kindeditor.net/doc.php](http://kindeditor.net/doc.php)）。
+> 使用前请移步了解更新日志： [点此查看](./UPDATE.md)
 
 <img width="1066" alt="image" src="https://user-images.githubusercontent.com/19524115/190976990-6089d387-8886-4fda-b6ed-41a541d4ee5a.png">
 
-
 ---
 
-## 修改的模块： 
+## 特点： 
 
-👉. 基于theme/default的样式更新，更新图标样式
-👉. KindEditor工具栏配置更新，可使用**K.Tools.All**、**K.Tools.Normal**、**K.Tools.Small**、**K.Tools.Mini**进行配置
+👉. 基于theme/default的样式更新，使用iconfont更新图标样式
+👉. KindEditor工具栏便捷配置，可使用**K.Tools.All**、**K.Tools.Normal**、**K.Tools.Small**、**K.Tools.Mini**进行配置
 ```
 KindEditor.ready(function (K) {
     var options = {
@@ -112,7 +46,7 @@ KindEditor.ready(function (K) {
     </tr>
 </table>
 
-👉. Image-Uploader更新（包含多图上传、单图上传）
+👉. Image-Uploader图片上传优化（包含多图上传、单图上传）
 ```
 单图上传弃用了form提交的方式，多图上传弃用了flash的方式，两种上传都是用webuploader进行上传
 由于webuploader中使用了jquery，但jquery体量较大，又考虑到在vue中使用的情况，所以将zepto取必须模块封装在了对应模块中，
@@ -163,5 +97,4 @@ pnpm i mhalo.kindeditor
       transformMixedEsModules: true,
     },
   },
-
 ```
