@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.4.7 (2023-03-08)',
+var _VERSION = '4.4.8 (2023-03-09)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -4215,6 +4215,7 @@ _extend(KUploadButton, {
 			url = options.url || '',
 			title = button.val(),
 			extraParams = options.extraParams || {},
+			uploadResponseFilter = options.uploadResponseFilter,
 			cls = button[0].className || '',
 			target = options.target || 'kindeditor_upload_iframe_' + new Date().getTime();
 		options.afterError = options.afterError || function(str) {
@@ -4261,7 +4262,17 @@ _extend(KUploadButton, {
 		self.uploader.on('uploadStart', function(file){
 		});
 		self.uploader.on('uploadSuccess', function(file, response){
-			self.options.afterUpload.call(self, response.data);
+			var resData = response;
+			if(uploadResponseFilter){
+				resData = uploadResponseFilter.call(null, response)
+			}
+			self.options.afterUpload.call(self, resData);
+		});
+		self.uploader.on('uploadError', function(file, response){
+			self.options.afterUpload.call(self, {
+				error: 1,
+				message: '[http-error]图片上传失败！'
+			});
 		});
 		self.uploader.on('error', function(type){
 			var error = '文件上传出现错误，请检查后重试！';
@@ -7032,6 +7043,7 @@ KindEditor.plugin('image', function(K) {
 		uploadHeader = K.undef(self.uploadHeader,{}),
 		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '2MB'),
 		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.jpg;*.gif;*.png;*.jpeg,*.bmp'),
+		uploadResponseFilter = K.undef(self.uploadResponseFilter, 0),
 		extraParams = K.undef(self.extraFileUploadParams, {}),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
 		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
@@ -7186,6 +7198,7 @@ KindEditor.plugin('image', function(K) {
 			uploadHeader: uploadHeader,
 			uploadData: extraParams,
 			uploadUrl : K.addParam(uploadJson, 'dir=image'),
+			uploadResponseFilter: uploadResponseFilter,
 			afterUpload : function(data) {
 				dialog.hideLoading();
 				if (data.error === 0) {
@@ -7350,6 +7363,7 @@ KindEditor.plugin('insertfile', function(K) {
 		uploadHeader = K.undef(self.uploadHeader,{}),
 		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '20MB'),
 		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.mp3;*.wav;*.mp4;*.wmv;*.rmvb;*.avi,*.jpg;*.gif;*.png;*.jpeg,*.bmp'),
+		uploadResponseFilter = K.undef(self.uploadResponseFilter, 0),
 		extraParams = K.undef(self.extraFileUploadParams, {}),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
 		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
@@ -7413,6 +7427,7 @@ KindEditor.plugin('insertfile', function(K) {
 				uploadHeader: uploadHeader,
 				uploadData: extraParams,
 				uploadUrl : K.addParam(uploadJson, 'dir=file'),
+				uploadResponseFilter: uploadResponseFilter,
 				afterUpload : function(data) {
 					dialog.hideLoading();
 					if (data.error === 0) {
@@ -7572,6 +7587,7 @@ KindEditor.plugin('media', function(K) {
 		uploadHeader = K.undef(self.uploadHeader,{}),
 		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '20MB'),
 		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.mp3;*.wav;*.mp4;*.wmv;*.rmvb;*.avi'),
+		uploadResponseFilter = K.undef(self.uploadResponseFilter, 0),
 		extraParams = K.undef(self.extraFileUploadParams, {}),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
 		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
@@ -7698,6 +7714,7 @@ KindEditor.plugin('media', function(K) {
 					uploadHeader: uploadHeader,
 					uploadData: extraParams,
 					uploadUrl : K.addParam(uploadJson, 'dir=media'),
+					uploadResponseFilter: uploadResponseFilter,
 					afterUpload : function(data) {
 						dialog.hideLoading();
 						if (data.error === 0) {

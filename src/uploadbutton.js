@@ -10,6 +10,7 @@ _extend(KUploadButton, {
 			url = options.url || '',
 			title = button.val(),
 			extraParams = options.extraParams || {},
+			uploadResponseFilter = options.uploadResponseFilter,
 			cls = button[0].className || '',
 			target = options.target || 'kindeditor_upload_iframe_' + new Date().getTime();
 		options.afterError = options.afterError || function(str) {
@@ -66,8 +67,20 @@ _extend(KUploadButton, {
 			
 		});
 		self.uploader.on('uploadSuccess', function(file, response){
-			self.options.afterUpload.call(self, response.data);
+			var resData = response;
+			if(uploadResponseFilter){
+				resData = uploadResponseFilter.call(null, response)
+			}
+			self.options.afterUpload.call(self, resData);
 		});
+
+		self.uploader.on('uploadError', function(file, response){
+			self.options.afterUpload.call(self, {
+				error: 1,
+				message: '[http-error]图片上传失败！'
+			});
+		});
+		
 		self.uploader.on('error', function(type){
 			var error = '文件上传出现错误，请检查后重试！';
 			if(type === 'Q_TYPE_DENIED'){

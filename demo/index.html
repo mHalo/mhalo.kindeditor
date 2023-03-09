@@ -41,13 +41,16 @@
                 formatUploadUrl: false,
                 allowFileManager: false,
                 allowImageRemote: true,
-                uploadJson: '/handler/upload/',
+                uploadJson: '/handler/upload-test/',
                 uploadHeader:{
                     corefx: 'mhalo',
                     time: new Date() * 1
                 },
                 extraFileUploadParams:{
                     'paramA': 'A'
+                },
+                uploadResponseFilter: function(response){
+                    return response.data
                 },
                 imageSizeLimit: '2MB',
                 items: K.Tools.Normal,

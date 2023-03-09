@@ -15,6 +15,8 @@ KindEditor.plugin('media', function(K) {
 		uploadHeader = K.undef(self.uploadHeader,{}),
 		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '20MB'),
 		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.mp3;*.wav;*.mp4;*.wmv;*.rmvb;*.avi'),
+		uploadResponseFilter = K.undef(self.uploadResponseFilter, 0),
+		
 		extraParams = K.undef(self.extraFileUploadParams, {}),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
 		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
@@ -157,6 +159,7 @@ KindEditor.plugin('media', function(K) {
 					uploadHeader: uploadHeader,
 					uploadData: extraParams,
 					uploadUrl : K.addParam(uploadJson, 'dir=media'),
+					uploadResponseFilter: uploadResponseFilter,
 
 					afterUpload : function(data) {
 						dialog.hideLoading();

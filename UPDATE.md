@@ -1,10 +1,34 @@
 
 ## 更新日志
+v4.4.8 (2023-03-09)
+上传类接口返回数据格式处理逻辑更新(保持kindeditor默认格式处理)； 
+如遇到接口返回数据格式不同的情况，可以增加uploadResponseFilter参数配置进行处理：
+```
+> options 
+
+uploadJson: '/handler/upload-test',
+uploadHeader:{
+    corefx: 'mhalo'
+},
+extraFileUploadParams:{
+    data: 'demo'
+},
+uploadFileSizeLimit: '5MB',
+uploadFileTypeLimit: '*.jpg;*.gif;*.png;*.jpeg,*.bmp',
+filePostName: 'imgFile',
+
+// upload新增配置参数
+uploadResponseFilter: function(response){
+    return response.data
+},
+```
+
+
+
 v4.4.7 (2023-03-08)
 1. 图片编辑窗内，属性编辑的逻辑优化 
 2. 地图组件BUG修复（iframe方式引入可交互地图的更新已包含在计划中，暂只支持图片的引入方式） 
 3. 一些优化更新 
-
 
 v4.4.6 (2023-02-24)
 1. 调整emoji/symbol插件样式结构

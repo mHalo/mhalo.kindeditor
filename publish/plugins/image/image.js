@@ -17,6 +17,7 @@ KindEditor.plugin('image', function(K) {
 		uploadHeader = K.undef(self.uploadHeader,{}),
 		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '2MB'),
 		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.jpg;*.gif;*.png;*.jpeg,*.bmp'),
+		uploadResponseFilter = K.undef(self.uploadResponseFilter, 0),
 		extraParams = K.undef(self.extraFileUploadParams, {}),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
 		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
@@ -202,6 +203,7 @@ KindEditor.plugin('image', function(K) {
 			uploadHeader: uploadHeader,
 			uploadData: extraParams,
 			uploadUrl : K.addParam(uploadJson, 'dir=image'),
+			uploadResponseFilter: uploadResponseFilter,
 
 			afterUpload : function(data) {
 				dialog.hideLoading();
@@ -221,7 +223,7 @@ KindEditor.plugin('image', function(K) {
 						K(".ke-refresh-btn", div).click();
 					}
 				} else {
-					alert(data.message);					
+					alert(data.message);
 					setTimeout(function(){
 						localUrlBox.val('');
 					}, 100);

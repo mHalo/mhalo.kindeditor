@@ -48,12 +48,11 @@ KindEditor.ready(function (K) {
 </table>
 
 👉. Image-Uploader图片上传优化（包含多图上传、单图上传）
-```
-单图上传弃用了form提交的方式，多图上传弃用了flash的方式，两种上传都是用webuploader进行上传
-由于webuploader中使用了jquery，但jquery体量较大，又考虑到在vue中使用的情况，所以将zepto取必须模块封装在了对应模块中，
-后期会考虑使用现代浏览器支持的方式自行构建uploader，毕竟zepto+webuploader的体积也不小
 
-上传时支持携带formData和Headers，支持限制上传文件大小及文件类型（客户端）：
+↦ 单图上传弃用了form提交的方式，多图上传弃用了flash的方式，统一使用webuploader进行上传。  
+↦ 由于webuploader中使用了jquery，但jquery体量较大，又考虑到在vue中使用的情况，所以将zepto取必须模块封装在了对应模块中，后期会考虑使用现代浏览器支持的方式自行构建。  
+↦ 上传时支持携带formData和Headers，支持客户端限制上传文件大小及文件类型。
+```
 > options 
 
 uploadJson: '/handler/upload-test?dir=image',
@@ -65,7 +64,10 @@ extraFileUploadParams:{
 },
 uploadFileSizeLimit: '5MB',
 uploadFileTypeLimit: '*.jpg;*.gif;*.png;*.jpeg,*.bmp',
-filePostName: 'imgFile'
+filePostName: 'imgFile',
+uploadResponseFilter: function(response){
+    return response.data
+},
 ```
 <img width="1081" alt="image" src="https://user-images.githubusercontent.com/19524115/191661051-c23222db-ca4c-4015-9614-3cfebc54f274.png">
 
