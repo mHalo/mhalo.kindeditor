@@ -1,8 +1,9 @@
 
 # 更新日志
 ### v4.4.9 (2023-03-17)  
-MultiImageUploader上传接口中返回数据格式处理逻辑BUG修复(保持kindeditor默认格式处理)；
+1. MultiImageUploader上传接口中返回数据格式处理逻辑BUG修复(保持kindeditor默认格式处理)；
 关联[v4.4.8](https://github.com/mHalo/mhalo.kindeditor/blob/main/UPDATE.md#v448-2023-03-09)更新
+2. README.md中增加自定义图标的配置方法
 
 ### v4.4.8 (2023-03-09)  
 上传类接口返回数据格式处理逻辑更新(保持kindeditor默认格式处理)； 

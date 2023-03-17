@@ -29,17 +29,25 @@ MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https:/
 ## 特点： 
 
 👉. 基于theme/default的样式更新，使用iconfont更新图标样式  
+#### 自定义组件图标添加方式：
+1. 移步 https://www.iconfont.cn/ 下载所需图标的svg/png文件 
+2. 根据图标样式名规则(.ke-icon-[插件定义的name])定义样式：  
+<font color="#efac42">以插件plugin-demo为例(注意：关于background的相关样式设置，请务必添加 **!important** )</font>
 ```
-# 自定义组件图标添加方式：
-# 1. 移步 https://www.iconfont.cn/
-# 2. 
+.ke-icon-plugin-demo{
+    background: url(./icons-path/plugin.svg) center center no-repeat!important;
+    background-size: auto 80%!important;
+}
 ```
+
 
 👉. KindEditor工具栏便捷配置，可使用**K.Tools.All**、**K.Tools.Normal**、**K.Tools.Small**、**K.Tools.Mini**进行配置
 ```
 KindEditor.ready(function (K) {
     var options = {
         items: K.Tools.All,
+        //或基于某个默认配置增加自定义插件
+        items: K.Tools.Mini.concat(['plugin-demo']),
     };
     var contentEditor = K.create('#editor', options);
 });
