@@ -14,6 +14,7 @@ KindEditor.plugin('image', function(K) {
 		allowFileManager = K.undef(self.allowFileManager, false),
 
 
+		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
 		uploadHeader = K.undef(self.uploadHeader,{}),
 		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '2MB'),
 		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.jpg;*.gif;*.png;*.jpeg,*.bmp'),
@@ -22,6 +23,7 @@ KindEditor.plugin('image', function(K) {
 		filePostName = K.undef(self.filePostName, 'imgFile'),
 		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
 		formatUploadUrl = K.undef(self.formatUploadUrl, true),
+		uploadCompress = K.undef(self.uploadCompress, function(){}),
 
 
 		imageTabIndex = K.undef(self.imageTabIndex, 1), /**为0时默认显示网络图片，为1时默认显示本地上传 */
@@ -204,6 +206,7 @@ KindEditor.plugin('image', function(K) {
 			uploadData: extraParams,
 			uploadUrl : K.addParam(uploadJson, 'dir=image'),
 			uploadResponseFilter: uploadResponseFilter,
+			uploadCompress: uploadCompress,
 
 			afterUpload : function(data) {
 				dialog.hideLoading();

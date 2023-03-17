@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.4.8 (2023-03-09)',
+var _VERSION = '4.4.8 (2023-03-17)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -4216,6 +4216,7 @@ _extend(KUploadButton, {
 			title = button.val(),
 			extraParams = options.extraParams || {},
 			uploadResponseFilter = options.uploadResponseFilter,
+			uploadCompress = options.uploadCompress,
 			cls = button[0].className || '',
 			target = options.target || 'kindeditor_upload_iframe_' + new Date().getTime();
 		options.afterError = options.afterError || function(str) {
@@ -4259,6 +4260,9 @@ _extend(KUploadButton, {
 			fileNumLimit: 1,
 			fileSingleSizeLimit: fileSizeLimit.replace(/MB/g,'') * 1 * 1024 *1024
 		});
+		if(uploadCompress !== undefined){
+			self.uploader.options.compress = uploadCompress;
+		}
 		self.uploader.on('uploadStart', function(file){
 		});
 		self.uploader.on('uploadSuccess', function(file, response){
@@ -6863,7 +6867,7 @@ KindEditor.plugin('symbols', function (K) {
 });
 KindEditor.plugin('filemanager', function(K) {
 	var self = this, name = 'filemanager',
-		fileManagerJson = K.undef(self.fileManagerJson, self.basePath + 'php/file_manager_json.php'),
+		fileManagerJson = K.undef(self.fileManagerJson, self.basePath + '_404.html'),
 		imgPath = self.pluginsPath + name + '/images/',
 		lang = self.lang(name + '.');
 	function makeFileTitle(filename, filesize, datetime) {
@@ -7040,6 +7044,7 @@ KindEditor.plugin('image', function(K) {
 		allowImageUpload = K.undef(self.allowImageUpload, true),
 		allowImageRemote = K.undef(self.allowImageRemote, true),
 		allowFileManager = K.undef(self.allowFileManager, false),
+		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
 		uploadHeader = K.undef(self.uploadHeader,{}),
 		uploadFileSizeLimit= K.undef(self.uploadFileSizeLimit, '2MB'),
 		uploadFileTypeLimit= K.undef(self.uploadFileTypeLimit, '*.jpg;*.gif;*.png;*.jpeg,*.bmp'),
@@ -7048,6 +7053,7 @@ KindEditor.plugin('image', function(K) {
 		filePostName = K.undef(self.filePostName, 'imgFile'),
 		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
 		formatUploadUrl = K.undef(self.formatUploadUrl, true),
+		uploadCompress = K.undef(self.uploadCompress, function(){}),
 		imageTabIndex = K.undef(self.imageTabIndex, 1), /**为0时默认显示网络图片，为1时默认显示本地上传 */
 		imgPath = self.pluginsPath + 'image/images/',
 		fillDescAfterUploadImage = K.undef(self.fillDescAfterUploadImage, false),
@@ -7199,6 +7205,7 @@ KindEditor.plugin('image', function(K) {
 			uploadData: extraParams,
 			uploadUrl : K.addParam(uploadJson, 'dir=image'),
 			uploadResponseFilter: uploadResponseFilter,
+			uploadCompress: uploadCompress,
 			afterUpload : function(data) {
 				dialog.hideLoading();
 				if (data.error === 0) {
@@ -7824,9 +7831,9 @@ KindEditor.plugin('media', function(K) {
                     mimeTypes: 'image/*'
                 },
                 uploadBeforeSend: function(object, data, headers){
-                    headers = options.uploadHeaders || {};
-                    data = options.uploadData || {};
                 },
+                headers: options.uploadHeader,
+                formData: options.uploadData,
                 fileNumLimit: options.fileUploadLimit,
                 fileSingleSizeLimit: options.fileSizeLimit.replace(/MB/g,'') * 1 * 1024 *1024
             });
@@ -7856,8 +7863,12 @@ KindEditor.plugin('media', function(K) {
                 progressbar.percent.html(barText).show();
             });
             self.uploader.on('uploadSuccess', function(file, response){
+                var resData = response;
+                if(options.uploadResponseFilter){
+                    resData = options.uploadResponseFilter.call(null, response)
+                }
                 var itemDiv = K('div[data-id="' + file.id + '"]', self.bodyDiv).eq(0);
-                var data = response.data;
+                var data = resData;
                 if (data.error !== 0) {
                     showError(itemDiv, data.message || self.options.errorMessage);
                     return;
@@ -7976,12 +7987,13 @@ KindEditor.plugin('media', function(K) {
 KindEditor.plugin('multiimage', function(K) {
 	var self = this, name = 'multiimage',
 		formatUploadUrl = K.undef(self.formatUploadUrl, true),
-		uploadJson = K.undef(self.uploadJson, self.basePath + 'php/upload_json.php'),
-		uploadHeader = K.undef(self.uploadHeader, self.basePath + 'php/upload_json.php'),
-		uploadData = K.undef(self.uploadData, self.basePath + 'php/upload_json.php'),
+		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
+		uploadHeader = K.undef(self.uploadHeader, {}),
+		extraParams = K.undef(self.extraFileUploadParams, {}),
 		imgPath = self.pluginsPath + 'multiimage/images/',
 		imageSizeLimit = K.undef(self.imageSizeLimit, '1MB'),
 		imageFileTypes = K.undef(self.imageFileTypes, '*.jpg;*.gif;*.png'),
+        uploadResponseFilter = K.undef(self.uploadResponseFilter, 0),
 		imageUploadLimit = K.undef(self.imageUploadLimit, 20),
 		filePostName = K.undef(self.filePostName, 'imgFile'),
 		lang = self.lang(name + '.');
@@ -8026,8 +8038,9 @@ KindEditor.plugin('multiimage', function(K) {
 			uploadDesc : uploadDesc,
 			startButtonValue : lang.startUpload,
 			uploadUrl : K.addParam(uploadJson, 'dir=image'),
-			uploadData : uploadData,
+			uploadData : extraParams,
 			uploadHeader : uploadHeader,
+            uploadResponseFilter: uploadResponseFilter,
             uploadCompress: self.uploadCompress,
             formatUploadUrl: self.formatUploadUrl,
 			flashUrl : imgPath + 'swfupload.swf',

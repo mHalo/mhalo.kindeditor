@@ -1,10 +1,21 @@
-## What is KindEditor?
+## 🔵 What is KindEditor?
 
-KindEditor is a lightweight, Open Source(LGPL), cross browser, web based WYSIWYG HTML editor. KindEditor has the ability to convert standard textareas to rich text editing.
+KindEditor is a lightweight, Open Source(LGPL), cross browser, web based WYSIWYG HTML editor. KindEditor has the ability to convert standard textareas to rich text editing.  
+**Official site**: [http://kindeditor.net/](http://kindeditor.net/)
 
-## Official site
-http://kindeditor.net/
+## 🔴 Break Changes
+- @v4.4.8  
+上传类接口返回数据格式处理逻辑更新(保持kindeditor默认格式处理)；   
+如遇到接口返回数据格式不同的情况，可以增加[**uploadResponseFilter**]参数配置进行处理；  
+[点此查看更新详情](https://github.com/mHalo/mhalo.kindeditor/blob/main/UPDATE.md#v448-2023-03-09)
 
+## 🟠 Bug 和需求反馈
+如果想要反馈 Bug、提供意见，可以创建一个 Github issue 或 添加微信 联系，十分感谢！ 
+
+<img src="https://user-images.githubusercontent.com/19524115/224662425-0b5223ca-e775-4331-8250-0779fd02c640.JPG" height="320">
+
+
+## 🟢 MHalo.KindEditor
 
 MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https://github.com/kindsoft/kindeditor) ）的基础上，进行了界面的美化，以及部分插件的优化修改。
 具体使用方式与kindeditor无较大差异，可参考[http://kindeditor.net/doc.php](http://kindeditor.net/doc.php)。
@@ -17,7 +28,12 @@ MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https:/
 
 ## 特点： 
 
-👉. 基于theme/default的样式更新，使用iconfont更新图标样式 
+👉. 基于theme/default的样式更新，使用iconfont更新图标样式  
+```
+# 自定义组件图标添加方式：
+# 1. 移步 https://www.iconfont.cn/
+# 2. 
+```
 
 👉. KindEditor工具栏便捷配置，可使用**K.Tools.All**、**K.Tools.Normal**、**K.Tools.Small**、**K.Tools.Mini**进行配置
 ```

@@ -11,6 +11,7 @@ _extend(KUploadButton, {
 			title = button.val(),
 			extraParams = options.extraParams || {},
 			uploadResponseFilter = options.uploadResponseFilter,
+			uploadCompress = options.uploadCompress,
 			cls = button[0].className || '',
 			target = options.target || 'kindeditor_upload_iframe_' + new Date().getTime();
 		options.afterError = options.afterError || function(str) {
@@ -62,6 +63,10 @@ _extend(KUploadButton, {
 			fileNumLimit: 1,
 			fileSingleSizeLimit: fileSizeLimit.replace(/MB/g,'') * 1 * 1024 *1024
 		});
+
+		if(uploadCompress !== undefined){
+			self.uploader.options.compress = uploadCompress;
+		}
 		
 		self.uploader.on('uploadStart', function(file){
 			
