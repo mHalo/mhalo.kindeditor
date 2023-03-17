@@ -54,7 +54,7 @@ _extend(KUploadButton, {
 			resize: false,
 			fileVal: 'file',
 			accept: {
-				title: 'upload',
+				title: 'Images',
 				extensions: fileTypeLimit.replace(/\*\./g,'').replace(/;/g,','),
 				mimeTypes: 'image/*'
 			},

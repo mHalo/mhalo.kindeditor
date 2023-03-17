@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.4.9 (2023-03-17)',
+var _VERSION = '4.4.10 (2023-03-17)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -4251,7 +4251,7 @@ _extend(KUploadButton, {
 			resize: false,
 			fileVal: 'file',
 			accept: {
-				title: 'upload',
+				title: 'Images',
 				extensions: fileTypeLimit.replace(/\*\./g,'').replace(/;/g,','),
 				mimeTypes: 'image/*'
 			},
@@ -7053,7 +7053,7 @@ KindEditor.plugin('image', function(K) {
 		filePostName = K.undef(self.filePostName, 'imgFile'),
 		uploadJson = K.undef(self.uploadJson, self.basePath + '_404.html'),
 		formatUploadUrl = K.undef(self.formatUploadUrl, true),
-		uploadCompress = K.undef(self.uploadCompress, function(){}),
+		uploadCompress = self.uploadCompress,
 		imageTabIndex = K.undef(self.imageTabIndex, 1), /**为0时默认显示网络图片，为1时默认显示本地上传 */
 		imgPath = self.pluginsPath + 'image/images/',
 		fillDescAfterUploadImage = K.undef(self.fillDescAfterUploadImage, false),
