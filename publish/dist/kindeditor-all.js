@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.4.10 (2023-03-17)',
+var _VERSION = '4.4.10 (2023-04-02)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -6673,7 +6673,12 @@ KindEditor.plugin('emoticons', function (K) {
                 K(this).removeClass('ke-on');
             });
             cell.click(function (e) {
-                self.insertHtml(emoji).hideMenu().focus();
+                self.insertHtml(emoji).hideMenu();
+                setTimeout(function(){
+                    self.focus();
+                    self.cmd.select();
+                    self.cmd.selection(true);
+                }, 1e2);
                 e.stop();
             });
         }
@@ -6796,7 +6801,12 @@ KindEditor.plugin('symbols', function (K) {
                 K(this).removeClass('ke-on');
             });
             cell.click(function (e) {
-                self.insertHtml(symbol).hideMenu().focus();
+                self.insertHtml(symbol).hideMenu();
+                setTimeout(function(){
+                    self.focus();
+                    self.cmd.select();
+                    self.cmd.selection(true);
+                }, 1e2);
                 e.stop();
             });
         }

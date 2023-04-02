@@ -63,7 +63,12 @@ KindEditor.plugin('symbols', function (K) {
                 K(this).removeClass('ke-on');
             });
             cell.click(function (e) {
-                self.insertHtml(symbol).hideMenu().focus();
+                self.insertHtml(symbol).hideMenu();
+                setTimeout(function(){
+                    self.focus(); 
+                    self.cmd.select();
+                    self.cmd.selection(true);
+                }, 1e2);
                 e.stop();
             });
         }
