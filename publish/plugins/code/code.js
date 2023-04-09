@@ -13,6 +13,11 @@
 KindEditor.plugin('code', function(K) {
 	var self = this, name = 'code';
 	self.clickToolbar(name, function() {
+		self.cmd.selection();
+		var preCodeNode = self.plugin.getSelectedPreCode(), preCode = '';
+		if(!!preCodeNode){
+			preCode = preCodeNode.html();
+		}
 		var lang = self.lang(name + '.'),
 			html = ['<div style="padding:10px 20px;">',
 				'<div class="ke-dialog-row">',
@@ -30,10 +35,13 @@ KindEditor.plugin('code', function(K) {
 				'<option value="cs">C#</option>',
 				'<option value="xml">XML</option>',
 				'<option value="bsh">Shell</option>',
+				'<option value="bsh">SQL</option>',
 				'<option value="">Other</option>',
 				'</select>',
 				'</div>',
-				'<textarea class="ke-textarea" style="width:518px;height:260px;"></textarea>',
+				'<textarea class="ke-textarea" style="width:518px;height:260px;">',
+				preCode,
+				'</textarea>',
 				'</div>'].join(''),
 			dialog = self.createDialog({
 				name : name,
@@ -50,7 +58,7 @@ KindEditor.plugin('code', function(K) {
 								.replace(/\s+$/g, '\n')
 								.replace(/(\s*<!--)/g, '\n$1')
 								.replace(/>(\s*)(?=<!--\s*\/)/g, '> '),
-							cls = type === '' ? '' :  ' lang-' + type,
+							cls = type === '' ? '' :  ' ke-code lang-' + type,
 							html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
 						if (K.trim(code) === '') {
 							alert(lang.pleaseInput);

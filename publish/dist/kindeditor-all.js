@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.4.10 (2023-04-02)',
+var _VERSION = '4.4.11 (2023-04-09)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -3620,7 +3620,8 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData) {
 		'img[data-ke-class="ke-image"]:hover { border-color: #4696ec; }',
 		'audio,video{ border:3px solid transparent; }',
 		'audio:hover, video:hover{ border:3px solid #2196f3; }',
-		'pre{ font-size: 14px;line-height: 20px;width: 100%;background-color: antiquewhite;padding: 6px 18px;box-sizing: border-box; }',
+		'pre{ font-size: 14px;line-height: 20px;width: 100%;background-color: #f4f2f0;padding: 6px 18px;box-sizing: border-box; border: 3px solid transparent;}',
+		'pre:hover{border: 3px solid #4696ec;}',
 		'.ke-script, .ke-noscript, .ke-display-none {',
 		'	display:none;',
 		'	font-size:0;',
@@ -5837,6 +5838,9 @@ _plugin('core', function(K) {
 	self.plugin.getSelectedLink = function() {
 		return self.cmd.commonAncestor('a');
 	};
+	self.plugin.getSelectedPreCode = function() {
+		return self.cmd.commonAncestor('pre');
+	};
 	self.plugin.getSelectedImage = function() {
 		return _getImageFromRange(self.edit.cmd.range, function(img) {
 			return !/^ke-\w+$/i.test(img[0].className);
@@ -6571,6 +6575,11 @@ KindEditor.plugin('clearhtml', function(K) {
 KindEditor.plugin('code', function(K) {
 	var self = this, name = 'code';
 	self.clickToolbar(name, function() {
+		self.cmd.selection();
+		var preCodeNode = self.plugin.getSelectedPreCode(), preCode = '';
+		if(!!preCodeNode){
+			preCode = preCodeNode.html();
+		}
 		var lang = self.lang(name + '.'),
 			html = ['<div style="padding:10px 20px;">',
 				'<div class="ke-dialog-row">',
@@ -6588,10 +6597,13 @@ KindEditor.plugin('code', function(K) {
 				'<option value="cs">C#</option>',
 				'<option value="xml">XML</option>',
 				'<option value="bsh">Shell</option>',
+				'<option value="bsh">SQL</option>',
 				'<option value="">Other</option>',
 				'</select>',
 				'</div>',
-				'<textarea class="ke-textarea" style="width:518px;height:260px;"></textarea>',
+				'<textarea class="ke-textarea" style="width:518px;height:260px;">',
+				preCode,
+				'</textarea>',
 				'</div>'].join(''),
 			dialog = self.createDialog({
 				name : name,
@@ -6608,7 +6620,7 @@ KindEditor.plugin('code', function(K) {
 								.replace(/\s+$/g, '\n')
 								.replace(/(\s*<!--)/g, '\n$1')
 								.replace(/>(\s*)(?=<!--\s*\/)/g, '> '),
-							cls = type === '' ? '' :  ' lang-' + type,
+							cls = type === '' ? '' :  ' ke-code lang-' + type,
 							html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
 						if (K.trim(code) === '') {
 							alert(lang.pleaseInput);

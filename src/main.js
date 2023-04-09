@@ -1361,6 +1361,10 @@ _plugin('core', function(K) {
 	self.plugin.getSelectedLink = function() {
 		return self.cmd.commonAncestor('a');
 	};
+	
+	self.plugin.getSelectedPreCode = function() {
+		return self.cmd.commonAncestor('pre');
+	};
 	self.plugin.getSelectedImage = function() {
 		return _getImageFromRange(self.edit.cmd.range, function(img) {
 			return !/^ke-\w+$/i.test(img[0].className);
