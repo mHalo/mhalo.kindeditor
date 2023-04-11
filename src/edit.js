@@ -26,7 +26,7 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData) {
 		'audio,video{ border:3px solid transparent; }',
 		'audio:hover, video:hover{ border:3px solid #2196f3; }',
 		'pre{ font-size: 14px;line-height: 20px;width: 100%;background-color: #f4f2f0;padding: 6px 18px;box-sizing: border-box; border: 3px solid transparent;}',
-		'pre:hover{border: 3px solid #4696ec;}',
+		'pre:hover,pre:active{border: 3px solid #4696ec;}',
 		// 'img.ke-flash {',
 		// '	border:1px solid #AAA;',
 		// '	background-image:url(' + themesPath + 'common/flash.gif);',
@@ -158,7 +158,7 @@ _extend(KEdit, KWidget, {
 			// [WEBKIT] select an image after click the image
 			if (_WEBKIT) {
 				K(doc).click(function(e) {
-					if (K(e.target).name === 'img' || K(e.target).name === 'audio' || K(e.target).name === 'video') {
+					if (K(e.target).name === 'img' || K(e.target).name === 'audio' || K(e.target).name === 'video' || K(e.target).name === 'pre') {
 						cmd.selection(true);
 						cmd.range.selectNode(e.target);
 						cmd.select();

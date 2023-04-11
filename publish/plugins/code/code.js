@@ -14,9 +14,14 @@ KindEditor.plugin('code', function(K) {
 	var self = this, name = 'code';
 	self.clickToolbar(name, function() {
 		self.cmd.selection();
-		var preCodeNode = self.plugin.getSelectedPreCode(), preCode = '';
+		console.info(self);
+		var preCodeNode = self.plugin.getSelectedPreCode(), preCode = '',preLang = 'js'	;
 		if(!!preCodeNode){
 			preCode = preCodeNode.html();
+			preLang = (preCodeNode.attr("class").match(/lang-(\w+)/ig) || [])[0];
+			if(!!preLang){
+				preLang = preLang.replace("lang-", "");
+			}
 		}
 		var lang = self.lang(name + '.'),
 			html = ['<div style="padding:10px 20px;">',
@@ -35,7 +40,7 @@ KindEditor.plugin('code', function(K) {
 				'<option value="cs">C#</option>',
 				'<option value="xml">XML</option>',
 				'<option value="bsh">Shell</option>',
-				'<option value="bsh">SQL</option>',
+				'<option value="sql">SQL</option>',
 				'<option value="">Other</option>',
 				'</select>',
 				'</div>',
@@ -58,18 +63,37 @@ KindEditor.plugin('code', function(K) {
 								.replace(/\s+$/g, '\n')
 								.replace(/(\s*<!--)/g, '\n$1')
 								.replace(/>(\s*)(?=<!--\s*\/)/g, '> '),
-							cls = type === '' ? '' :  ' ke-code lang-' + type,
-							html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
+							cls = type === '' ? '' :  ' ke-code lang-' + type;
 						if (K.trim(code) === '') {
 							alert(lang.pleaseInput);
 							textarea[0].focus();
 							return;
 						}
+						if(!!preCodeNode){
+							preCodeNode.html(K.escape(code)).attr("class", cls);
+							self.hideDialog().focus();
+							return
+						}else{
+							html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
+						}
 						self.insertHtml(html).hideDialog().focus();
 					}
 				}
 			}),
-			textarea = K('textarea', dialog.div);
+			textarea = K('textarea', dialog.div),
+			select = K('select', dialog.div);
+		K(select).children().each(function(i,o){
+			var node = K(o);
+			if(node.val() === preLang){
+				node.attr("selected", true);
+				setTimeout(function(){
+					K(select).val(preLang)
+					select[0].value = preLang;
+				}, 180);
+			}else{
+				node.removeAttr("selected");
+			}
+		})
 		textarea[0].focus();
 	});
 });

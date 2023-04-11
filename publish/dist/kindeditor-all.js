@@ -20,7 +20,7 @@ if (!window.console) {
 if (!console.log) {
 	console.log = function () {};
 }
-var _VERSION = '4.4.11 (2023-04-09)',
+var _VERSION = '4.4.13 (2023-04-11)',
 	_ua = navigator.userAgent.toLowerCase(),
 	_IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
 	_NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -3621,7 +3621,7 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData) {
 		'audio,video{ border:3px solid transparent; }',
 		'audio:hover, video:hover{ border:3px solid #2196f3; }',
 		'pre{ font-size: 14px;line-height: 20px;width: 100%;background-color: #f4f2f0;padding: 6px 18px;box-sizing: border-box; border: 3px solid transparent;}',
-		'pre:hover{border: 3px solid #4696ec;}',
+		'pre:hover,pre:active{border: 3px solid #4696ec;}',
 		'.ke-script, .ke-noscript, .ke-display-none {',
 		'	display:none;',
 		'	font-size:0;',
@@ -3715,7 +3715,7 @@ _extend(KEdit, KWidget, {
 			});
 			if (_WEBKIT) {
 				K(doc).click(function(e) {
-					if (K(e.target).name === 'img' || K(e.target).name === 'audio' || K(e.target).name === 'video') {
+					if (K(e.target).name === 'img' || K(e.target).name === 'audio' || K(e.target).name === 'video' || K(e.target).name === 'pre') {
 						cmd.selection(true);
 						cmd.range.selectNode(e.target);
 						cmd.select();
@@ -6576,9 +6576,14 @@ KindEditor.plugin('code', function(K) {
 	var self = this, name = 'code';
 	self.clickToolbar(name, function() {
 		self.cmd.selection();
-		var preCodeNode = self.plugin.getSelectedPreCode(), preCode = '';
+		console.info(self);
+		var preCodeNode = self.plugin.getSelectedPreCode(), preCode = '',preLang = 'js'	;
 		if(!!preCodeNode){
 			preCode = preCodeNode.html();
+			preLang = (preCodeNode.attr("class").match(/lang-(\w+)/ig) || [])[0];
+			if(!!preLang){
+				preLang = preLang.replace("lang-", "");
+			}
 		}
 		var lang = self.lang(name + '.'),
 			html = ['<div style="padding:10px 20px;">',
@@ -6597,7 +6602,7 @@ KindEditor.plugin('code', function(K) {
 				'<option value="cs">C#</option>',
 				'<option value="xml">XML</option>',
 				'<option value="bsh">Shell</option>',
-				'<option value="bsh">SQL</option>',
+				'<option value="sql">SQL</option>',
 				'<option value="">Other</option>',
 				'</select>',
 				'</div>',
@@ -6620,18 +6625,37 @@ KindEditor.plugin('code', function(K) {
 								.replace(/\s+$/g, '\n')
 								.replace(/(\s*<!--)/g, '\n$1')
 								.replace(/>(\s*)(?=<!--\s*\/)/g, '> '),
-							cls = type === '' ? '' :  ' ke-code lang-' + type,
-							html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
+							cls = type === '' ? '' :  ' ke-code lang-' + type;
 						if (K.trim(code) === '') {
 							alert(lang.pleaseInput);
 							textarea[0].focus();
 							return;
 						}
+						if(!!preCodeNode){
+							preCodeNode.html(K.escape(code)).attr("class", cls);
+							self.hideDialog().focus();
+							return
+						}else{
+							html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
+						}
 						self.insertHtml(html).hideDialog().focus();
 					}
 				}
 			}),
-			textarea = K('textarea', dialog.div);
+			textarea = K('textarea', dialog.div),
+			select = K('select', dialog.div);
+		K(select).children().each(function(i,o){
+			var node = K(o);
+			if(node.val() === preLang){
+				node.attr("selected", true);
+				setTimeout(function(){
+					K(select).val(preLang)
+					select[0].value = preLang;
+				}, 180);
+			}else{
+				node.removeAttr("selected");
+			}
+		})
 		textarea[0].focus();
 	});
 });
