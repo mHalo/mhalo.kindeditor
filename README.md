@@ -7,7 +7,6 @@
 </p>
 </div>
 
-
 ## 🔵 What is KindEditor?
 
 KindEditor is a lightweight, Open Source(LGPL), cross browser, web based WYSIWYG HTML editor. KindEditor has the ability to convert standard textareas to rich text editing.  
@@ -134,3 +133,14 @@ pnpm i mhalo.kindeditor
     },
   },
 ```
+
+---
+<h3 align="center">🔗 MHalo.Vue-KindEditor `支持Vue3`</h1>
+<p align="center">
+👉🏻  <a src="https://github.com/mHalo/mhalo.vue-kindeditor">https://github.com/mHalo/mhalo.vue-kindeditor</a>
+</p>
+<p align="center">
+    <a href="https://npmcharts.com/compare/mhalo.vue-kindeditor?minimal=true"><img src="https://img.shields.io/npm/dm/mhalo.vue-kindeditor.svg?sanitize=true" alt="Downloads"></a>
+    <a href="https://www.npmjs.com/package/mhalo.vue-kindeditor"><img src="https://img.shields.io/npm/v/mhalo.vue-kindeditor.svg?sanitize=true" alt="Version"></a>
+    <a href="https://www.npmjs.com/package/mhalo.vue-kindeditor"><img src="https://img.shields.io/npm/l/mhalo.vue-kindeditor.svg?sanitize=true" alt="License"></a>
+</p>
