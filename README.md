@@ -13,6 +13,11 @@ KindEditor is a lightweight, Open Source(LGPL), cross browser, web based WYSIWYG
 **Official site**: [http://kindeditor.net/](http://kindeditor.net/)
 
 ## 🔴 Break Changes
+- @v4.4.15  
+工具栏图标文件本地化（不再引用iconfont线上地址）  
+图标字体路径: themes -> default -> fonts/*，图标样式包含在default.css文件中
+[点此查看更新详情](https://github.com/mHalo/mhalo.kindeditor/blob/main/UPDATE.md#v4415-2023-05-08)
+
 - @v4.4.8  
 上传类接口返回数据格式处理逻辑更新(保持kindeditor默认格式处理)；   
 如遇到接口返回数据格式不同的情况，可以增加[**uploadResponseFilter**]参数配置进行处理；  

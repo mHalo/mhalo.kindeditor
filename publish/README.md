@@ -1,5 +1,5 @@
 <div align="center" border="none">
-<h1 align="center">KindEditor</h1>
+<h1 align="center">MHalo.KindEditor</h1>
 <p align="center">
   <a href="https://npmcharts.com/compare/mhalo.kindeditor?minimal=true"><img src="https://img.shields.io/npm/dm/mhalo.kindeditor.svg?sanitize=true" alt="Downloads"></a>
     <a href="https://www.npmjs.com/package/mhalo.kindeditor"><img src="https://img.shields.io/npm/v/mhalo.kindeditor.svg?sanitize=true" alt="Version"></a>
@@ -7,13 +7,17 @@
 </p>
 </div>
 
-
 ## 🔵 What is KindEditor?
 
 KindEditor is a lightweight, Open Source(LGPL), cross browser, web based WYSIWYG HTML editor. KindEditor has the ability to convert standard textareas to rich text editing.  
 **Official site**: [http://kindeditor.net/](http://kindeditor.net/)
 
 ## 🔴 Break Changes
+- @v4.4.15  
+工具栏图标文件本地化（不再引用iconfont线上地址）  
+图标字体路径: themes -> default -> fonts/*，图标样式包含在default.css文件中
+[点此查看更新详情](https://github.com/mHalo/mhalo.kindeditor/blob/main/UPDATE.md#v4415-2023-05-08)
+
 - @v4.4.8  
 上传类接口返回数据格式处理逻辑更新(保持kindeditor默认格式处理)；   
 如遇到接口返回数据格式不同的情况，可以增加[**uploadResponseFilter**]参数配置进行处理；  
@@ -134,3 +138,14 @@ pnpm i mhalo.kindeditor
     },
   },
 ```
+
+---
+<h3 align="center">🔗 MHalo.Vue-KindEditor `支持Vue3`</h1>
+<p align="center">
+👉🏻  <a src="https://github.com/mHalo/mhalo.vue-kindeditor">https://github.com/mHalo/mhalo.vue-kindeditor</a>
+</p>
+<p align="center">
+    <a href="https://npmcharts.com/compare/mhalo.vue-kindeditor?minimal=true"><img src="https://img.shields.io/npm/dm/mhalo.vue-kindeditor.svg?sanitize=true" alt="Downloads"></a>
+    <a href="https://www.npmjs.com/package/mhalo.vue-kindeditor"><img src="https://img.shields.io/npm/v/mhalo.vue-kindeditor.svg?sanitize=true" alt="Version"></a>
+    <a href="https://www.npmjs.com/package/mhalo.vue-kindeditor"><img src="https://img.shields.io/npm/l/mhalo.vue-kindeditor.svg?sanitize=true" alt="License"></a>
+</p>
