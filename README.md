@@ -24,7 +24,7 @@ KindEditor is a lightweight, Open Source(LGPL), cross browser, web based WYSIWYG
 [点此查看更新详情](https://github.com/mHalo/mhalo.kindeditor/blob/main/UPDATE.md#v448-2023-03-09)
 
 ## 🟠 Bug 和需求反馈
-如果想要反馈 Bug、提供意见，可以创建 Github issue 或 添加微信(备注mhalo.kindeditor) 联系，十分感谢！ 
+如果想要反馈 Bug、提供意见，可以创建 Github issue 或 添加微信(备注KE) 联系，十分感谢！ 
 
 <img src="https://user-images.githubusercontent.com/19524115/224662425-0b5223ca-e775-4331-8250-0779fd02c640.JPG" height="320">
 
