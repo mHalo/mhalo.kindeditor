@@ -11,6 +11,12 @@
                 background: url(./icons/plugin.svg) center center no-repeat!important;
                 background-size: auto 80%!important;
             }
+
+            .ke-toolbar-icon{
+                width:24px!important;
+                height: 24px!important;
+                font-size: 14px!important;
+            }
         </style>
 	</head>
 	<body>
@@ -62,6 +68,9 @@
                 cssData: 'body{font-size: 16px;line-height: 28px;}',
                 afterBlur: function () {
                     this.sync();
+                },
+                afterChange: function(){
+                    // console.info(event)
                 }
             };
             var contentEditor = K.create('#editor', options);
@@ -70,6 +79,27 @@
             // html += '<p><img src="http://res.henandingdang.com/guanwang/Article/20170228/20170228155437.jpg"/></p><p>xxxxx</p>';
             contentEditor.html(html);
 
+            contentEditor.edit.doc.addEventListener('paste', function (e) {
+                var clipboardData = e.clipboardData;
+                if (!(clipboardData && clipboardData.items)) {
+                    return;
+                }
+                for (var i = 0, len = clipboardData.items.length; i < len; i++) {
+                    var item = clipboardData.items[i];
+                    if (item.kind === "file") {
+                        var pasteFile = item.getAsFile();
+                        var reader = new FileReader();
+                        reader.readAsDataURL(pasteFile);
+                        reader.onload = function () {
+                            contentEditor.insertHtml("<img src='"+ reader.result +"' />")
+                        }
+                    }
+                }
+            })
+
+
             });
+    
+        
     </script>
 </html>
