@@ -12,3 +12,4 @@ Thumbs.db
 node_modules/
 _build/
 attached/*
+publish/temp/*

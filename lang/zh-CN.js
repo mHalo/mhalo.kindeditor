@@ -48,6 +48,7 @@ KindEditor.lang({
 	hr : '插入横线',
 	emoticons : '插入表情',
 	symbols : '特殊字符',
+	swiper : '轮播图',
 	link : '超级链接',
 	unlink : '取消超级链接',
 	fullscreen : '全屏显示',

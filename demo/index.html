@@ -11,12 +11,6 @@
                 background: url(./icons/plugin.svg) center center no-repeat!important;
                 background-size: auto 80%!important;
             }
-
-            .ke-toolbar-icon{
-                width:24px!important;
-                height: 24px!important;
-                font-size: 14px!important;
-            }
         </style>
 	</head>
 	<body>
@@ -35,8 +29,8 @@
                 basePath:'../',
                 resizeType: 1,
                 pasteType: 2,//0:禁止粘贴, 1:纯文本粘贴, 2:HTML粘贴
-                height: 420,
-                autoHeightMode: false,
+                autoHeightMode: true,
+                height: 320,
                 fixToolBar: true,
                 fixToolBarWatchRef: '#wrapper',
                 scrollToEditingTarget: false,
@@ -65,7 +59,7 @@
                 },
                 imageSizeLimit: '2MB',
                 items: K.Tools.All,
-                cssData: 'body{font-size: 16px;line-height: 28px;}',
+                cssData: 'body{font-size: 16px;line-height: 28px;}p{padding:0;margin:0}',
                 afterBlur: function () {
                     this.sync();
                 },
@@ -79,27 +73,25 @@
             // html += '<p><img src="http://res.henandingdang.com/guanwang/Article/20170228/20170228155437.jpg"/></p><p>xxxxx</p>';
             contentEditor.html(html);
 
-            contentEditor.edit.doc.addEventListener('paste', function (e) {
-                var clipboardData = e.clipboardData;
-                if (!(clipboardData && clipboardData.items)) {
-                    return;
-                }
-                for (var i = 0, len = clipboardData.items.length; i < len; i++) {
-                    var item = clipboardData.items[i];
-                    if (item.kind === "file") {
-                        var pasteFile = item.getAsFile();
-                        var reader = new FileReader();
-                        reader.readAsDataURL(pasteFile);
-                        reader.onload = function () {
-                            contentEditor.insertHtml("<img src='"+ reader.result +"' />")
-                        }
-                    }
-                }
-            })
-
+            // contentEditor.edit.doc.addEventListener('paste', function (e) {
+            //     var clipboardData = e.clipboardData;
+            //     if (!(clipboardData && clipboardData.items)) {
+            //         return;
+            //     }
+            //     for (var i = 0, len = clipboardData.items.length; i < 1; i++) {
+            //         var item = clipboardData.items[i];
+            //         if (item.kind === "file") {
+            //             var pasteFile = item.getAsFile();
+            //             var reader = new FileReader();
+            //             reader.readAsDataURL(pasteFile);
+            //             reader.onload = function () {
+            //                 console.info('ppppp')
+            //                 contentEditor.insertHtml("<img src='"+ reader.result +"' />")
+            //             }
+            //         }
+            //     }
+            // })
 
             });
-    
-        
     </script>
 </html>

@@ -1,6 +1,6 @@
 {
   "name": "mhalo.kindeditor",
-  "version": "4.4.15",
+  "version": "4.4.16",
   "filename": "kindeditor",
   "repository": {
     "type": "git",
@@ -13,23 +13,25 @@
   },
   "homepage": "https://github.com/mHalo/mhalo.kindeditor#readme",
   "main": "index.js",
-  
   "devDependencies": {
+    "@babel/preset-env": "^7.24.5",
     "grunt": "~0.4.1",
+    "grunt-babel": "^8.0.0",
     "grunt-connect-proxy": "^0.2.0",
     "grunt-contrib-compress": "~0.5.3",
     "grunt-contrib-concat": "~0.3.0",
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-livereload": "^0.1.2",
-    "grunt-contrib-uglify": "~0.2.7",
+    "grunt-contrib-uglify": "~5.2.2",
     "gulp-connect": "^5.7.0",
     "gulp-livereload": "^4.0.2",
     "http-proxy-middleware": "^2.0.3"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "pub": "grunt build && npm publish ./publish",
-    "run": "gulp"
+    "pub": "grunt build && npm publish ./publish --registry https://registry.npmjs.org",
+    "dev": "gulp",
+    "build": "grunt build "
   },
   "keywords": [
     "kindeditor",
