@@ -44,7 +44,7 @@ K.Tools = {
 };
 K.Templates = [
 	{ name: '图片和文字', content: '<h3><img align="left" height="100" style="margin-right: 10px" width="100" />在此处输入标题</h3><p>在此处输入内容</p>'},
-	{ name: '表格', content: '<h3>标题</h3><table style="width:100%;" cellpadding="2" cellspacing="0" border="1"><tbody><tr><td><h3>标题1</h3></td><td><h3>标题1</h3></td></tr><tr><td>内容1</td><td>内容2</td></tr><tr><td>内容3</td><td>内容4</td></tr></tbody></table><p>表格说明</p>' },
+	{ name: '表格', content: '<h3>表格标题</h3><table style="width:100%;" cellpadding="2" cellspacing="0" border="1"><tbody><tr><td>表头1</td><td>表头2</td></tr><tr><td>内容1</td><td>内容2</td></tr><tr><td>内容3</td><td>内容4</td></tr></tbody></table><p>表格说明</p>' },
 	{ name: '项目编号', content: '<p>在此处输入内容</p><ol><li>描述1</li><li>描述2</li><li>描述3</li></ol><p>在此处输入内容</p><ul><li>描述1</li><li>描述2</li><li>描述3</li></ul>' },
 ];
 

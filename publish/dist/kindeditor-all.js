@@ -3010,7 +3010,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   if (!console.log) {
     console.log = function () {};
   }
-  var _VERSION = '4.4.16 (2024-09-25)',
+  var _VERSION = '4.4.16 (2024-11-05)',
     _ua = navigator.userAgent.toLowerCase(),
     _IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
     _NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -3227,7 +3227,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     content: '<h3><img align="left" height="100" style="margin-right: 10px" width="100" />在此处输入标题</h3><p>在此处输入内容</p>'
   }, {
     name: '表格',
-    content: '<h3>标题</h3><table style="width:100%;" cellpadding="2" cellspacing="0" border="1"><tbody><tr><td><h3>标题1</h3></td><td><h3>标题1</h3></td></tr><tr><td>内容1</td><td>内容2</td></tr><tr><td>内容3</td><td>内容4</td></tr></tbody></table><p>表格说明</p>'
+    content: '<h3>表格标题</h3><table style="width:100%;" cellpadding="2" cellspacing="0" border="1"><tbody><tr><td>表头1</td><td>表头2</td></tr><tr><td>内容1</td><td>内容2</td></tr><tr><td>内容3</td><td>内容4</td></tr></tbody></table><p>表格说明</p>'
   }, {
     name: '项目编号',
     content: '<p>在此处输入内容</p><ol><li>描述1</li><li>描述2</li><li>描述3</li></ol><p>在此处输入内容</p><ul><li>描述1</li><li>描述2</li><li>描述3</li></ul>'
@@ -9549,10 +9549,10 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         }
       }
       var lang = self.lang(name + '.'),
-        html = ['<div style="padding:10px 20px;">', '<div class="ke-dialog-row">', '<select class="ke-code-type">', '<option value="js">JavaScript</option>', '<option value="html">HTML</option>', '<option value="css">CSS</option>', '<option value="php">PHP</option>', '<option value="pl">Perl</option>', '<option value="py">Python</option>', '<option value="rb">Ruby</option>', '<option value="java">Java</option>', '<option value="vb">ASP/VB</option>', '<option value="cpp">C/C++</option>', '<option value="cs">C#</option>', '<option value="xml">XML</option>', '<option value="bsh">Shell</option>', '<option value="sql">SQL</option>', '<option value="">Other</option>', '</select>', '</div>', '<textarea class="ke-textarea" style="width:518px;height:260px;">', preCode, '</textarea>', '</div>'].join(''),
+        html = ['<div style="padding:10px 20px;">', '<div class="ke-dialog-row">', '<select class="ke-code-type">', '<option value="js">JavaScript</option>', '<option value="html">HTML</option>', '<option value="css">CSS</option>', '<option value="php">PHP</option>', '<option value="pl">Perl</option>', '<option value="py">Python</option>', '<option value="rb">Ruby</option>', '<option value="java">Java</option>', '<option value="vb">ASP/VB</option>', '<option value="cpp">C/C++</option>', '<option value="cs">C#</option>', '<option value="xml">XML</option>', '<option value="bsh">Shell</option>', '<option value="sql">SQL</option>', '<option value="">Other</option>', '</select>', '</div>', '<textarea class="ke-textarea" style="width:100%;height:260px;">', preCode, '</textarea>', '</div>'].join(''),
         dialog = self.createDialog({
           name: name,
-          width: 560,
+          width: 650,
           title: self.lang(name),
           body: html,
           yesBtn: {

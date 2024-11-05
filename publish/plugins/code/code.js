@@ -44,13 +44,13 @@ KindEditor.plugin('code', function(K) {
 				'<option value="">Other</option>',
 				'</select>',
 				'</div>',
-				'<textarea class="ke-textarea" style="width:518px;height:260px;">',
+				'<textarea class="ke-textarea" style="width:100%;height:260px;">',
 				preCode,
 				'</textarea>',
 				'</div>'].join(''),
 			dialog = self.createDialog({
 				name : name,
-				width : 560,
+				width : 650,
 				title : self.lang(name),
 				body : html,
 				yesBtn : {
