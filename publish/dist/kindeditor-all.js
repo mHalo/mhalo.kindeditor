@@ -3010,7 +3010,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   if (!console.log) {
     console.log = function () {};
   }
-  var _VERSION = '4.4.17 (2024-11-05)',
+  var _VERSION = '4.4.19 (2024-11-06)',
     _ua = navigator.userAgent.toLowerCase(),
     _IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
     _NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -9542,7 +9542,8 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         preCode = '',
         preLang = 'js';
       if (!!preCodeNode) {
-        preCode = preCodeNode.html();
+        preCode = preCodeNode.html().match(/<code[^>]*>([\s\S]*?)<\/code>/)[1];
+        ;
         preLang = (preCodeNode.attr("class").match(/lang-(\w+)/ig) || [])[0];
         if (!!preLang) {
           preLang = preLang.replace("lang-", "");
@@ -9572,7 +9573,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
                 self.hideDialog().focus();
                 return;
               } else {
-                html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
+                html = '<pre class="' + cls + '"><code class="language-' + type + '">' + K.escape(code) + '</code></pre>';
               }
               self.insertHtml(html).hideDialog().focus();
             }

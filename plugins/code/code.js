@@ -17,7 +17,7 @@ KindEditor.plugin('code', function(K) {
 		console.info(self);
 		var preCodeNode = self.plugin.getSelectedPreCode(), preCode = '',preLang = 'js'	;
 		if(!!preCodeNode){
-			preCode = preCodeNode.html();
+			preCode = preCodeNode.html().match(/<code[^>]*>([\s\S]*?)<\/code>/)[1];;
 			preLang = (preCodeNode.attr("class").match(/lang-(\w+)/ig) || [])[0];
 			if(!!preLang){
 				preLang = preLang.replace("lang-", "");
@@ -75,7 +75,8 @@ KindEditor.plugin('code', function(K) {
 							self.hideDialog().focus();
 							return
 						}else{
-							html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
+							// html = '<pre class="' + cls + '">\n' + K.escape(code) + '\n</pre> ';
+							html = '<pre class="' + cls + '"><code class="language-' + type + '">' + K.escape(code) + '</code></pre>';
 						}
 						self.insertHtml(html).hideDialog().focus();
 					}
