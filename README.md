@@ -41,6 +41,22 @@ MHalo.KindEditor在Kindeditor（[https://github.com/kindsoft/kindeditor](https:/
 
 ## 特点： 
 
+👉. 插入代码插件prism插件进行高亮转换  
+1、插入代码插件结构适配prism，可在内容展示页面通过引入`prism.css`、`prism.js`高亮格式化展示（编辑器结果仍然保持插入的代码内容）；  
+2: 支持编辑器内引入prism插件进行高亮转换（编辑器将只储存prism高亮转换后的结果）,在内容展示页面只需要引入`prism.css`即可。根据以下示例进行配置：
+```
+KindEditor.ready(function (K) {
+    var options = {
+        prismPath: '../other-plugins/prism',
+        //或
+        prismPath: 'https://your.website-domain.com/libs/prism',
+    };
+    var contentEditor = K.create('#editor', options);
+});
+```
+![image-20241107174550495](https://raw.githubusercontent.com/mHalo/mhalo.github.io/master/image-bed/image-20241107174550495.png)
+
+
 👉. 基于theme/default的样式更新，使用iconfont更新图标样式  
 #### 自定义组件图标添加方式：
 1. 移步 https://www.iconfont.cn/ 下载所需图标的svg/png文件 
