@@ -6,6 +6,7 @@
 		<!-- <script src="../lib/firebug-lite/build/firebug-lite.js#startOpened"></script> -->
         <script>window.rnd = function(){ return Math.random() }</script>
 		<script src="../publish/dist/kindeditor-all.js"></script>
+        <link href="../other-plugins/prism/prism.css" rel="stylesheet" />
         <style>
             .ke-icon-plugin-demo{
                 background: url(./icons/plugin.svg) center center no-repeat!important;
@@ -24,9 +25,22 @@
             <div>
                 <button id="testHtml">获取HTML</button>
             </div>
+            <div class="result">
+
+            </div>
+            <div class="show">
+                <pre><code class="language-css">p { color: red }</code></pre>
+                <pre class=" ke-code line-numbers language-javascript lang-javascript"><code class="language-javascript">1
+                    2
+                    3
+                    4
+                    5</code></pre>
+            </div>
         </div>
 	</body>
+    <script src="../other-plugins/prism/prism.js"></script>
     <script>
+        
         // 初始化编辑器
         KindEditor.ready(function (K) {
             var options = {
@@ -100,6 +114,7 @@
 
             $("#testHtml").click(function(){
                 console.info(contentEditor.html())
+                $(".result").html(contentEditor.html())
             })
         });
     </script>

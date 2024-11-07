@@ -3010,7 +3010,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   if (!console.log) {
     console.log = function () {};
   }
-  var _VERSION = '4.4.20 (2024-11-07)',
+  var _VERSION = '4.4.21 (2024-11-07)',
     _ua = navigator.userAgent.toLowerCase(),
     _IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
     _NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -9553,7 +9553,8 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   KindEditor.plugin('code', function (K) {
     var self = this,
       name = 'code',
-      lineBreak = "<line-break>\n</line-break>";
+      lineBreak = "<line-break>\n</line-break>",
+      codeRegex = /<code[^>]*>([\s\S]*?)<\/code>/;
     function extractFormattedCodeFromHTML(preCodeNode) {
       function extractContent(element) {
         var content = '';
@@ -9602,6 +9603,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
           preCode = extractFormattedCodeFromHTML(preCodeNode);
         } else {
           preCode = preCodeNode.html();
+          preCode = preCode.match(codeRegex)[1];
         }
         preLang = (preCodeNode.attr("class").match(/lang-(\w+)/ig) || [])[0];
         if (!!preLang) {
@@ -9711,7 +9713,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
                   self.hideDialog().focus();
                   return;
                 } else {
-                  preCodeNode.html(K.escape(code)).attr("class", cls);
+                  preCodeNode.html("<code class=\"language-".concat(type, "\">").concat(K.escape(code), "</code>")).attr("class", cls);
                   preCodeNode.next('\n');
                   self.hideDialog().focus();
                   return;
@@ -9727,9 +9729,9 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
                   prism.highlightElement(codeElement, false);
                   code = preElement.innerHTML;
                   code = code.replace(/\n/g, lineBreak);
-                  html = '<pre class="' + cls + ' ">\n' + code + '\n</pre>\n<br />';
+                  html = '<pre class="' + cls + ' ">' + code + '</pre>\n<br />';
                 } else {
-                  html = '<pre class="' + cls + ' ">\n' + K.escape(code) + '\n</pre>\n<br />';
+                  html = '<pre class="' + cls + ' "><code class="language-' + type + ' ">' + K.escape(code) + '</code></pre>\n<br />';
                 }
               }
               var anchorCur = self === null || self === void 0 || (_self$cmd$sel = self.cmd.sel) === null || _self$cmd$sel === void 0 ? void 0 : _self$cmd$sel.extentNode;

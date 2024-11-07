@@ -11,7 +11,7 @@
 // http://google-code-prettify.googlecode.com/
 
 KindEditor.plugin('code', function(K) {
-	var self = this, name = 'code', lineBreak = `<line-break>\n</line-break>`;
+	var self = this, name = 'code', lineBreak = `<line-break>\n</line-break>`, codeRegex = /<code[^>]*>([\s\S]*?)<\/code>/;
 	function extractFormattedCodeFromHTML(preCodeNode) {
 		// 定义一个函数来递归提取格式化的代码
 		function extractContent(element) {
@@ -67,6 +67,7 @@ KindEditor.plugin('code', function(K) {
 				preCode = extractFormattedCodeFromHTML(preCodeNode)
 			}else{
 				preCode = preCodeNode.html();
+				preCode = preCode.match(codeRegex)[1];
 			}
 
 			preLang = (preCodeNode.attr("class").match(/lang-(\w+)/ig) || [])[0];
@@ -163,7 +164,7 @@ KindEditor.plugin('code', function(K) {
 								return
 
 							}else{
-								preCodeNode.html(K.escape(code)).attr("class", cls);
+								preCodeNode.html(`<code class="language-${type}">${K.escape(code)}</code>`).attr("class", cls);
 								preCodeNode.next('\n')
 								self.hideDialog().focus();
 								return
@@ -181,9 +182,9 @@ KindEditor.plugin('code', function(K) {
 								code = preElement.innerHTML;
 
 								code = code.replace(/\n/g, lineBreak);
-								html = '<pre class="' + cls + ' ">\n' + code + '\n</pre>\n<br />';
+								html = '<pre class="' + cls + ' ">' + code + '</pre>\n<br />';
 							}else{
-								html = '<pre class="' + cls + ' ">\n' + K.escape(code) + '\n</pre>\n<br />';
+								html = '<pre class="' + cls + ' "><code class="language-' + type + ' ">' + K.escape(code) + '</code></pre>\n<br />';
 							}
 						}
 						var anchorCur = self?.cmd.sel?.extentNode;
