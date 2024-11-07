@@ -9,10 +9,11 @@ if ((html = document.getElementsByTagName('html'))) {
 	_direction = html[0].dir;
 }
 
-function _getInitHtml(themesPath, bodyClass, cssPath, cssData) {
+function _getInitHtml(themesPath, bodyClass, cssPath, cssData, prismPath) {
 	var arr = [
 		(_direction === '' ? '<html>' : '<html dir="' + _direction + '">'),
 		'<head><meta charset="utf-8" /><title></title>',
+		!!prismPath ? `<link href="${prismPath}/prism.css" rel="stylesheet" />` : '',
 		'<style>',
 		'html,body {margin:0;padding:0;}',
 		'body, td {font:12px/1.5 "PingFang","Microsoft Yahei","苹方","微软雅黑", "sans serif",tahoma,verdana,helvetica;}',
@@ -25,7 +26,7 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData) {
 		'img[data-ke-class="ke-image"]:hover { border-color: #4696ec; }',
 		'audio,video{ border:3px solid transparent; }',
 		'audio:hover, video:hover{ border:3px solid #2196f3; }',
-		'pre{ font-size: 14px;line-height: 20px;width: 100%;background-color: #f4f2f0;padding: 6px 18px;box-sizing: border-box; border: 3px solid transparent;}',
+		'pre{ font-size: 14px!important;line-height: 20px;width: 100%;background-color: #f4f2f0;padding: 6px 18px;box-sizing: border-box; border: 3px solid transparent;    word-break: break-all;white-space: break-spaces;-webkit-user-modify: read-only;line-height: 1.2em!important;}',
 		'pre:hover,pre:active{border: 3px solid #4696ec;}',
 		// 'img.ke-flash {',
 		// '	border:1px solid #AAA;',
@@ -80,7 +81,9 @@ function _getInitHtml(themesPath, bodyClass, cssPath, cssData) {
 	if (cssData) {
 		arr.push('<style>' + cssData + '</style>');
 	}
-	arr.push('</head><body ' + (bodyClass ? 'class="' + bodyClass + '"' : '') + ' author="MHalo"></body></html>');
+	// arr.push(!!prismPath ? `<script src="${prismPath}/prism.js"></script>` : '')
+	arr.push('</head><body ' + (bodyClass ? 'class="' + bodyClass + '"' : '') + ' author="MHalo"></body>');
+	arr.push('</html>');
 	return arr.join('\n');
 }
 
@@ -106,7 +109,6 @@ _extend(KEdit, KWidget, {
 	init : function(options) {
 		var self = this;
 		KEdit.parent.init.call(self, options);
-
 		self.srcElement = K(options.srcElement);
 		self.div.addClass('ke-edit');
 		self.designMode = _undef(options.designMode, true);
@@ -115,6 +117,7 @@ _extend(KEdit, KWidget, {
 		self.afterSetHtml = options.afterSetHtml;
 
 		var themesPath = _undef(options.themesPath, ''),
+			prismPath = _undef(options.editorOptions.prismPath, ''),
 			bodyClass = options.bodyClass,
 			cssPath = options.cssPath,
 			cssData = options.cssData,
@@ -128,6 +131,7 @@ _extend(KEdit, KWidget, {
 		self.tabIndex = isNaN(parseInt(options.tabIndex, 10)) ? self.srcElement.attr('tabindex') : parseInt(options.tabIndex, 10);
 		self.iframe.attr('tabindex', self.tabIndex);
 		self.textarea.attr('tabindex', self.tabIndex);
+
 
 		if (self.width) {
 			self.setWidth(self.width);
@@ -146,7 +150,7 @@ _extend(KEdit, KWidget, {
 			if (isDocumentDomain) {
 				doc.domain = document.domain;
 			}
-			doc.write(_getInitHtml(themesPath, bodyClass, cssPath, cssData));
+			doc.write(_getInitHtml(themesPath, bodyClass, cssPath, cssData, prismPath));
 			doc.close();
 			self.win = self.iframe[0].contentWindow;
 			self.doc = doc;
@@ -154,6 +158,10 @@ _extend(KEdit, KWidget, {
 			// add events
 			self.afterChange(function(e) {
 				cmd.selection();
+				var last = K(doc.body).last()?.children();
+				if(last && (last.length != 1 || last.name !== 'br')){
+					K(doc.body).append("<p><br /></p>")
+				}
 			});
 			// [WEBKIT] select an image after click the image
 			if (_WEBKIT) {
@@ -178,6 +186,7 @@ _extend(KEdit, KWidget, {
 				// [IE] bug: clear iframe when press backspase key
 				K(doc).keydown(function(e) {
 					if (e.which == 8) {
+						console.info('ieieieie')
 						cmd.selection();
 						var rng = cmd.range;
 						if (rng.isControl()) {
@@ -198,6 +207,15 @@ _extend(KEdit, KWidget, {
 				doc.designMode = 'on';
 			}
 			if (options.afterCreate) {
+				let head = self?.doc?.head;
+				if(!!prismPath && !!head){
+					//<script src="../publish/dist/kindeditor-all.js"></script>
+					// K(head).append(`<script src="${prismPath}/prism.js"></script>`);
+					var script = self.doc.createElement('script');
+					script.src = `${prismPath}/prism.js`;
+					script.setAttribute('data-manual', 'true');
+					head.appendChild(script);
+				}
 				options.afterCreate.call(self);
 			}
 		}

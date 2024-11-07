@@ -3010,7 +3010,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   if (!console.log) {
     console.log = function () {};
   }
-  var _VERSION = '4.4.19 (2024-11-06)',
+  var _VERSION = '4.4.20 (2024-11-07)',
     _ua = navigator.userAgent.toLowerCase(),
     _IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
     _NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -3196,7 +3196,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   };
   var _INLINE_TAG_MAP = _toMap('a,abbr,acronym,b,basefont,bdo,big,br,button,cite,code,del,dfn,em,font,i,img,input,ins,kbd,label,map,q,s,samp,select,small,span,strike,strong,sub,sup,textarea,tt,u,var'),
     _BLOCK_TAG_MAP = _toMap('address,applet,blockquote,body,center,dd,dir,div,dl,dt,fieldset,form,frameset,h1,h2,h3,h4,h5,h6,head,hr,html,iframe,ins,isindex,li,map,menu,meta,noframes,noscript,object,ol,p,pre,script,style,table,tbody,td,tfoot,th,thead,title,tr,ul,audio,video'),
-    _SINGLE_TAG_MAP = _toMap('area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed'),
+    _SINGLE_TAG_MAP = _toMap('line-break,area,base,basefont,br,col,frame,hr,img,input,isindex,link,meta,param,embed'),
     _STYLE_TAG_MAP = _toMap('b,basefont,big,del,em,font,i,s,small,span,strike,strong,sub,sup,u'),
     _CONTROL_TAG_MAP = _toMap('img,table,input,textarea,button,audio,video'),
     _PRE_TAG_MAP = _toMap('pre,style,script'),
@@ -3280,7 +3280,9 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       pre: ['id', 'class'],
       hr: ['id', 'class', '.page-break-after'],
       'br,tbody,tr,strong,b,sub,sup,em,i,u,strike,s,del': ['id', 'class'],
-      iframe: ['id', 'class', 'src', 'frameborder', 'width', 'height', '.width', '.height']
+      iframe: ['id', 'class', 'src', 'frameborder', 'width', 'height', '.width', '.height'],
+      "line-break": ['style'],
+      "code": ['class', 'style']
     },
     layout: '<div class="container"><div class="toolbar"></div><div class="edit"></div><div class="statusbar"></div></div>'
   };
@@ -6667,8 +6669,8 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   if (html = document.getElementsByTagName('html')) {
     _direction = html[0].dir;
   }
-  function _getInitHtml(themesPath, bodyClass, cssPath, cssData) {
-    var arr = [_direction === '' ? '<html>' : '<html dir="' + _direction + '">', '<head><meta charset="utf-8" /><title></title>', '<style>', 'html,body {margin:0;padding:0;}', 'body, td {font:12px/1.5 "PingFang","Microsoft Yahei","苹方","微软雅黑", "sans serif",tahoma,verdana,helvetica;}', 'body, p, div {word-wrap: break-word;line-height:28px;}', 'table {border-collapse:collapse;}', 'noscript {display:none;}', 'table.ke-zeroborder td {border:1px dotted #AAA;}', '.ke-content {padding: 15px;}', 'img[data-ke-class="ke-image"] { max-width: 100%;border: 2px solid transparent; }', 'img[data-ke-class="ke-image"]:hover { border-color: #4696ec; }', 'audio,video{ border:3px solid transparent; }', 'audio:hover, video:hover{ border:3px solid #2196f3; }', 'pre{ font-size: 14px;line-height: 20px;width: 100%;background-color: #f4f2f0;padding: 6px 18px;box-sizing: border-box; border: 3px solid transparent;}', 'pre:hover,pre:active{border: 3px solid #4696ec;}', '.ke-script, .ke-noscript, .ke-display-none {', '	display:none;', '	font-size:0;', '	width:0;', '	height:0;', '}', '.ke-pagebreak {', '	border:1px dotted #AAA;', '	font-size:0;', '	height:2px;', '}', '</style>'];
+  function _getInitHtml(themesPath, bodyClass, cssPath, cssData, prismPath) {
+    var arr = [_direction === '' ? '<html>' : '<html dir="' + _direction + '">', '<head><meta charset="utf-8" /><title></title>', !!prismPath ? "<link href=\"".concat(prismPath, "/prism.css\" rel=\"stylesheet\" />") : '', '<style>', 'html,body {margin:0;padding:0;}', 'body, td {font:12px/1.5 "PingFang","Microsoft Yahei","苹方","微软雅黑", "sans serif",tahoma,verdana,helvetica;}', 'body, p, div {word-wrap: break-word;line-height:28px;}', 'table {border-collapse:collapse;}', 'noscript {display:none;}', 'table.ke-zeroborder td {border:1px dotted #AAA;}', '.ke-content {padding: 15px;}', 'img[data-ke-class="ke-image"] { max-width: 100%;border: 2px solid transparent; }', 'img[data-ke-class="ke-image"]:hover { border-color: #4696ec; }', 'audio,video{ border:3px solid transparent; }', 'audio:hover, video:hover{ border:3px solid #2196f3; }', 'pre{ font-size: 14px!important;line-height: 20px;width: 100%;background-color: #f4f2f0;padding: 6px 18px;box-sizing: border-box; border: 3px solid transparent;    word-break: break-all;white-space: break-spaces;-webkit-user-modify: read-only;line-height: 1.2em!important;}', 'pre:hover,pre:active{border: 3px solid #4696ec;}', '.ke-script, .ke-noscript, .ke-display-none {', '	display:none;', '	font-size:0;', '	width:0;', '	height:0;', '}', '.ke-pagebreak {', '	border:1px dotted #AAA;', '	font-size:0;', '	height:2px;', '}', '</style>'];
     if (!_isArray(cssPath)) {
       cssPath = [cssPath];
     }
@@ -6680,7 +6682,8 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
     if (cssData) {
       arr.push('<style>' + cssData + '</style>');
     }
-    arr.push('</head><body ' + (bodyClass ? 'class="' + bodyClass + '"' : '') + ' author="MHalo"></body></html>');
+    arr.push('</head><body ' + (bodyClass ? 'class="' + bodyClass + '"' : '') + ' author="MHalo"></body>');
+    arr.push('</html>');
     return arr.join('\n');
   }
   function _elementVal(knode, val) {
@@ -6708,6 +6711,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
       self.beforeSetHtml = options.beforeSetHtml;
       self.afterSetHtml = options.afterSetHtml;
       var themesPath = _undef(options.themesPath, ''),
+        prismPath = _undef(options.editorOptions.prismPath, ''),
         bodyClass = options.bodyClass,
         cssPath = options.cssPath,
         cssData = options.cssData,
@@ -6736,13 +6740,18 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         if (isDocumentDomain) {
           doc.domain = document.domain;
         }
-        doc.write(_getInitHtml(themesPath, bodyClass, cssPath, cssData));
+        doc.write(_getInitHtml(themesPath, bodyClass, cssPath, cssData, prismPath));
         doc.close();
         self.win = self.iframe[0].contentWindow;
         self.doc = doc;
         var cmd = _cmd(doc, options.editorOptions);
         self.afterChange(function (e) {
+          var _K$last;
           cmd.selection();
+          var last = (_K$last = K(doc.body).last()) === null || _K$last === void 0 ? void 0 : _K$last.children();
+          if (last && (last.length != 1 || last.name !== 'br')) {
+            K(doc.body).append("<p><br /></p>");
+          }
         });
         if (_WEBKIT) {
           K(doc).click(function (e) {
@@ -6764,6 +6773,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
           K(document).mousedown(self._mousedownHandler);
           K(doc).keydown(function (e) {
             if (e.which == 8) {
+              console.info('ieieieie');
               cmd.selection();
               var rng = cmd.range;
               if (rng.isControl()) {
@@ -6784,6 +6794,14 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
           doc.designMode = 'on';
         }
         if (options.afterCreate) {
+          var _self$doc;
+          var head = self === null || self === void 0 || (_self$doc = self.doc) === null || _self$doc === void 0 ? void 0 : _self$doc.head;
+          if (!!prismPath && !!head) {
+            var script = self.doc.createElement('script');
+            script.src = "".concat(prismPath, "/prism.js");
+            script.setAttribute('data-manual', 'true');
+            head.appendChild(script);
+          }
           options.afterCreate.call(self);
         }
       }
@@ -9534,23 +9552,131 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   });
   KindEditor.plugin('code', function (K) {
     var self = this,
-      name = 'code';
+      name = 'code',
+      lineBreak = "<line-break>\n</line-break>";
+    function extractFormattedCodeFromHTML(preCodeNode) {
+      function extractContent(element) {
+        var content = '';
+        Array.from(element.childNodes).forEach(function (child) {
+          var _child$parentNode;
+          if (child !== null && child !== void 0 && (_child$parentNode = child.parentNode) !== null && _child$parentNode !== void 0 && (_child$parentNode = _child$parentNode.classList) !== null && _child$parentNode !== void 0 && _child$parentNode.contains('line-numbers-rows')) {
+            console.info('skip');
+          } else {
+            if (child.nodeType === Node.TEXT_NODE) {
+              content += child.nodeValue;
+            } else if (child.tagName) {
+              switch (child.tagName.toLowerCase()) {
+                case 'br':
+                  content += '\n';
+                  break;
+                case 'line-break':
+                  content += '\n';
+                  break;
+                case 'span':
+                  content += extractContent(child);
+                  break;
+              }
+            }
+          }
+        });
+        return content;
+      }
+      var formattedCode = extractContent(preCodeNode.children().get(0));
+      return formattedCode; //;.replace(/\n{3,}/g, '\n\n');
+    }
+    function capitalizeAndNormalizeSpaces(str) {
+      var normalizedStr = str.replace(/\s+/g, ' ');
+      return normalizedStr.replace(/\b\w/g, function (_char) {
+        return _char.toUpperCase();
+      });
+    }
     self.clickToolbar(name, function () {
+      var prism = self.edit.win.Prism;
+      console.info('prism', prism);
       self.cmd.selection();
-      console.info(self);
       var preCodeNode = self.plugin.getSelectedPreCode(),
         preCode = '',
-        preLang = 'js';
+        preLang = 'javascript';
       if (!!preCodeNode) {
-        preCode = preCodeNode.html().match(/<code[^>]*>([\s\S]*?)<\/code>/)[1];
-        ;
+        if (prism) {
+          preCode = extractFormattedCodeFromHTML(preCodeNode);
+        } else {
+          preCode = preCodeNode.html();
+        }
         preLang = (preCodeNode.attr("class").match(/lang-(\w+)/ig) || [])[0];
         if (!!preLang) {
           preLang = preLang.replace("lang-", "");
         }
       }
+      var languageSupport = [];
+      if (prism) {
+        var plang = prism.languages,
+          langs = {};
+        for (var key in plang) {
+          if (plang.hasOwnProperty(key) && typeof plang[key] !== 'function' && key !== 'meta') {
+            var pid = plang[key].__id;
+            if (!!!langs[pid]) {
+              langs[pid] = key;
+              languageSupport.push({
+                key: key,
+                value: capitalizeAndNormalizeSpaces(key)
+              });
+            }
+          }
+        }
+      } else {
+        languageSupport = [{
+          key: "javascript",
+          value: "JavaScript"
+        }, {
+          key: "html",
+          value: "HTML"
+        }, {
+          key: "css",
+          value: "CSS"
+        }, {
+          key: "php",
+          value: "PHP"
+        }, {
+          key: "pl",
+          value: "Perl"
+        }, {
+          key: "py",
+          value: "Python"
+        }, {
+          key: "rb",
+          value: "Ruby"
+        }, {
+          key: "java",
+          value: "Java"
+        }, {
+          key: "vb",
+          value: "ASP"
+        }, {
+          key: "cpp",
+          value: "C"
+        }, {
+          key: "cs",
+          value: "C"
+        }, {
+          key: "xml",
+          value: "XML"
+        }, {
+          key: "bsh",
+          value: "Shell"
+        }, {
+          key: "sql",
+          value: "SQL"
+        }, {
+          key: "none",
+          value: "Other"
+        }];
+      }
+      var languageSupportOptions = languageSupport.map(function (o) {
+        return "<option value=\"".concat(o.key, "\">").concat(o.value, "</option>");
+      }).join('');
       var lang = self.lang(name + '.'),
-        html = ['<div style="padding:10px 20px;">', '<div class="ke-dialog-row">', '<select class="ke-code-type">', '<option value="js">JavaScript</option>', '<option value="html">HTML</option>', '<option value="css">CSS</option>', '<option value="php">PHP</option>', '<option value="pl">Perl</option>', '<option value="py">Python</option>', '<option value="rb">Ruby</option>', '<option value="java">Java</option>', '<option value="vb">ASP/VB</option>', '<option value="cpp">C/C++</option>', '<option value="cs">C#</option>', '<option value="xml">XML</option>', '<option value="bsh">Shell</option>', '<option value="sql">SQL</option>', '<option value="">Other</option>', '</select>', '</div>', '<textarea class="ke-textarea" style="width:100%;height:330px;">', preCode, '</textarea>', '</div>'].join(''),
+        html = ['<div style="padding:10px 20px;">', '<div class="ke-dialog-row">', '<select class="ke-code-type">', languageSupportOptions, '</select>', '</div>', '<textarea class="ke-textarea" style="width:100%;height:330px;">\r\n', preCode.replace(/\n/g, '\r\n'), '</textarea>\r\n', '</div>'].join(''),
         dialog = self.createDialog({
           name: name,
           width: 650,
@@ -9560,22 +9686,67 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
           yesBtn: {
             name: self.lang('yes'),
             click: function click(e) {
+              var _self$cmd$sel, _K$last2;
               var type = K('.ke-code-type', dialog.div).val(),
                 code = textarea.val().replace(/^\s+/g, '').replace(/\s+$/g, '\n').replace(/(\s*<!--)/g, '\n$1').replace(/>(\s*)(?=<!--\s*\/)/g, '> '),
-                cls = type === '' ? '' : ' ke-code lang-' + type;
+                cls = type === '' ? '' : " ke-code line-numbers language-".concat(type, " lang-").concat(type);
               if (K.trim(code) === '') {
                 alert(lang.pleaseInput);
                 textarea[0].focus();
                 return;
               }
               if (!!preCodeNode) {
-                preCodeNode.html(K.escape(code)).attr("class", cls);
-                self.hideDialog().focus();
-                return;
+                if (prism) {
+                  var preElement = document.createElement("pre");
+                  preElement.className = cls + ' line-numbers';
+                  var codeElement = document.createElement("code");
+                  codeElement.className = 'line-numbers';
+                  codeElement.innerHTML = code;
+                  preElement.appendChild(codeElement);
+                  prism.highlightElement(codeElement, false);
+                  code = preElement.innerHTML;
+                  code = code.replace(/\n/g, lineBreak);
+                  preCodeNode.html(code).attr("class", cls);
+                  preCodeNode.next('\n');
+                  self.hideDialog().focus();
+                  return;
+                } else {
+                  preCodeNode.html(K.escape(code)).attr("class", cls);
+                  preCodeNode.next('\n');
+                  self.hideDialog().focus();
+                  return;
+                }
               } else {
-                html = '<pre class="' + cls + '"><code class="language-' + type + '">' + K.escape(code) + '</code></pre>';
+                if (prism) {
+                  var preElement = document.createElement("pre");
+                  preElement.className = cls + ' line-numbers';
+                  var codeElement = document.createElement("code");
+                  codeElement.className = 'line-numbers';
+                  codeElement.innerHTML = code;
+                  preElement.appendChild(codeElement);
+                  prism.highlightElement(codeElement, false);
+                  code = preElement.innerHTML;
+                  code = code.replace(/\n/g, lineBreak);
+                  html = '<pre class="' + cls + ' ">\n' + code + '\n</pre>\n<br />';
+                } else {
+                  html = '<pre class="' + cls + ' ">\n' + K.escape(code) + '\n</pre>\n<br />';
+                }
               }
-              self.insertHtml(html).hideDialog().focus();
+              var anchorCur = self === null || self === void 0 || (_self$cmd$sel = self.cmd.sel) === null || _self$cmd$sel === void 0 ? void 0 : _self$cmd$sel.extentNode;
+              if (anchorCur && K(anchorCur).name == 'p') {
+                var anchorChildren = K(anchorCur).children();
+                if (anchorChildren.length == 1 && anchorChildren.name == 'br') {
+                  K(anchorCur).replaceWith(html);
+                }
+              } else {
+                var parentNode = K(anchorCur).parent() || self;
+                parentNode.after(html);
+              }
+              self.hideDialog().focus();
+              var last = (_K$last2 = K(self.edit.doc.body).last()) === null || _K$last2 === void 0 ? void 0 : _K$last2.children();
+              if (last && (last.length != 1 || last.name !== 'br')) {
+                K(self.edit.doc.body).append("<p><br /></p>");
+              }
             }
           }
         }),
@@ -11070,7 +11241,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   KindEditor.plugin('quickformat', function (K) {
     var self = this,
       name = 'quickformat',
-      blockMap = K.toMap('blockquote,center,div,h1,h2,h3,h4,h5,h6,p');
+      blockMap = K.toMap('blockquote,center,div,h1,h2,h3,h4,h5,h6,p,pre,code');
     function getFirstChild(knode) {
       var child = knode.first();
       while (child && child.first()) {
@@ -11089,11 +11260,12 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
         bookmark = range.createBookmark(true);
       while (child) {
         next = child.next();
+        next && console.info(-1, next.name);
         var firstChild = getFirstChild(child);
         if (!firstChild || firstChild.name != 'img') {
           if (blockMap[child.name]) {
             child.html(child.html().replace(/^(\s|&nbsp;|　)+/ig, ''));
-            child.css('text-indent', '2em');
+            child.css('text-indent', child.name == 'pre' ? '' : '2em');
           } else {
             subList.push(child);
           }

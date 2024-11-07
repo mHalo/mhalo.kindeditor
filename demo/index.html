@@ -19,6 +19,10 @@
             <div style="margin-left: 4vw;">
                 <textarea  id="editor" cols="30" rows="10" style="width:90%;;margin-left:15px;"></textarea>
             </div>
+
+            <div>
+                <button id="testHtml">获取HTML</button>
+            </div>
         </div>
 	</body>
     <script>
@@ -28,7 +32,7 @@
                 themesPath: '../themes/',
                 basePath:'../',
                 resizeType: 1,
-                pasteType: 2,//0:禁止粘贴, 1:纯文本粘贴, 2:HTML粘贴
+                pasteType: 3,//0:禁止粘贴, 1:纯文本粘贴, 2:HTML粘贴
                 autoHeightMode: true,
                 height: 320,
                 fixToolBar: true,
@@ -40,6 +44,7 @@
                 symbolConfig:function(symbols, page){
                     page.cols = 9
                 },
+                prismPath: '../other-plugins/prism',
                 // allowPreviewEmoticons: false,
                 allowImageUpload: true,
                 allowFlashUpload: false,
@@ -69,7 +74,7 @@
             };
             var contentEditor = K.create('#editor', options);
 
-            var html = Array.from({length: 3}).map(function(o,i){ return  '<p>'+ i +'</p>' }).join("")
+            var html = Array.from({length: 1}).map(function(o,i){ return  '<p>'+ i +'</p>' }).join("")
             // html += '<p><img src="http://res.henandingdang.com/guanwang/Article/20170228/20170228155437.jpg"/></p><p>xxxxx</p>';
             contentEditor.html(html);
 
@@ -92,6 +97,9 @@
             //     }
             // })
 
-            });
+            $("#testHtml").click(function(){
+                console.info(contentEditor.html())
+            })
+        });
     </script>
 </html>
