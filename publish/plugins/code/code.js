@@ -150,6 +150,8 @@ KindEditor.plugin('code', function(K) {
 								preElement.className= cls + ' line-numbers';
 								var codeElement = document.createElement("code");
 								codeElement.className= 'line-numbers';
+								
+								code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 								codeElement.innerHTML = code;
 								preElement.appendChild(codeElement);
 
@@ -171,6 +173,8 @@ KindEditor.plugin('code', function(K) {
 							}
 						}else{
 							if(prism){
+								
+								code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
 								var preElement = document.createElement("pre");
 								preElement.className= cls + ' line-numbers';
 								var codeElement = document.createElement("code");

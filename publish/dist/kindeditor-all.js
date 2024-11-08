@@ -3010,7 +3010,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
   if (!console.log) {
     console.log = function () {};
   }
-  var _VERSION = '4.4.21 (2024-11-07)',
+  var _VERSION = '4.4.22 (2024-11-08)',
     _ua = navigator.userAgent.toLowerCase(),
     _IE = _ua.indexOf('msie') > -1 && _ua.indexOf('opera') == -1,
     _NEWIE = _ua.indexOf('msie') == -1 && _ua.indexOf('trident') > -1,
@@ -9703,6 +9703,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
                   preElement.className = cls + ' line-numbers';
                   var codeElement = document.createElement("code");
                   codeElement.className = 'line-numbers';
+                  code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                   codeElement.innerHTML = code;
                   preElement.appendChild(codeElement);
                   prism.highlightElement(codeElement, false);
@@ -9720,6 +9721,7 @@ function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == 
                 }
               } else {
                 if (prism) {
+                  code = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                   var preElement = document.createElement("pre");
                   preElement.className = cls + ' line-numbers';
                   var codeElement = document.createElement("code");
